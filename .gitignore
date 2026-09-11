@@ -1,0 +1,9 @@
+# OS / editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Local scratch / temp files
+*.tmp
+*.bak
