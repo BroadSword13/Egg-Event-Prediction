@@ -380,13 +380,17 @@
     return hashString(`${startDate}${JSON.stringify(state.settings)}${JSON.stringify(state.overrides)}|${state.remote?.syncedAt || 'seed'}`);
   }
 
+  function simulationRunRandom(baseSeed, run) {
+    return mulberry32(hashString(`${baseSeed}|run:${run}`));
+  }
+
   function simulateFirstHitPool(startDate, dateList, activeOrder, targetOrder, seedLabel, runs = NEXT_HIT_RUNS) {
     const firstDate = addDays(startDate, 1);
     const confirmed = store.getConfirmedDays();
     const counts = Object.fromEntries(targetOrder.map(id => [id, new Map()]));
     const hitTotals = Object.fromEntries(targetOrder.map(id => [id, 0]));
     const state = store.getState();
-    const random = mulberry32(hashString(`${seedLabel}|${startDate}|${JSON.stringify(state.settings)}|${JSON.stringify(state.overrides)}|${state.remote?.syncedAt || 'seed'}`));
+    const baseSeed = hashString(`${seedLabel}|${startDate}|${JSON.stringify(state.settings)}|${JSON.stringify(state.overrides)}|${state.remote?.syncedAt || 'seed'}`);
 
     const statCache = {};
     const initialLast = {};
@@ -396,6 +400,7 @@
     });
 
     for (let run = 0; run < runs; run += 1) {
+      const random = simulationRunRandom(baseSeed, run);
       const last = { ...initialLast };
       const firstSeen = new Set();
 
@@ -449,7 +454,7 @@
     const counts = Object.fromEntries(CAPACITY_ORDER.map(id => [id, new Map()]));
     const hitTotals = Object.fromEntries(CAPACITY_ORDER.map(id => [id, 0]));
     const state = store.getState();
-    const random = mulberry32(hashString(`next-capacity|${startDate}|${JSON.stringify(state.settings)}|${JSON.stringify(state.overrides)}|${state.remote?.syncedAt || 'seed'}`));
+    const baseSeed = hashString(`next-capacity|${startDate}|${JSON.stringify(state.settings)}|${JSON.stringify(state.overrides)}|${state.remote?.syncedAt || 'seed'}`);
 
     const statCache = {};
     const initialLast = {};
@@ -459,6 +464,7 @@
     });
 
     for (let run = 0; run < runs; run += 1) {
+      const random = simulationRunRandom(baseSeed, run);
       const last = { ...initialLast };
       const firstSeen = new Set();
 
@@ -547,7 +553,7 @@
       dateList.map(date => [date, Object.fromEntries(MODEL_ORDER.map(id => [id, 0]))])
     );
     const confirmed = store.getConfirmedDays();
-    const random = mulberry32(forecastSeed(startDate));
+    const baseSeed = forecastSeed(startDate);
 
     const statCache = {};
     const initialLast = {};
@@ -557,6 +563,7 @@
     });
 
     for (let run = 0; run < SIM_RUNS; run += 1) {
+      const random = simulationRunRandom(baseSeed, run);
       const last = { ...initialLast };
 
       for (const date of dateList) {
@@ -599,9 +606,9 @@
     return Array.from({ length: count }, (_, index) => addDays(firstSunday, index * 7));
   }
 
-  function capacityForecastSeed(startDate, weeks) {
+  function capacityForecastSeed(startDate) {
     const state = store.getState();
-    return hashString(`capacity|${startDate}|${weeks}|${JSON.stringify(state.settings)}|${JSON.stringify(state.overrides)}|${state.remote?.syncedAt || 'seed'}`);
+    return hashString(`capacity|${startDate}|${JSON.stringify(state.settings)}|${JSON.stringify(state.overrides)}|${state.remote?.syncedAt || 'seed'}`);
   }
 
   function simulateCapacityForecast(startDate, weeks = 4) {
@@ -613,7 +620,7 @@
       dateList.map(date => [date, Object.fromEntries(CAPACITY_ORDER.map(id => [id, 0]))])
     );
     const confirmed = store.getConfirmedDays();
-    const random = mulberry32(capacityForecastSeed(startDate, weeks));
+    const baseSeed = capacityForecastSeed(startDate);
 
     const statCache = {};
     const initialLast = {};
@@ -624,6 +631,7 @@
     });
 
     for (let run = 0; run < SIM_RUNS; run += 1) {
+      const random = simulationRunRandom(baseSeed, run);
       const last = { ...initialLast };
 
       for (const date of dateList) {

@@ -38,7 +38,8 @@
     eventDisplayDateIso,
     fmtEventDate,
     eventWeekdayShort,
-    modelDateForDisplayDate
+    modelDateForDisplayDate,
+    advanceForecastReference
   } = root.EggEventLab.utils;
   const store = root.EggEventLab.store;
   const model = root.EggEventLab.model;
@@ -48,9 +49,44 @@
   let currentTab = 'forecast';
   let calendarCursor = new Date(2026, 8, 1);
   let tooltip = null;
+  let observedEventDate = null;
+  let eventDayWatcher = null;
+  let rolloverSyncInFlight = false;
 
   function state() {
     return store.getState();
+  }
+
+  function advanceForecastToCurrentEventDay() {
+    const input = document.getElementById('forecastStart');
+    if (!input) return false;
+    const currentEventDate = clock.currentEventDate();
+    const nextReference = advanceForecastReference(input.value, currentEventDate);
+    if (nextReference === input.value) return false;
+    input.value = nextReference;
+    model.invalidateNextHitCache();
+    return true;
+  }
+
+  function startEventDayWatcher() {
+    if (eventDayWatcher) clearInterval(eventDayWatcher);
+    observedEventDate = clock.currentEventDate();
+    eventDayWatcher = setInterval(async () => {
+      const currentEventDate = clock.currentEventDate();
+      if (currentEventDate === observedEventDate) return;
+
+      observedEventDate = currentEventDate;
+      advanceForecastToCurrentEventDay();
+      renderAll();
+
+      if (state().remote?.autoSync === false || rolloverSyncInFlight) return;
+      rolloverSyncInFlight = true;
+      try {
+        await syncWasmegg({ silent: true });
+      } finally {
+        rolloverSyncInFlight = false;
+      }
+    }, 60000);
   }
 
 
@@ -206,6 +242,8 @@
     renderWasmeggSyncStatus('busy');
     await clock.sync();
     renderClockStatus();
+    observedEventDate = clock.currentEventDate();
+    const referenceAdvanced = advanceForecastToCurrentEventDay();
     const result = await wasmegg.sync();
 
     if (result.ok) {
@@ -219,6 +257,7 @@
       return true;
     }
 
+    if (referenceAdvanced) renderAll();
     renderWasmeggSyncStatus();
     if (!silent) toast('Wasmegg sync failed; using cached/seed data');
     return false;
@@ -988,6 +1027,7 @@
 
     renderClockStatus();
     renderAll();
+    startEventDayWatcher();
     if (state().remote?.autoSync !== false) syncWasmegg({ silent: true });
   }
 

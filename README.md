@@ -1,6 +1,6 @@
 # Egg Event Lab
 
-**Current release: v0.2**
+**Current release: v0.3**
 
 Egg Event Lab is a static browser application for analyzing and forecasting Egg, Inc. event rotations. It combines the public Wasmegg event history with local corrections, empirical gap distributions, recency weighting, and known same-day scheduling constraints.
 
@@ -170,7 +170,7 @@ The fallback history is maintained separately in `data/seed-events.js` and is us
 
 ## Versioning
 
-The current release is **v0.2**. Public release numbers are stored in `src/config.js` and `VERSION`. The JSON export schema has its own independent version so application releases do not unnecessarily invalidate saved data.
+The current release is **v0.3**. Public release numbers are stored in `src/config.js` and `VERSION`. The JSON export schema has its own independent version so application releases do not unnecessarily invalidate saved data.
 
 `CHANGELOG.md` records public release changes.
 

@@ -1,7 +1,7 @@
 (function (root) {
   'use strict';
 
-  const APP_VERSION = '0.2';
+  const APP_VERSION = '0.3';
   const EXPORT_SCHEMA_VERSION = 6;
   const STORAGE_KEY = 'egg-event-lab-v1';
   const DAY = 86400000;

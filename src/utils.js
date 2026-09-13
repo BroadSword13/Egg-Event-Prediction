@@ -106,6 +106,12 @@
     return value;
   }
 
+  function advanceForecastReference(currentReference, currentEventDate) {
+    if (!currentEventDate) return currentReference || '';
+    if (!currentReference || currentReference < currentEventDate) return currentEventDate;
+    return currentReference;
+  }
+
   function clamp(value, min, max) {
     return Math.max(min, Math.min(max, value));
   }
@@ -158,6 +164,7 @@
     fmtEventDate,
     eventWeekdayShort,
     modelDateForDisplayDate,
+    advanceForecastReference,
     clamp,
     pct,
     isAnniversaryDate,

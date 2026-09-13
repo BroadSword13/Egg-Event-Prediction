@@ -22,14 +22,20 @@ function timestamp(dateString) {
   return Date.parse(`${dateString}T12:00:00Z`) / 1000;
 }
 
-test('release remains v0.2 and matches VERSION', () => {
-  assert.equal(config.APP_VERSION, '0.2');
-  assert.equal(require('node:fs').readFileSync(path.join(root, 'VERSION'), 'utf8').trim(), '0.2');
+test('release is v0.3 and matches VERSION', () => {
+  assert.equal(config.APP_VERSION, '0.3');
+  assert.equal(require('node:fs').readFileSync(path.join(root, 'VERSION'), 'utf8').trim(), '0.3');
 });
 
 test('date helpers preserve calendar-day arithmetic', () => {
   assert.equal(utils.addDays('2026-09-10', 7), '2026-09-17');
   assert.equal(utils.diffDays('2026-09-01', '2026-09-10'), 9);
+});
+
+test('forecast reference advances with the Pacific event day but never moves backward', () => {
+  assert.equal(utils.advanceForecastReference('2026-09-10', '2026-09-11'), '2026-09-11');
+  assert.equal(utils.advanceForecastReference('', '2026-09-11'), '2026-09-11');
+  assert.equal(utils.advanceForecastReference('2026-09-12', '2026-09-11'), '2026-09-12');
 });
 
 
@@ -297,5 +303,34 @@ test('Tue-Thu guaranteed Ultra and Non-Ultra slots remain compatible', () => {
   if (model.isUltraCadenceDate('2026-09-15')) {
     const ultraTotal = [...config.ULTRA_DAILY_POOL].reduce((sum, id) => sum + tuesday[id], 0);
     assert.ok(Math.abs(ultraTotal - 1) < 1e-9);
+  }
+});
+
+
+test('Next X Days probabilities stay identical when the forecast horizon is extended', () => {
+  model.invalidateNextHitCache();
+  const sevenDays = model.simulateForecast('2026-09-10', 7);
+  const thirtyDays = model.simulateForecast('2026-09-10', 30);
+
+  for (const date of Object.keys(sevenDays)) {
+    assert.deepEqual(
+      sevenDays[date],
+      thirtyDays[date],
+      `${date} changed when extending the forecast horizon`
+    );
+  }
+});
+
+test('Double Capacity probabilities stay identical when the week horizon is extended', () => {
+  model.invalidateNextHitCache();
+  const fourWeeks = model.simulateCapacityForecast('2026-09-10', 4);
+  const twelveWeeks = model.simulateCapacityForecast('2026-09-10', 12);
+
+  for (const date of Object.keys(fourWeeks)) {
+    assert.deepEqual(
+      fourWeeks[date],
+      twelveWeeks[date],
+      `${date} changed when extending the Double Capacity horizon`
+    );
   }
 });

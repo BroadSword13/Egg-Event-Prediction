@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.3 - 2026-09-11
+
+- Stabilized Monte Carlo seeding so changing the Next X Days horizon only adds or removes dates; probabilities for dates already in view remain identical. The same prefix-stability rule now applies to the adjustable Double Capacity week horizon.
+- Made the forecast reference follow the Pacific event-day rollover automatically. When the app detects or syncs a new event day, Next X Days advances immediately so today is never left in the future forecast, without requiring a page refresh.
+
 ## v0.2 - 2026-09-10
 
 - Reworked forecast probabilities so Tuesday–Thursday Non-Ultra events and eligible Ultra cadence days each divide a guaranteed 100% event slot; Ultra scheduling now follows the observed every-other-Pacific-day cadence from May 4, 2026 forward.
