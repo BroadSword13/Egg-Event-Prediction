@@ -20,7 +20,7 @@
   const ULTRA_CADENCE_INTERVAL_DAYS = 2;
 
   const EVENTS = {
-    housing_blue: { label: 'Non-Ultra Hab Sale', short: 'Non-Ultra Hab Sale', family: 'housing', tier: 'non-ultra', color: 'blue', icon: '🏠', minGap: 7, maxGap: 16, weekdayObserved: true, coverageStart: REMOTE_DATA_START },
+    housing_blue: { label: 'Non-Ultra Hab Sale', short: 'Non-Ultra Hab Sale', family: 'housing', tier: 'non-ultra', color: 'blue', icon: '🏠', minGap: 6, maxGap: 16, weekdayObserved: true, coverageStart: REMOTE_DATA_START },
     housing_pink: { label: 'Ultra Hab Sale', short: 'Ultra Hab Sale', family: 'housing', tier: 'ultra', color: 'pink', icon: '🏠', coverageStart: REMOTE_DATA_START },
     shipping_blue: { label: 'Non-Ultra Vehicle Sale', short: 'Non-Ultra Vehicle Sale', family: 'shipping', tier: 'non-ultra', color: 'blue', icon: '🚚', minGap: 6, maxGap: 16, weekdayObserved: true, coverageStart: REMOTE_DATA_START },
     shipping_pink: { label: 'Ultra Vehicle Sale', short: 'Ultra Vehicle Sale', family: 'shipping', tier: 'ultra', color: 'pink', icon: '🚚', coverageStart: REMOTE_DATA_START },

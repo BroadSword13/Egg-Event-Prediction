@@ -1,6 +1,8 @@
 # Changelog
 
-## v0.4 - 2026-09-15
+## v0.4 - 2026-09-16
+
+- Reduced the Non-Ultra Hab Sale minimum gap from 7 days to 6 days, allowing forecasts to consider six-day returns.
 
 - Streamlined the Forecast page with collapsible named sections, local-date manual entry, clearer **Today** status labels, and Next X Days views that skip all-zero dates while continuing forward to fill the requested range.
 - Expanded the calendar with configurable confirmed/predicted overlays, Ultra/Non-Ultra filters, probability thresholds, fixed Friday–Monday events, likely future events, and clearer solid-border styling for fixed predictions.
