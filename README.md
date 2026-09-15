@@ -1,6 +1,6 @@
 # Egg Event Lab
 
-**Current release: v0.3**
+**Current release: v0.4**
 
 Egg Event Lab is a static browser application for analyzing and forecasting Egg, Inc. event rotations. It combines the public Wasmegg event history with local corrections, empirical gap distributions, recency weighting, and known same-day scheduling constraints.
 
@@ -8,13 +8,13 @@ The project has no build step and no runtime dependencies. It can be hosted dire
 
 ## Features
 
-- Separate tiles for the current Pacific event day
+- Separate Today and Tomorrow tiles displayed in the viewer’s local date/time context
 - Side-by-side Today’s Events and Tomorrow’s Events panels, with tomorrow’s highest-probability Ultra and Non-Ultra picks
-- Configurable 1–120 day forward forecast window that begins the day after the reference date
+- Configurable 1–120 row forward forecast that begins after the reference date and skips dates where every selected event is 0%
 - Per-event selection for all daily forecast rotations
-- Separate Sunday-only double-capacity forecast with independent Ultra / Non-Ultra selection and a configurable number of weeks (4 Sundays by default)
+- Separate Sunday-only Mission Capacity Boost forecast with independent Ultra / Non-Ultra selection and a configurable number of weeks (4 Sundays by default)
 - Separate Ultra and Non-Ultra rotations
-- Most-likely-next-date estimates with a 400-day look-ahead
+- Collapsible most-likely-next-date and rotation-status sections, with a 400-day next-hit look-ahead
 - Gap-history explorer with raw and weighted frequencies
 - Rolling recency weights:
   - under 1 year: 3×
@@ -22,57 +22,71 @@ The project has no build step and no runtime dependencies. It can be hosted dire
   - 2+ years: 0.5×
 - Conditional gap-hazard modeling
 - Monte Carlo simulation with same-day event conflicts
-- Calendar view and local event overrides
+- Calendar view with configurable confirmed/predicted overlays, tier filters, and a minimum probability threshold
+- Local event overrides; Record a Day uses the viewer’s local display date while mapping back to the Pacific event date internally
+- Lazy-loaded Data table that renders records in 100-row batches
 - JSON import/export for browser state
 - Automatic Wasmegg synchronization from January 1, 2024 forward
 - July 14 / Egg Day exclusion from model training
 
 ## Event model
 
-The model treats every supported rotation as a first-class event. Fourteen daily rotations share the main forecast, while double capacity remains in its own Sunday-only forecast:
+The model treats every supported rotation as a first-class event. Fourteen daily rotations share the main forecast, while Mission Capacity Boost remains in its own Sunday-only forecast:
 
 | Family | Non-Ultra | Ultra |
 | --- | --- | --- |
-| Housing | Non-Ultra Housing | Ultra Housing |
-| Shipping | Non-Ultra Shipping | Ultra Shipping |
-| Drones | Non-Ultra Drones | Ultra Drones |
-| 2× Boost Duration | Non-Ultra 2× Boost Duration | Ultra 2× Boost Duration |
-| 2× Gifts | Non-Ultra 2× Gifts | Ultra 2× Gifts |
-| 15% Off Shells | Non-Ultra 15% Off Shells | Ultra 15% Off Shells |
-| 3× Fueling | Non-Ultra 3× Fueling | Ultra 3× Fueling |
-| Mission capacity | Non-Ultra 2× Capacity | Ultra 2× Capacity |
+| Hab Sale | Non-Ultra Hab Sale | Ultra Hab Sale |
+| Vehicle Sale | Non-Ultra Vehicle Sale | Ultra Vehicle Sale |
+| Generous Drones | Non-Ultra Generous Drones | Ultra Generous Drones |
+| Boost Time+ | Non-Ultra Boost Time+ | Ultra Boost Time+ |
+| Generous Gifts | Non-Ultra Generous Gifts | Ultra Generous Gifts |
+| Shell Sale | Non-Ultra Shell Sale | Ultra Shell Sale |
+| Mission Fuel Boost | Non-Ultra Mission Fuel Boost | Ultra Mission Fuel Boost |
+| Mission Capacity Boost | Non-Ultra Mission Capacity Boost | Ultra Mission Capacity Boost |
 
 ### Scheduling rules currently modeled
 
-- Tuesday–Thursday has one shared Non-Ultra event slot across Housing, Shipping, Drones, 2× Boost Duration, 2× Gifts, 15% Off Shells, and 3× Fueling, so those seven Non-Ultra rotations are mutually exclusive and their daily probabilities sum to 100%.
-- The Ultra versions of those four event types likewise conflict with Ultra housing, shipping, and drones.
-- From May 4, 2026 forward, exactly one modeled Ultra event is assigned to each eligible every-other-Pacific-day cadence slot; Ultra 2× Capacity can take that slot only when the date is also Sunday.
+- Tuesday–Thursday has one shared Non-Ultra event slot across Hab Sale, Vehicle Sale, Generous Drones, Boost Time+, Generous Gifts, Shell Sale, and Mission Fuel Boost, so those seven Non-Ultra rotations are mutually exclusive and their daily probabilities sum to 100%.
+- The Ultra versions of those seven event types likewise conflict with Ultra Hab Sale, Vehicle Sale, and Generous Drones.
+- From May 4, 2026 forward, exactly one modeled Ultra event is assigned to each eligible every-other-Pacific-day cadence slot; Ultra Mission Capacity Boost can take that slot only when the date is also Sunday.
 - Ultra same-rotation gaps ending in that cadence era are used for training only when their length aligns to the 2-day cadence; misaligned gaps are ignored as schedule-transition / anniversary artifacts.
 - Ultra and Non-Ultra versions of the same tracked event family cannot occur on the same day.
-- No additional same-day exclusivity among Boost Duration, Gifts, Shells, and Fueling is assumed unless future data establishes it.
-- The optional 16-day prediction cap applies to Non-Ultra housing, shipping, and drones.
+- No additional same-day exclusivity among Boost Time+, Generous Gifts, Shell Sale, and Mission Fuel Boost is assumed unless future data establishes it.
+- The optional 16-day prediction cap applies to Non-Ultra Hab Sale, Vehicle Sale, and Generous Drones.
 - The optional observed weekday rule limits those same rotations to Tuesday–Thursday.
-- The Tomorrow’s Events panel treats the regular Non-Ultra Friday–Monday schedule as fixed: 70% Off Common Research on Friday, a Prestige Bonus on Saturday, alternating 35% Off Epic Research / 30% Off Crafting on Sunday, and 2× Earnings on Monday.
-- Double-capacity events are restricted to Pacific-time Sundays and are displayed only on Sunday rows in their dedicated forecast. Non-Ultra 2× Capacity is an independent Sunday event and can occur alongside the regular fixed Non-Ultra Sunday event.
-- The optional Ultra rule excludes a 5-day repeat gap; the every-other-day cadence independently blocks all odd-day regular Ultra returns after May 4, 2026.
+- The Tomorrow’s Events panel treats the regular Non-Ultra Friday–Monday schedule as fixed: Research Sale on Friday, Prestige Boost on Saturday, alternating Epic Research Sale / Crafting Sale on Sunday, and Cash Boost on Monday.
+- Mission Capacity Boost events are restricted to Pacific-time Sundays and are displayed only on Sunday rows in their dedicated forecast. Non-Ultra Mission Capacity Boost is an independent Sunday event and can occur alongside the regular fixed Non-Ultra Sunday event.
 - Every July 14 is excluded from training and current-gap resets because Egg Day uses a special event schedule.
 
 The raw history is retained even when a prediction rule is enabled. Rules affect forecasts and gap-training eligibility; they do not rewrite or delete source data.
 
 ## Prediction method
 
-For a candidate gap `g`, the base probability is the empirical conditional hazard:
+The predictor is based on what actually happened in past event rotations. At a high level:
+
+1. It measures the number of days between previous occurrences of each event.
+2. Recent history counts more than older history.
+3. It estimates how likely an event is to end its current gap on each eligible future date.
+4. It applies the scheduling rules we have observed, including guaranteed event slots, Ultra cadence, weekday restrictions, same-day conflicts, Sunday-only Mission Capacity Boost, and the Egg Day exclusion.
+5. It simulates the future schedule thousands of times and turns those outcomes into the percentages shown in the app.
+
+The percentages are therefore estimates from historical behavior and the currently enabled rules; they are not an official Egg, Inc. schedule.
+
+<details>
+<summary><strong>Technical model details</strong></summary>
+
+For a gap length `g`, the base estimate is a conditional hazard: among historical gaps that lasted at least `g` days, how many ended exactly at `g`?
 
 ```text
-P(hit at g | survived to g)
+P(hit at gap g | event has not already hit)
   = weighted count(g) / weighted count(historical gaps >= g)
 ```
 
-Historical observations are weighted by age relative to the forecast date. The selected forecast date is treated as the reference day: confirmed events on that day immediately reset their rotation counters to 0 and their newly completed gaps are included in the model. The configurable **Next X days** forecast begins on the following day. The application then runs 3,000 deterministic Monte Carlo simulations across that forward window. Each simulated hit resets its rotation, and same-day conflicts are resolved before the result is counted.
+Historical observations are weighted by age. The selected forecast date is the reference day; confirmed events on that date immediately reset their rotation and add their newly completed gap to the training history. **Next X Days** begins after the reference date and skips rows where every selected event is 0%.
 
-The Most Likely Next Date cards use the same model with a dedicated 1,200-run first-hit simulation so the larger daily event set stays responsive.
+The main forecast uses 3,000 deterministic Monte Carlo runs. Each run advances one day at a time, applies eligibility and conflict rules, resets rotations after simulated hits, and records which events occur. The Most Likely Next Date cards use a separate 1,200-run first-hit simulation to keep the interface responsive.
 
-This is an empirical predictor, not an official Egg, Inc. schedule or API.
+</details>
 
 ## Wasmegg data
 
@@ -86,14 +100,14 @@ Supported records dated January 1, 2024 or later are mapped as follows:
 
 | Wasmegg type | Egg Event Lab rotation |
 | --- | --- |
-| `hab-sale` | Housing |
-| `vehicle-sale` | Shipping |
-| `drone-boost` | Drones |
-| `mission-capacity` at 2× | Double Capacity |
-| `boost-duration` at 2× | 2× Boost Duration, tier from `ultra` |
-| `gift-boost` at 2× | 2× Gifts, tier from `ultra` |
-| `shell-sale` at 0.85× | 15% Off Shells, tier from `ultra` |
-| `mission-fuel` at 3× | 3× Fueling, tier from `ultra` |
+| `hab-sale` | Hab Sale |
+| `vehicle-sale` | Vehicle Sale |
+| `drone-boost` | Generous Drones |
+| `mission-capacity` at 2× | Mission Capacity Boost |
+| `boost-duration` at 2× | Boost Time+, tier from `ultra` |
+| `gift-boost` at 2× | Generous Gifts, tier from `ultra` |
+| `shell-sale` at 0.85× | Shell Sale, tier from `ultra` |
+| `mission-fuel` at 3× | Mission Fuel Boost, tier from `ultra` |
 
 The Wasmegg `ultra` field determines the Ultra/Non-Ultra classification. Future-dated records are ignored until their event date arrives. Successful syncs are cached in localStorage; if a later sync fails, the cached data remains available.
 
@@ -111,6 +125,7 @@ A local confirmation overrides all tracked event rotations for that date. Wasmeg
 ├── src/
 │   ├── config.js           # Version, event definitions, constants, defaults
 │   ├── utils.js            # Date, formatting, random, and HTML helpers
+│   ├── clock.js            # Server-clock sync and Pacific event-day rollover
 │   ├── store.js            # Browser state, event repository, gap statistics
 │   ├── wasmegg.js          # Wasmegg mapping, normalization, and synchronization
 │   ├── model.js            # Hazards, conflicts, and forecast simulations
@@ -140,7 +155,7 @@ Then open `http://localhost:8080`.
 
 The prediction model uses the Egg, Inc. daily event boundary at **9:00 AM America/Los_Angeles**. On startup the app requests its own page and reads the HTTP `Date` header, so the current model day is based on the hosting server clock rather than the visitor's device clock. If the app is opened directly from disk or the server clock cannot be read, it falls back to the browser clock and shows that state in the header.
 
-Forecast and historical event dates are converted automatically to the browser's detected IANA time zone for display. The underlying model, weekday rules, and gap calculations always remain on the Pacific event date. When the viewer's local calendar date differs from the Pacific event date, the UI shows both dates to avoid ambiguity.
+Forecast and historical event dates are converted automatically to the browser's detected IANA time zone for display. The underlying model, weekday rules, and gap calculations always remain on the Pacific event date. The Record a Day date picker also uses the local display date and maps it back to the matching Pacific event date internally. When the viewer's local calendar date differs from the Pacific event date, the UI shows both dates where useful to avoid ambiguity.
 
 ## Tests
 
@@ -170,7 +185,7 @@ The fallback history is maintained separately in `data/seed-events.js` and is us
 
 ## Versioning
 
-The current release is **v0.3**. Public release numbers are stored in `src/config.js` and `VERSION`. The JSON export schema has its own independent version so application releases do not unnecessarily invalidate saved data.
+The current release is **v0.4**. Public release numbers are stored in `src/config.js` and `VERSION`. The JSON export schema has its own independent version so application releases do not unnecessarily invalidate saved data.
 
 `CHANGELOG.md` records public release changes.
 

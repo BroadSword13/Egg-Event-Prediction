@@ -35,9 +35,9 @@
   const store = root.EggEventLab.store;
 
   const FIXED_NON_ULTRA = {
-    1: { label: '2× Earnings', short: '2× Earnings', icon: '💰', color: 'gold', family: 'earnings' },
-    5: { label: '70% Off Common Research', short: '70% Off Research', icon: '🔬', color: 'teal', family: 'research' },
-    6: { label: 'Prestige Bonus', short: 'Prestige Bonus', icon: '⭐', color: 'purple', family: 'prestige', note: 'Usually 2×; special multipliers can occur.' }
+    1: { label: 'Cash Boost', short: 'Cash Boost', icon: '💰', color: 'gold', family: 'earnings' },
+    5: { label: 'Research Sale', short: 'Research Sale', icon: '🔬', color: 'teal', family: 'research' },
+    6: { label: 'Prestige Boost', short: 'Prestige Boost', icon: '⭐', color: 'purple', family: 'prestige', note: 'Usually 2×; special multipliers can occur.' }
   };
 
   // Hot-path caches. Forecast simulations evaluate the same event/date pairs
@@ -56,8 +56,8 @@
     const weekOffset = Math.round(diffDays(SUNDAY_ROTATION_ANCHOR, dateStr) / 7);
     const isCrafting = ((weekOffset % 2) + 2) % 2 === 0;
     return isCrafting
-      ? { label: '30% Off Crafting', short: '30% Off Crafting', icon: '🛠️', color: 'amber', family: 'crafting' }
-      : { label: '35% Off Epic Research', short: '35% Off Epic Research', icon: '📚', color: 'gold', family: 'epic-research' };
+      ? { label: 'Crafting Sale', short: 'Crafting Sale', icon: '🛠️', color: 'amber', family: 'crafting' }
+      : { label: 'Epic Research Sale', short: 'Epic Research Sale', icon: '📚', color: 'gold', family: 'epic-research' };
   }
 
   function highestProbability(probabilities, ids) {
@@ -134,7 +134,6 @@
 
     const gap = diffDays(last, targetDate);
     if (event.minGap && gap < event.minGap) return 0;
-    if (state.settings.pink5 && event.tier === 'ultra' && gap === 5) return 0;
 
     if (state.settings.cap16 && event.maxGap) {
       const deadline = latestEligibleGap(eventId, last);
@@ -162,7 +161,6 @@
 
     const gap = diffDays(lastDate, targetDate);
     if (event.minGap && gap < event.minGap) return 0;
-    if (state.settings.pink5 && event.tier === 'ultra' && gap === 5) return 0;
 
     if (state.settings.cap16 && event.maxGap) {
       const deadline = latestEligibleGap(eventId, lastDate);
@@ -255,55 +253,120 @@
     return [...ULTRA_CADENCE_POOL].filter(id => activeSet.has(id) && allowedWeekday(id, dateStr));
   }
 
-  function weightedChoice(ids, weights, random, statCache = null) {
-    if (!ids.length) return null;
-    const sanitized = ids.map(id => Math.max(Number(weights[id] || 0), 0));
-    let total = sanitized.reduce((sum, value) => sum + value, 0);
+  function isHardBlocked(eventId, targetDate, lastDate) {
+    const event = EVENTS[eventId];
+    const state = store.getState();
+    if (!allowedWeekday(eventId, targetDate)) return true;
 
-    // A guaranteed slot is known to contain one event. If all gap hazards
-    // happen to be zero (for example after a newly observed schedule change),
-    // fall back to each rotation's cached weighted historical support instead of
-    // incorrectly inventing a no-event outcome.
-    if (total <= 0) {
-      ids.forEach((id, index) => {
-        const rows = statCache?.[id]?.rows || store.gapStats(id);
-        const support = rows.reduce((sum, row) => sum + row.weighted, 0);
-        sanitized[index] = Math.max(support, 0.001);
-      });
-      total = sanitized.reduce((sum, value) => sum + value, 0);
+    // Missing history means the model does not know the rotation's current gap;
+    // it is not evidence that the event is impossible. This matters for the
+    // bundled fallback data, which intentionally does not contain every event.
+    if (!lastDate) return false;
+
+    const gap = diffDays(lastDate, targetDate);
+    if (event.minGap && gap < event.minGap) return true;
+
+    if (state.settings.cap16 && event.maxGap) {
+      const deadline = latestEligibleGap(eventId, lastDate);
+      if (deadline != null && gap > deadline) return true;
     }
+
+    return false;
+  }
+
+  function isHardDue(eventId, targetDate, lastDate) {
+    const event = EVENTS[eventId];
+    const state = store.getState();
+    if (!lastDate || !state.settings.cap16 || !event.maxGap) return false;
+    if (!allowedWeekday(eventId, targetDate)) return false;
+
+    const deadline = latestEligibleGap(eventId, lastDate);
+    return deadline != null && diffDays(lastDate, targetDate) === deadline;
+  }
+
+  function fallbackPoolWeights(ids, statCache = null, hardBlocked = null) {
+    const supports = Object.fromEntries(ids.map(id => {
+      if (hardBlocked?.[id]) return [id, 0];
+      const rows = statCache?.[id]?.rows || store.gapStats(id);
+      return [id, rows.reduce((sum, row) => sum + row.weighted, 0)];
+    }));
+
+    const known = Object.values(supports).filter(value => value > 0).sort((a, b) => a - b);
+    const middle = Math.floor(known.length / 2);
+    const neutralPrior = known.length === 0
+      ? 1
+      : known.length % 2
+        ? known[middle]
+        : (known[middle - 1] + known[middle]) / 2;
+
+    return Object.fromEntries(ids.map(id => {
+      if (hardBlocked?.[id]) return [id, 0];
+      return [id, supports[id] > 0 ? supports[id] : neutralPrior];
+    }));
+  }
+
+  function directPoolWeights(ids, probabilities, hardBlocked = null) {
+    return Object.fromEntries(ids.map(id => [
+      id,
+      hardBlocked?.[id] ? 0 : Math.max(Number(probabilities[id] || 0), 0)
+    ]));
+  }
+
+  function poolWeights(ids, probabilities, statCache = null, hardBlocked = null) {
+    const direct = directPoolWeights(ids, probabilities, hardBlocked);
+    const total = Object.values(direct).reduce((sum, value) => sum + value, 0);
+    return total > 0 ? direct : fallbackPoolWeights(ids, statCache, hardBlocked);
+  }
+
+  function weightedChoice(ids, weights, random, statCache = null, hardBlocked = null) {
+    if (!ids.length) return null;
+    const weightMap = poolWeights(ids, weights, statCache, hardBlocked);
+    const sanitized = ids.map(id => weightMap[id] || 0);
+    const total = sanitized.reduce((sum, value) => sum + value, 0);
+
+    // A guaranteed slot must still choose an event when learned hazards are all
+    // zero, but hard-rule zeros remain impossible. Rotations with missing
+    // fallback history receive a neutral prior instead of being treated as
+    // impossible or allowing one known rotation to become artificially certain.
+    if (total <= 0) return null;
 
     let roll = random() * total;
     for (let index = 0; index < ids.length; index += 1) {
       roll -= sanitized[index];
       if (roll <= 0) return ids[index];
     }
-    return ids.at(-1);
+    return ids.findLast(id => !hardBlocked?.[id]) || null;
   }
 
-  function candidateWeight(id, probabilities, statCache) {
-    const direct = Math.max(Number(probabilities[id] || 0), 0);
-    if (direct > 0) return direct;
-    const support = statCache?.[id]?.rows?.reduce((sum, row) => sum + row.weighted, 0) || 0;
-    return Math.max(support, 0.001);
-  }
-
-  function weightedCompatiblePair(nonUltraIds, ultraIds, probabilities, statCache, random) {
-    const pairs = [];
-    let total = 0;
-    const nonUltraWeights = Object.fromEntries(nonUltraIds.map(id => [id, candidateWeight(id, probabilities, statCache)]));
-    const ultraWeights = Object.fromEntries(ultraIds.map(id => [id, candidateWeight(id, probabilities, statCache)]));
-
-    for (const nonUltra of nonUltraIds) {
-      for (const ultra of ultraIds) {
-        if (conflicts(nonUltra, ultra)) continue;
-        const weight = nonUltraWeights[nonUltra] * ultraWeights[ultra];
-        pairs.push({ nonUltra, ultra, weight });
-        total += weight;
+  function weightedCompatiblePair(nonUltraIds, ultraIds, probabilities, statCache, random, hardBlocked = null) {
+    function buildPairs(nonUltraWeights, ultraWeights) {
+      const pairs = [];
+      let total = 0;
+      for (const nonUltra of nonUltraIds) {
+        for (const ultra of ultraIds) {
+          if (conflicts(nonUltra, ultra)) continue;
+          const weight = (nonUltraWeights[nonUltra] || 0) * (ultraWeights[ultra] || 0);
+          pairs.push({ nonUltra, ultra, weight });
+          total += weight;
+        }
       }
+      return { pairs, total };
     }
 
-    if (!pairs.length) return { nonUltra: null, ultra: null };
+    let nonUltraWeights = poolWeights(nonUltraIds, probabilities, statCache, hardBlocked);
+    let ultraWeights = poolWeights(ultraIds, probabilities, statCache, hardBlocked);
+    let { pairs, total } = buildPairs(nonUltraWeights, ultraWeights);
+
+    // Direct hazards can occasionally leave only mutually conflicting choices.
+    // In that case, expand to the same safe fallback priors used by a single
+    // guaranteed slot, while continuing to exclude hard-blocked rotations.
+    if (total <= 0) {
+      nonUltraWeights = fallbackPoolWeights(nonUltraIds, statCache, hardBlocked);
+      ultraWeights = fallbackPoolWeights(ultraIds, statCache, hardBlocked);
+      ({ pairs, total } = buildPairs(nonUltraWeights, ultraWeights));
+    }
+
+    if (!pairs.length || total <= 0) return { nonUltra: null, ultra: null };
     let roll = random() * total;
     for (const pair of pairs) {
       roll -= pair.weight;
@@ -314,12 +377,14 @@
 
   function sampleActiveEvents(date, activeOrder, last, statCache, random) {
     const probabilities = {};
+    const hardBlocked = {};
     const triggered = [];
     const nonUltraCandidates = nonUltraCandidatesForDate(date, activeOrder);
     const ultraCandidates = ultraCandidatesForDate(date, activeOrder);
     const guaranteedSet = new Set([...nonUltraCandidates, ...ultraCandidates]);
 
     for (const id of activeOrder) {
+      hardBlocked[id] = isHardBlocked(id, date, last[id]);
       const probability = hazardFast(id, date, last[id], statCache[id]);
       probabilities[id] = probability;
       if (guaranteedSet.has(id)) continue;
@@ -329,14 +394,23 @@
     let guaranteedNonUltra = null;
     let guaranteedUltra = null;
 
-    if (nonUltraCandidates.length && ultraCandidates.length) {
-      const pair = weightedCompatiblePair(nonUltraCandidates, ultraCandidates, probabilities, statCache, random);
+    // A max-gap deadline is a hard scheduling rule, not merely a large weight.
+    // Once a rotation reaches its last eligible day, the shared daily slot must
+    // select it; otherwise normalization against other candidates can dilute a
+    // required 100% hit into a lower displayed probability.
+    const dueNonUltra = nonUltraCandidates.filter(id => isHardDue(id, date, last[id]));
+    const dueUltra = ultraCandidates.filter(id => isHardDue(id, date, last[id]));
+    const selectableNonUltra = dueNonUltra.length ? dueNonUltra : nonUltraCandidates;
+    const selectableUltra = dueUltra.length ? dueUltra : ultraCandidates;
+
+    if (selectableNonUltra.length && selectableUltra.length) {
+      const pair = weightedCompatiblePair(selectableNonUltra, selectableUltra, probabilities, statCache, random, hardBlocked);
       guaranteedNonUltra = pair.nonUltra;
       guaranteedUltra = pair.ultra;
-    } else if (nonUltraCandidates.length) {
-      guaranteedNonUltra = weightedChoice(nonUltraCandidates, probabilities, random, statCache);
-    } else if (ultraCandidates.length) {
-      guaranteedUltra = weightedChoice(ultraCandidates, probabilities, random, statCache);
+    } else if (selectableNonUltra.length) {
+      guaranteedNonUltra = weightedChoice(selectableNonUltra, probabilities, random, statCache, hardBlocked);
+    } else if (selectableUltra.length) {
+      guaranteedUltra = weightedChoice(selectableUltra, probabilities, random, statCache, hardBlocked);
     }
 
     // Guaranteed daily slots cannot be removed by independently triggered events.
@@ -598,6 +672,45 @@
   }
 
 
+  function calendarPredictionPicks(dateStr, probabilities = {}, threshold = 0.25, options = {}) {
+    const minimum = clamp(Number(threshold) || 0, 0, 1);
+    const showNonUltra = options.showNonUltra !== false;
+    const showUltra = options.showUltra !== false;
+    const picks = [];
+
+    if (showNonUltra) {
+      const fixed = fixedNonUltraEvent(dateStr);
+      if (fixed) {
+        picks.push({
+          id: null,
+          tier: 'non-ultra',
+          probability: 1,
+          fixed: true,
+          ...fixed
+        });
+      } else {
+        const best = highestProbability(probabilities, [...NON_ULTRA_MIDWEEK_POOL]);
+        if (best && best.probability > 0 && best.probability >= minimum) {
+          picks.push({ id: best.id, tier: 'non-ultra', probability: best.probability, fixed: false, ...EVENTS[best.id] });
+        }
+      }
+
+      const capacityProbability = Number(probabilities.capacity_purple || 0);
+      if (parseDate(dateStr).getDay() === 0 && capacityProbability > 0 && capacityProbability >= minimum) {
+        picks.push({ id: 'capacity_purple', tier: 'non-ultra', probability: capacityProbability, fixed: false, ...EVENTS.capacity_purple });
+      }
+    }
+
+    if (showUltra) {
+      const best = highestProbability(probabilities, [...ULTRA_CADENCE_POOL]);
+      if (best && best.probability > 0 && best.probability >= minimum) {
+        picks.push({ id: best.id, tier: 'ultra', probability: best.probability, fixed: false, ...EVENTS[best.id] });
+      }
+    }
+
+    return picks;
+  }
+
   function capacitySundayDates(startDate, weeks = 4) {
     const count = clamp(Math.round(Number(weeks) || 4), 1, 52);
     const startDay = parseDate(startDate).getDay();
@@ -680,6 +793,8 @@
     latestEligibleGap,
     hazard,
     hazardFast,
+    isHardBlocked,
+    isHardDue,
     conflicts,
     nonUltraCandidatesForDate,
     ultraCandidatesForDate,
@@ -688,6 +803,7 @@
     simulateNextHitForecast,
     getNextHitForecast,
     simulateForecast,
+    calendarPredictionPicks,
     capacitySundayDates,
     simulateCapacityForecast,
     invalidateNextHitCache

@@ -112,6 +112,25 @@
     return currentReference;
   }
 
+  function forecastDisplayDates(probabilities, eventIds, count) {
+    const ids = Array.isArray(eventIds) ? eventIds : [];
+    const wanted = Math.max(0, Math.round(Number(count) || 0));
+    const dates = [];
+    let skipped = 0;
+
+    for (const [date, row] of Object.entries(probabilities || {})) {
+      const hasChance = ids.some(id => Number(row?.[id] || 0) > 0);
+      if (!hasChance) {
+        skipped += 1;
+        continue;
+      }
+      dates.push(date);
+      if (dates.length >= wanted) break;
+    }
+
+    return { dates, skipped };
+  }
+
   function clamp(value, min, max) {
     return Math.max(min, Math.min(max, value));
   }
@@ -165,6 +184,7 @@
     eventWeekdayShort,
     modelDateForDisplayDate,
     advanceForecastReference,
+    forecastDisplayDates,
     clamp,
     pct,
     isAnniversaryDate,

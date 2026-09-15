@@ -115,7 +115,12 @@
           forecastSelectionVersion: DEFAULT_UI.forecastSelectionVersion,
           forecastEvents: savedEvents.length ? savedEvents : [...DEFAULT_UI.forecastEvents],
           capacityWeeks: clamp(Number(parsed.ui?.capacityWeeks || 4), 1, 52),
-          capacityEvents: savedCapacityEvents.length ? savedCapacityEvents : [...CAPACITY_ORDER]
+          capacityEvents: savedCapacityEvents.length ? savedCapacityEvents : [...CAPACITY_ORDER],
+          calendarShowConfirmed: parsed.ui?.calendarShowConfirmed !== false,
+          calendarShowPredictions: parsed.ui?.calendarShowPredictions !== false,
+          calendarShowNonUltra: parsed.ui?.calendarShowNonUltra !== false,
+          calendarShowUltra: parsed.ui?.calendarShowUltra !== false,
+          calendarMinProbability: clamp(Number(parsed.ui?.calendarMinProbability ?? DEFAULT_UI.calendarMinProbability), 0, 100)
         },
         remote
       };

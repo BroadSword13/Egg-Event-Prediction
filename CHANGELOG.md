@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.4 - 2026-09-15
+
+- Streamlined the Forecast page with collapsible named sections, local-date manual entry, clearer **Today** status labels, and Next X Days views that skip all-zero dates while continuing forward to fill the requested range.
+- Expanded the calendar with configurable confirmed/predicted overlays, Ultra/Non-Ultra filters, probability thresholds, fixed Friday–Monday events, likely future events, and clearer solid-border styling for fixed predictions.
+- Improved usability and performance with lazy/batched Data rendering, simpler model documentation, official in-game event terminology throughout the UI/docs, clearer rule presentation, and removal of the redundant 5-day Ultra-gap constraint.
+
 ## v0.3 - 2026-09-11
 
 - Stabilized Monte Carlo seeding so changing the Next X Days horizon only adds or removes dates; probabilities for dates already in view remain identical. The same prefix-stability rule now applies to the adjustable Double Capacity week horizon.

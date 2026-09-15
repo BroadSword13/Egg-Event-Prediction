@@ -39,7 +39,8 @@
     fmtEventDate,
     eventWeekdayShort,
     modelDateForDisplayDate,
-    advanceForecastReference
+    advanceForecastReference,
+    forecastDisplayDates
   } = root.EggEventLab.utils;
   const store = root.EggEventLab.store;
   const model = root.EggEventLab.model;
@@ -52,9 +53,19 @@
   let observedEventDate = null;
   let eventDayWatcher = null;
   let rolloverSyncInFlight = false;
+  const DATA_PAGE_SIZE = 100;
+  const CALENDAR_PREDICTION_HORIZON = 90;
+  let dataVisibleRows = DATA_PAGE_SIZE;
+  let dataRowsCacheKey = null;
+  let dataRowsCache = [];
 
   function state() {
     return store.getState();
+  }
+
+  function invalidateDataRows() {
+    dataRowsCacheKey = null;
+    dataRowsCache = [];
   }
 
   function advanceForecastToCurrentEventDay() {
@@ -138,14 +149,14 @@
 
   function familyLabel(event) {
     const labels = {
-      housing: 'Housing',
-      shipping: 'Shipping',
-      drone: 'Drones',
-      capacity: 'Double capacity',
-      'boost-duration': '2× Boost Duration',
-      gifts: '2× Gifts',
-      shells: '15% Off Shells',
-      fueling: '3× Fueling'
+      housing: 'Hab Sale',
+      shipping: 'Vehicle Sale',
+      drone: 'Generous Drones',
+      capacity: 'Mission Capacity Boost',
+      'boost-duration': 'Boost Time+',
+      gifts: 'Generous Gifts',
+      shells: 'Shell Sale',
+      fueling: 'Mission Fuel Boost'
     };
     return labels[event.family] || event.family;
   }
@@ -232,7 +243,7 @@
       const error = current.remote?.lastError
         ? `<br><span class="sync-error-text">Last error: ${escapeHtml(current.remote.lastError)}</span>`
         : '';
-      details.innerHTML = `Source: Wasmegg Events Calendar dataset<br>Imported range: <strong>${fmtDate(REMOTE_DATA_START, { month: 'short', day: 'numeric', year: 'numeric' })} → ${through}</strong><br>Daily rotations: housing · shipping · drones · 2× boost duration · 2× gifts · 15% off shells · 3× fueling<br>Egg Day exclusion: <strong>July 14 ignored by the probability model</strong><br>Last successful sync: <strong>${synced}</strong>${error}`;
+      details.innerHTML = `Source: Wasmegg Events Calendar dataset<br>Imported range: <strong>${fmtDate(REMOTE_DATA_START, { month: 'short', day: 'numeric', year: 'numeric' })} → ${through}</strong><br>Daily rotations: Hab Sale · Vehicle Sale · Generous Drones · Boost Time+ · Generous Gifts · Shell Sale · Mission Fuel Boost<br>Egg Day exclusion: <strong>July 14 ignored by the probability model</strong><br>Last successful sync: <strong>${synced}</strong>${error}`;
     }
     renderClockStatus();
   }
@@ -248,6 +259,7 @@
 
     if (result.ok) {
       model.invalidateNextHitCache();
+      invalidateDataRows();
       const newLatest = store.latestConfirmedDay();
       const record = document.getElementById('recordDate');
       if (record && (!record.value || record.value === previousLatest)) loadRecordDate(newLatest);
@@ -286,10 +298,10 @@
     if (current.settings.cap16 && event.maxGap) bits.push(`Prediction cap: ${event.maxGap} days`);
     if (current.settings.weekdayPattern && event.weekdayObserved) bits.push('Observed weekday pattern: Tue–Thu');
     if (NON_ULTRA_MIDWEEK_POOL.has(eventId)) {
-      bits.push('Shares the Non-Ultra Tue–Thu event pool (housing, shipping, drones, boost duration, gifts, shells, fueling).');
+      bits.push('Shares the Non-Ultra Tue–Thu event pool (Hab Sale, Vehicle Sale, Generous Drones, Boost Time+, Generous Gifts, Shell Sale, Mission Fuel Boost).');
     }
     if (ULTRA_MIDWEEK_POOL.has(eventId)) {
-      bits.push('Shares the Ultra event pool (housing, shipping, drones, boost duration, gifts, shells, fueling).');
+      bits.push('Shares the Ultra event pool (Hab Sale, Vehicle Sale, Generous Drones, Boost Time+, Generous Gifts, Shell Sale, Mission Fuel Boost).');
     }
     return bits.join('\n');
   }
@@ -332,12 +344,12 @@
     const selected = selectedForecastIds();
     toggle.textContent = selected.length === MAIN_ORDER.length ? `Events: All ${MAIN_ORDER.length}` : `Events: ${selected.length} selected`;
     const quick = [
-      ['all', 'All'], ['housing', 'Housing'], ['shipping', 'Shipping'], ['drone', 'Drones'],
-      ['boost-duration', 'Boost Duration'], ['gifts', 'Gifts'], ['shells', 'Shells'], ['fueling', 'Fueling'],
+      ['all', 'All'], ['housing', 'Hab Sale'], ['shipping', 'Vehicle Sale'], ['drone', 'Generous Drones'],
+      ['boost-duration', 'Boost Time+'], ['gifts', 'Generous Gifts'], ['shells', 'Shell Sale'], ['fueling', 'Mission Fuel Boost'],
       ['non-ultra', 'Non-Ultra'], ['ultra', 'Ultra']
     ];
 
-    box.innerHTML = `<div class="forecast-picker-top"><div><strong>Daily events</strong><div class="muted small">All modeled daily event rotations are available here. Double capacity remains separate below because it only occurs on Sundays.</div></div><div class="forecast-quick-select">${quick.map(([key, label]) => `<button class="pill" type="button" data-quick-select="${key}">${label}</button>`).join('')}</div></div>` +
+    box.innerHTML = `<div class="forecast-picker-top"><div><strong>Daily events</strong><div class="muted small">All modeled daily event rotations are available here. Mission Capacity Boost remains separate below because it only occurs on Sundays.</div></div><div class="forecast-quick-select">${quick.map(([key, label]) => `<button class="pill" type="button" data-quick-select="${key}">${label}</button>`).join('')}</div></div>` +
       `<div class="forecast-event-options">${MAIN_ORDER.map(id => {
         const event = EVENTS[id];
         return `<label class="forecast-event-option"><input type="checkbox" data-forecast-event="${id}" ${selected.includes(id) ? 'checked' : ''}/><span class="dot ${event.color}"></span><span>${event.label}</span></label>`;
@@ -372,8 +384,8 @@
     if (!box || !toggle) return;
 
     const selected = selectedCapacityIds();
-    toggle.textContent = selected.length === CAPACITY_ORDER.length ? 'Capacity: Both' : `Capacity: ${EVENTS[selected[0]].tier === 'ultra' ? 'Ultra' : 'Non-Ultra'}`;
-    box.innerHTML = `<div class="forecast-picker-top"><div><strong>Double capacity events</strong><div class="muted small">Only Pacific-time Sundays are shown.</div></div><div class="forecast-quick-select"><button class="pill" type="button" data-capacity-quick="all">Both</button><button class="pill" type="button" data-capacity-quick="non-ultra">Non-Ultra</button><button class="pill" type="button" data-capacity-quick="ultra">Ultra</button></div></div>` +
+    toggle.textContent = selected.length === CAPACITY_ORDER.length ? 'Mission Capacity Boost: Both' : `Mission Capacity Boost: ${EVENTS[selected[0]].tier === 'ultra' ? 'Ultra' : 'Non-Ultra'}`;
+    box.innerHTML = `<div class="forecast-picker-top"><div><strong>Mission Capacity Boost events</strong><div class="muted small">Only Pacific-time Sundays are shown.</div></div><div class="forecast-quick-select"><button class="pill" type="button" data-capacity-quick="all">Both</button><button class="pill" type="button" data-capacity-quick="non-ultra">Non-Ultra</button><button class="pill" type="button" data-capacity-quick="ultra">Ultra</button></div></div>` +
       `<div class="forecast-event-options capacity-options">${CAPACITY_ORDER.map(id => {
         const event = EVENTS[id];
         return `<label class="forecast-event-option"><input type="checkbox" data-capacity-event="${id}" ${selected.includes(id) ? 'checked' : ''}/><span class="dot ${event.color}"></span><span>${event.label}</span></label>`;
@@ -430,7 +442,8 @@
       .slice(0, 3)
       .map(row => `${row.gap}d`)
       .join(' · ');
-    return `<div class="rotation-card"><div class="name"><span class="dot ${event.color}"></span>${event.short}</div><div class="gap">${gap}d</div><div class="meta">Last: ${last ? fmtEventDate(last, { month: 'short', day: 'numeric' }) : '—'}</div><div class="meta">Common: ${common || '—'}</div></div>`;
+    const gapLabel = gap === 0 ? 'Today' : `${gap}d`;
+    return `<div class="rotation-card"><div class="name"><span class="dot ${event.color}"></span>${event.short}</div><div class="gap">${gapLabel}</div><div class="meta">Last: ${last ? fmtEventDate(last, { month: 'short', day: 'numeric' }) : '—'}</div><div class="meta">Common: ${common || '—'}</div></div>`;
   }
 
   function renderRotationCards(start) {
@@ -456,9 +469,24 @@
     current.ui ||= store.clone(DEFAULT_UI);
     current.ui.forecastDays = days;
 
-    const probabilities = model.simulateForecast(start, days);
     const ids = selectedForecastIds();
     const capacityIds = selectedCapacityIds();
+
+    // Next X Days is a list of useful forecast rows, not necessarily X consecutive
+    // calendar dates. Extend the simulation far enough to replace dates where all
+    // selected events are impossible (0%).
+    const hasUltra = ids.some(id => EVENTS[id].tier === 'ultra');
+    const hasNonUltra = ids.some(id => EVENTS[id].tier === 'non-ultra');
+    const densityFactor = hasUltra && hasNonUltra ? 1.5 : hasUltra ? 2.1 : 2.5;
+    let forecastHorizon = Math.min(365, Math.max(days, Math.ceil(days * densityFactor) + 7));
+    let probabilities = model.simulateForecast(start, forecastHorizon);
+    let displaySelection = forecastDisplayDates(probabilities, ids, days);
+    while (displaySelection.dates.length < days && forecastHorizon < 365) {
+      forecastHorizon = Math.min(365, forecastHorizon + Math.max(14, Math.ceil(days / 2)));
+      probabilities = model.simulateForecast(start, forecastHorizon);
+      displaySelection = forecastDisplayDates(probabilities, ids, days);
+    }
+    const displayDates = displaySelection.dates;
     const capacityWeeksInput = document.getElementById('capacityWeeks');
     const capacityWeeks = clamp(Math.round(Number(capacityWeeksInput?.value || current.ui?.capacityWeeks || 4)), 1, 52);
     if (capacityWeeksInput) capacityWeeksInput.value = capacityWeeks;
@@ -472,11 +500,24 @@
 
     const table = document.getElementById('forecastTable');
     table.innerHTML = `<thead><tr><th>Date</th>${ids.map(id => `<th class="event-head"><span class="dot ${EVENTS[id].color}"></span>${EVENTS[id].short}</th>`).join('')}</tr></thead><tbody>` +
-      Object.keys(probabilities).map(date => { const view = eventDateView(date, { month: 'short', day: 'numeric' }); return `<tr><td class="date-cell"><strong>${view.weekday}, ${view.text}</strong><span>${view.shifted ? `${view.localIso} local · ${date} Pacific` : date}</span></td>${ids.map(id => {
+      displayDates.map(date => { const view = eventDateView(date, { month: 'short', day: 'numeric' }); return `<tr><td class="date-cell"><strong>${view.weekday}, ${view.text}</strong><span>${view.shifted ? `${view.localIso} local · ${date} Pacific` : date}</span></td>${ids.map(id => {
         const probability = probabilities[date][id];
         const tip = escapeHtml(forecastDetail(id, date, probability)).replaceAll('\n', '&#10;');
         return `<td><span class="prob ${probabilityClass(probability)}" data-tip="${tip}">${pct(probability)}</span></td>`;
       }).join('')}</tr>`; }).join('') + '</tbody>';
+
+    const skippedNote = document.getElementById('forecastSkippedNote');
+    if (skippedNote) {
+      const skipped = displaySelection.skipped;
+      const shortfall = Math.max(0, days - displayDates.length);
+      skippedNote.hidden = skipped === 0 && shortfall === 0;
+      if (skipped > 0 || shortfall > 0) {
+        const parts = [];
+        if (skipped > 0) parts.push(`Skipped ${skipped} ${skipped === 1 ? 'date' : 'dates'} where every selected event was 0%.`);
+        if (shortfall > 0) parts.push(`Only ${displayDates.length} qualifying dates were found within the ${forecastHorizon}-day look-ahead limit.`);
+        skippedNote.textContent = parts.join(' ');
+      }
+    }
 
     const capacityTable = document.getElementById('capacityForecastTable');
     if (capacityTable) {
@@ -515,7 +556,7 @@
     const view = eventDateView(tomorrow, { month: 'short', day: 'numeric', year: 'numeric' });
     badge.textContent = view.shifted
       ? `${view.text} local · ${fmtDate(tomorrow, { month: 'short', day: 'numeric' })} Pacific`
-      : `${view.text} · Pacific event day`;
+      : view.text;
 
     if (tomorrow.slice(5) === '07-14') {
       box.innerHTML = `<article class="today-event-tile pending"><div class="today-event-icon">🥚</div><div><div class="today-event-name">Egg Day special events</div><div class="muted small">July 14 is intentionally excluded from probability modeling.</div></div></article>`;
@@ -530,7 +571,7 @@
       ? [
           fixed.note || 'Fixed weekly Non-Ultra event.',
           isSunday
-            ? `Non-Ultra 2× Capacity is independent and can also occur (${pct(nonUltraCapacityProbability)} chance).`
+            ? `Non-Ultra Mission Capacity Boost is independent and can also occur (${pct(nonUltraCapacityProbability)} chance).`
             : ''
         ].filter(Boolean).join(' ')
       : '';
@@ -568,15 +609,15 @@
 
     badge.textContent = view.shifted
       ? `${view.text} local · ${fmtDate(today, { month: 'short', day: 'numeric' })} Pacific`
-      : `${view.text} · Pacific event day`;
+      : view.text;
 
     if (!hasDay && !fixed) {
-      box.innerHTML = `<article class="today-event-tile pending"><div class="today-event-icon">↻</div><div><div class="today-event-name">Waiting for today’s data</div><div class="muted small">Sync Wasmegg to load the current Pacific event day.</div></div></article>`;
+      box.innerHTML = `<article class="today-event-tile pending"><div class="today-event-icon">↻</div><div><div class="today-event-name">Waiting for today’s data</div><div class="muted small">Sync Wasmegg to load today’s events.</div></div></article>`;
       return;
     }
 
     if (!ids.length && !fixed) {
-      box.innerHTML = `<article class="today-event-tile empty"><div class="today-event-icon">—</div><div><div class="today-event-name">No modeled events today</div><div class="muted small">No tracked event is recorded for this Pacific event day.</div></div></article>`;
+      box.innerHTML = `<article class="today-event-tile empty"><div class="today-event-icon">—</div><div><div class="today-event-name">No modeled events today</div><div class="muted small">No tracked event is recorded for today.</div></div></article>`;
       return;
     }
 
@@ -636,14 +677,17 @@
     return !message;
   }
 
-  function loadRecordDate(date) {
-    document.getElementById('recordDate').value = date;
+  function loadRecordDate(value, { displayDate = false } = {}) {
+    const modelDate = displayDate ? modelDateForDisplayDate(value) : value;
+    const input = document.getElementById('recordDate');
+    input.value = eventDisplayDateIso(modelDate);
+    input.dataset.modelDate = modelDate;
     const current = state();
-    const selected = current.overrides[date]
-      ?? (store.getConfirmedDays()[date] || []).filter(id => ORDER.includes(id))
-      ?? ORDER.filter(id => store.getAllEventDates(id).includes(date));
-    document.querySelectorAll('#eventChecklist input').forEach(input => {
-      input.checked = selected.includes(input.value);
+    const selected = current.overrides[modelDate]
+      ?? (store.getConfirmedDays()[modelDate] || []).filter(id => ORDER.includes(id))
+      ?? ORDER.filter(id => store.getAllEventDates(id).includes(modelDate));
+    document.querySelectorAll('#eventChecklist input').forEach(inputElement => {
+      inputElement.checked = selected.includes(inputElement.value);
     });
     validateChecklist();
   }
@@ -653,28 +697,99 @@
     const month = calendarCursor.getMonth();
     document.getElementById('calendarMonthLabel').textContent = new Date(year, month, 1).toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
 
-    const grid = document.getElementById('calendarGrid');
-    const canonicalMap = store.eventMapForCalendar();
-    const eventMap = {};
-    Object.entries(canonicalMap).forEach(([canonicalDate, ids]) => {
-      const localDate = eventDisplayDateIso(canonicalDate);
-      (eventMap[localDate] ||= []).push(...ids.map(id => ({ id, canonicalDate })));
-    });
+    const current = state();
+    current.ui ||= store.clone(DEFAULT_UI);
+    const showConfirmed = current.ui.calendarShowConfirmed !== false;
+    const showPredictions = current.ui.calendarShowPredictions !== false;
+    const showNonUltra = current.ui.calendarShowNonUltra !== false;
+    const showUltra = current.ui.calendarShowUltra !== false;
+    const minProbability = clamp(Number(current.ui.calendarMinProbability ?? DEFAULT_UI.calendarMinProbability), 0, 100);
 
+    const confirmedToggle = document.getElementById('calendarShowConfirmed');
+    const predictionsToggle = document.getElementById('calendarShowPredictions');
+    const nonUltraToggle = document.getElementById('calendarShowNonUltra');
+    const ultraToggle = document.getElementById('calendarShowUltra');
+    const thresholdInput = document.getElementById('calendarMinProbability');
+    if (confirmedToggle) confirmedToggle.checked = showConfirmed;
+    if (predictionsToggle) predictionsToggle.checked = showPredictions;
+    if (nonUltraToggle) nonUltraToggle.checked = showNonUltra;
+    if (ultraToggle) ultraToggle.checked = showUltra;
+    if (thresholdInput) thresholdInput.value = minProbability;
+
+    const first = new Date(year, month, 1, 12);
+    const startDate = new Date(year, month, 1 - first.getDay(), 12);
+    const endDate = new Date(startDate);
+    endDate.setDate(startDate.getDate() + 41);
+    const startDisplayIso = isoDate(startDate);
+    const endDisplayIso = isoDate(endDate);
+
+    const confirmedMap = {};
+    if (showConfirmed) {
+      const canonicalMap = store.eventMapForCalendar();
+      Object.entries(canonicalMap).forEach(([canonicalDate, ids]) => {
+        const localDate = eventDisplayDateIso(canonicalDate);
+        if (localDate < startDisplayIso || localDate > endDisplayIso) return;
+        const filtered = ids.filter(id => {
+          const tier = EVENTS[id].tier;
+          return (tier === 'ultra' && showUltra) || (tier === 'non-ultra' && showNonUltra);
+        });
+        if (!filtered.length) return;
+        (confirmedMap[localDate] ||= []).push(...filtered.map(id => ({ id, canonicalDate })));
+      });
+    }
+
+    const predictionMap = {};
+    const referenceDate = document.getElementById('forecastStart')?.value || clock.currentEventDate();
+    let predictionHorizon = 0;
+    let predictionLimited = false;
+    if (showPredictions && (showNonUltra || showUltra)) {
+      const maxCanonical = addDays(modelDateForDisplayDate(endDisplayIso), 1);
+      predictionHorizon = Math.max(0, diffDays(referenceDate, maxCanonical));
+      if (predictionHorizon > CALENDAR_PREDICTION_HORIZON) {
+        predictionHorizon = CALENDAR_PREDICTION_HORIZON;
+        predictionLimited = true;
+      }
+      if (predictionHorizon > 0) {
+        const probabilities = model.simulateForecast(referenceDate, predictionHorizon);
+        const confirmedDays = store.getConfirmedDays();
+        Object.entries(probabilities).forEach(([canonicalDate, row]) => {
+          if (confirmedDays[canonicalDate]) return;
+          const localDate = eventDisplayDateIso(canonicalDate);
+          if (localDate < startDisplayIso || localDate > endDisplayIso) return;
+          const picks = model.calendarPredictionPicks(canonicalDate, row, minProbability / 100, { showNonUltra, showUltra });
+          if (picks.length) (predictionMap[localDate] ||= []).push(...picks.map(pick => ({ ...pick, canonicalDate })));
+        });
+      }
+    }
+
+    const note = document.getElementById('calendarPredictionNote');
+    if (note) {
+      if (!showPredictions) note.textContent = 'Prediction overlay is off.';
+      else if (predictionHorizon <= 0) note.textContent = 'This calendar range is at or before the forecast reference date, so no future prediction overlay is available.';
+      else if (predictionLimited) note.textContent = 'Prediction overlay is limited to 90 days after the forecast reference date to keep the calendar responsive.';
+      else note.textContent = `Predictions show the strongest Ultra and Non-Ultra candidates at or above ${minProbability}%. Fixed Friday–Monday Non-Ultra events are always shown.`;
+    }
+
+    const grid = document.getElementById('calendarGrid');
     const weekdayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     let html = weekdayNames.map(name => `<div class="calendar-weekday">${name}</div>`).join('');
-    const first = new Date(year, month, 1, 12);
-    const start = new Date(year, month, 1 - first.getDay(), 12);
 
     for (let index = 0; index < 42; index += 1) {
-      const date = new Date(start);
-      date.setDate(start.getDate() + index);
+      const date = new Date(startDate);
+      date.setDate(startDate.getDate() + index);
       const dateString = isoDate(date);
       const outside = date.getMonth() !== month;
-      const rows = eventMap[dateString] || [];
-      const chips = rows.map(row => `<span class="event-chip ${EVENTS[row.id].color}" title="${EVENTS[row.id].label}${row.canonicalDate !== dateString ? ` · ${row.canonicalDate} Pacific` : ''}">${EVENTS[row.id].icon} ${EVENTS[row.id].short}</span>`).join('');
-      const modelDate = rows[0]?.canonicalDate || modelDateForDisplayDate(dateString);
-      html += `<div class="calendar-day ${outside ? 'outside' : ''}" data-date="${modelDate}"><div class="day-num">${date.getDate()}</div>${chips}</div>`;
+      const confirmedRows = confirmedMap[dateString] || [];
+      const predictedRows = predictionMap[dateString] || [];
+      const confirmedChips = confirmedRows.map(row => `<span class="event-chip ${EVENTS[row.id].color} confirmed-chip" title="Confirmed: ${EVENTS[row.id].label}${row.canonicalDate !== dateString ? ` · ${row.canonicalDate} Pacific` : ''}">${EVENTS[row.id].icon} ${EVENTS[row.id].short}</span>`).join('');
+      const predictedChips = predictedRows.map(row => {
+        const label = row.short || row.label;
+        const suffix = row.fixed ? 'Fixed' : pct(row.probability);
+        const title = row.fixed ? `Fixed schedule: ${row.label}` : `Predicted: ${row.label} · ${pct(row.probability)}`;
+        return `<span class="event-chip ${row.color} predicted-chip ${row.fixed ? 'fixed-chip' : ''}" title="${escapeHtml(title)}">${row.icon} ${escapeHtml(label)} <span class="chip-prob">${suffix}</span></span>`;
+      }).join('');
+      const modelDate = confirmedRows[0]?.canonicalDate || predictedRows[0]?.canonicalDate || modelDateForDisplayDate(dateString);
+      html += `<div class="calendar-day ${outside ? 'outside' : ''}" data-date="${modelDate}"><div class="day-num">${date.getDate()}</div>${confirmedChips}${predictedChips}</div>`;
     }
 
     grid.innerHTML = html;
@@ -688,7 +803,7 @@
   function renderGapHistory() {
     const select = document.getElementById('gapEventSelect');
     if (!select.options.length) {
-      select.innerHTML = `<optgroup label="Daily events">${MAIN_ORDER.map(id => `<option value="${id}">${EVENTS[id].label}</option>`).join('')}</optgroup><optgroup label="Double capacity">${CAPACITY_ORDER.map(id => `<option value="${id}">${EVENTS[id].label}</option>`).join('')}</optgroup>`;
+      select.innerHTML = `<optgroup label="Daily events">${MAIN_ORDER.map(id => `<option value="${id}">${EVENTS[id].label}</option>`).join('')}</optgroup><optgroup label="Mission Capacity Boost">${CAPACITY_ORDER.map(id => `<option value="${id}">${EVENTS[id].label}</option>`).join('')}</optgroup>`;
     }
 
     const id = select.value || ORDER[0];
@@ -716,11 +831,13 @@
       }).join('') + '</tbody>';
   }
 
-  function renderData() {
+  function dataRows() {
     const current = state();
+    const cacheKey = `${current.remote?.syncedAt || 'seed'}|${JSON.stringify(current.overrides)}`;
+    if (cacheKey === dataRowsCacheKey) return dataRowsCache;
+
     const rows = [];
     const map = {};
-
     MODEL_ORDER.forEach(id => store.getAllEventDates(id).forEach(date => {
       (map[date] ||= []).push(id);
     }));
@@ -732,6 +849,17 @@
       rows.push({ date, id, source });
     }));
 
+    dataRowsCacheKey = cacheKey;
+    dataRowsCache = rows;
+    return rows;
+  }
+
+  function renderData({ resetLimit = false } = {}) {
+    const current = state();
+    if (resetLimit) dataVisibleRows = DATA_PAGE_SIZE;
+    const rows = dataRows();
+    const visibleRows = rows.slice(0, dataVisibleRows);
+
     document.getElementById('dataStats').innerHTML = [
       ['Event records', rows.length],
       ['Model event types', MODEL_ORDER.length],
@@ -740,8 +868,16 @@
     ].map(([key, value]) => `<article class="hero-card"><div class="eyebrow">${key}</div><div class="big-value">${value}</div></article>`).join('');
 
     document.getElementById('dataTable').innerHTML = '<thead><tr><th>Date</th><th>Event</th><th>Family</th><th>Source</th></tr></thead><tbody>' +
-      rows.map(row => { const view = eventDateView(row.date, { month: 'short', day: 'numeric', year: 'numeric' }); return `<tr><td>${view.text}${view.shifted ? `<br><span class="muted small">${row.date} Pacific</span>` : ''}</td><td><span class="dot ${EVENTS[row.id].color}"></span>${EVENTS[row.id].label}</td><td>${familyLabel(EVENTS[row.id])}</td><td>${row.source}</td></tr>`; }).join('') +
+      visibleRows.map(row => { const view = eventDateView(row.date, { month: 'short', day: 'numeric', year: 'numeric' }); return `<tr><td>${view.text}${view.shifted ? `<br><span class="muted small">${row.date} Pacific</span>` : ''}</td><td><span class="dot ${EVENTS[row.id].color}"></span>${EVENTS[row.id].label}</td><td>${familyLabel(EVENTS[row.id])}</td><td>${row.source}</td></tr>`; }).join('') +
       '</tbody>';
+
+    const status = document.getElementById('dataRowsStatus');
+    if (status) status.textContent = rows.length ? `Showing ${Math.min(visibleRows.length, rows.length)} of ${rows.length} records` : 'No records';
+    const moreButton = document.getElementById('dataShowMoreBtn');
+    if (moreButton) {
+      moreButton.hidden = visibleRows.length >= rows.length;
+      moreButton.textContent = `Show ${Math.min(DATA_PAGE_SIZE, Math.max(0, rows.length - visibleRows.length))} more`;
+    }
     renderWasmeggSyncStatus();
   }
 
@@ -750,9 +886,9 @@
     renderTomorrowEvents();
     renderLatest();
     renderForecast();
-    renderCalendar();
-    renderGapHistory();
-    renderData();
+    if (currentTab === 'calendar') renderCalendar();
+    if (currentTab === 'gaps') renderGapHistory();
+    if (currentTab === 'data') renderData();
   }
 
   function switchTab(id) {
@@ -761,7 +897,7 @@
     document.querySelectorAll('.panel-section').forEach(element => element.classList.toggle('active', element.id === id));
     if (id === 'calendar') renderCalendar();
     if (id === 'gaps') renderGapHistory();
-    if (id === 'data') renderData();
+    if (id === 'data') renderData({ resetLimit: true });
   }
 
   function exportData() {
@@ -824,7 +960,12 @@
             forecastSelectionVersion: DEFAULT_UI.forecastSelectionVersion,
             forecastEvents: importedEvents.length ? importedEvents : [...DEFAULT_UI.forecastEvents],
             capacityWeeks: clamp(Number(object.ui?.capacityWeeks || 4), 1, 52),
-            capacityEvents: importedCapacityEvents.length ? importedCapacityEvents : [...CAPACITY_ORDER]
+            capacityEvents: importedCapacityEvents.length ? importedCapacityEvents : [...CAPACITY_ORDER],
+            calendarShowConfirmed: object.ui?.calendarShowConfirmed !== false,
+            calendarShowPredictions: object.ui?.calendarShowPredictions !== false,
+            calendarShowNonUltra: object.ui?.calendarShowNonUltra !== false,
+            calendarShowUltra: object.ui?.calendarShowUltra !== false,
+            calendarMinProbability: clamp(Number(object.ui?.calendarMinProbability ?? DEFAULT_UI.calendarMinProbability), 0, 100)
           },
           remote: {
             ...store.clone(DEFAULT_REMOTE),
@@ -839,6 +980,7 @@
 
         store.replaceState(nextState);
         model.invalidateNextHitCache();
+        invalidateDataRows();
         store.saveState();
         syncSettingsUI();
         renderForecastEventPicker();
@@ -860,7 +1002,6 @@
     const current = state();
     document.getElementById('capToggle').checked = Boolean(current.settings.cap16);
     document.getElementById('weekdayToggle').checked = Boolean(current.settings.weekdayPattern);
-    document.getElementById('pink5Toggle').checked = Boolean(current.settings.pink5);
     document.getElementById('weightUnder1').value = current.settings.weights.under1;
     document.getElementById('weight1to2').value = current.settings.weights.oneToTwo;
     document.getElementById('weight2plus').value = current.settings.weights.twoPlus;
@@ -913,22 +1054,26 @@
   }
 
   function bindRecordControls() {
-    document.getElementById('recordDate').addEventListener('change', event => loadRecordDate(event.target.value));
+    document.getElementById('recordDate').addEventListener('change', event => loadRecordDate(event.target.value, { displayDate: true }));
     document.getElementById('todayBtn').addEventListener('click', () => loadRecordDate(clock.currentEventDate()));
     document.getElementById('saveDayBtn').addEventListener('click', () => {
       if (!validateChecklist()) return;
-      const date = document.getElementById('recordDate').value;
-      if (!date) return;
+      const displayDate = document.getElementById('recordDate').value;
+      if (!displayDate) return;
+      const date = modelDateForDisplayDate(displayDate);
       state().overrides[date] = selectedEvents();
       model.invalidateNextHitCache();
+      invalidateDataRows();
       store.saveState();
       renderAll();
-      toast(`Saved ${fmtDate(date, { month: 'short', day: 'numeric' })}`);
+      toast(`Saved ${fmtEventDate(date, { month: 'short', day: 'numeric' })}`);
     });
     document.getElementById('clearDayBtn').addEventListener('click', () => {
-      const date = document.getElementById('recordDate').value;
+      const displayDate = document.getElementById('recordDate').value;
+      const date = modelDateForDisplayDate(displayDate);
       delete state().overrides[date];
       model.invalidateNextHitCache();
+      invalidateDataRows();
       store.saveState();
       loadRecordDate(date);
       renderAll();
@@ -950,15 +1095,18 @@
       store.saveState();
       if (state().remote.autoSync) syncWasmegg();
     });
+    document.getElementById('dataShowMoreBtn')?.addEventListener('click', () => {
+      dataVisibleRows += DATA_PAGE_SIZE;
+      renderData();
+    });
   }
 
   function bindSettingsControls() {
-    ['capToggle', 'weekdayToggle', 'pink5Toggle', 'weightUnder1', 'weight1to2', 'weight2plus'].forEach(id => {
+    ['capToggle', 'weekdayToggle', 'weightUnder1', 'weight1to2', 'weight2plus'].forEach(id => {
       document.getElementById(id).addEventListener('change', () => {
         const current = state();
         current.settings.cap16 = document.getElementById('capToggle').checked;
         current.settings.weekdayPattern = document.getElementById('weekdayToggle').checked;
-        current.settings.pink5 = document.getElementById('pink5Toggle').checked;
         current.settings.weights.under1 = Number(document.getElementById('weightUnder1').value) || 0;
         current.settings.weights.oneToTwo = Number(document.getElementById('weight1to2').value) || 0;
         current.settings.weights.twoPlus = Number(document.getElementById('weight2plus').value) || 0;
@@ -967,6 +1115,29 @@
         renderForecast();
         renderGapHistory();
       });
+    });
+  }
+
+  function bindCalendarControls() {
+    const bindings = [
+      ['calendarShowConfirmed', 'calendarShowConfirmed', 'checked'],
+      ['calendarShowPredictions', 'calendarShowPredictions', 'checked'],
+      ['calendarShowNonUltra', 'calendarShowNonUltra', 'checked'],
+      ['calendarShowUltra', 'calendarShowUltra', 'checked']
+    ];
+    bindings.forEach(([elementId, stateKey]) => {
+      document.getElementById(elementId)?.addEventListener('change', event => {
+        state().ui[stateKey] = Boolean(event.target.checked);
+        store.saveState();
+        renderCalendar();
+      });
+    });
+    document.getElementById('calendarMinProbability')?.addEventListener('change', event => {
+      const value = clamp(Math.round(Number(event.target.value) || 0), 0, 100);
+      event.target.value = value;
+      state().ui.calendarMinProbability = value;
+      store.saveState();
+      renderCalendar();
     });
   }
 
@@ -989,6 +1160,7 @@
 
       store.resetState();
       model.invalidateNextHitCache();
+      invalidateDataRows();
       syncSettingsUI();
       renderForecastEventPicker();
       renderCapacityEventPicker();
@@ -1014,11 +1186,11 @@
     const latest = store.latestConfirmedDay();
     const defaultStart = modelToday < latest ? latest : modelToday;
     document.getElementById('forecastStart').value = defaultStart;
-    document.getElementById('recordDate').value = latest;
     loadRecordDate(latest);
     calendarCursor = parseDate(eventDisplayDateIso(latest));
 
     bindNavigationControls();
+    bindCalendarControls();
     bindForecastControls();
     bindRecordControls();
     bindDataControls();

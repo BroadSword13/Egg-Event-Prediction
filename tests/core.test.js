@@ -22,9 +22,9 @@ function timestamp(dateString) {
   return Date.parse(`${dateString}T12:00:00Z`) / 1000;
 }
 
-test('release is v0.3 and matches VERSION', () => {
-  assert.equal(config.APP_VERSION, '0.3');
-  assert.equal(require('node:fs').readFileSync(path.join(root, 'VERSION'), 'utf8').trim(), '0.3');
+test('release is v0.4 and matches VERSION', () => {
+  assert.equal(config.APP_VERSION, '0.4');
+  assert.equal(require('node:fs').readFileSync(path.join(root, 'VERSION'), 'utf8').trim(), '0.4');
 });
 
 test('date helpers preserve calendar-day arithmetic', () => {
@@ -46,6 +46,7 @@ test('Pacific event day rolls over at 9 AM and local display dates adjust intern
   assert.equal(utils.eventInstantForDate('2026-12-10').toISOString(), '2026-12-10T17:00:00.000Z');
   assert.equal(utils.eventDisplayDateIso('2026-09-10', 'America/New_York'), '2026-09-10');
   assert.equal(utils.eventDisplayDateIso('2026-09-10', 'Asia/Tokyo'), '2026-09-11');
+  assert.equal(utils.modelDateForDisplayDate('2026-09-11', 'Asia/Tokyo'), '2026-09-10');
 });
 
 test('Egg Day is excluded from model history', () => {
@@ -142,6 +143,17 @@ test('legacy local overrides preserve previously remote-only daily events during
   assert.deepEqual(alreadyUnified['2026-09-08'], ['shipping_pink']);
 });
 
+test('display labels use in-game event terminology without changing internal ids', () => {
+  assert.equal(config.EVENTS.housing_blue.label, 'Non-Ultra Hab Sale');
+  assert.equal(config.EVENTS.shipping_blue.label, 'Non-Ultra Vehicle Sale');
+  assert.equal(config.EVENTS.drone_green.label, 'Non-Ultra Generous Drones');
+  assert.equal(config.EVENTS.blocker_boost_duration.label, 'Non-Ultra Boost Time+');
+  assert.equal(config.EVENTS.blocker_gifts.label, 'Non-Ultra Generous Gifts');
+  assert.equal(config.EVENTS.blocker_shells.label, 'Non-Ultra Shell Sale');
+  assert.equal(config.EVENTS.blocker_fueling.label, 'Non-Ultra Mission Fuel Boost');
+  assert.equal(config.EVENTS.capacity_purple.label, 'Non-Ultra Mission Capacity Boost');
+});
+
 test('double capacity is separated from the main forecast and restricted to Sundays', () => {
   assert.deepEqual(config.CAPACITY_ORDER, ['capacity_purple', 'capacity_pink']);
   assert.equal(config.MAIN_ORDER.includes('capacity_purple'), false);
@@ -186,11 +198,11 @@ test('double capacity defaults to four Sundays and supports a configurable week 
 });
 
 test('fixed Non-Ultra Friday through Monday schedule is exposed for tomorrow cards', () => {
-  assert.equal(model.fixedNonUltraEvent('2026-09-11').label, '70% Off Common Research');
-  assert.equal(model.fixedNonUltraEvent('2026-09-12').label, 'Prestige Bonus');
-  assert.equal(model.fixedNonUltraEvent('2026-09-13').label, '35% Off Epic Research');
-  assert.equal(model.fixedNonUltraEvent('2026-09-14').label, '2× Earnings');
-  assert.equal(model.fixedNonUltraEvent('2026-09-20').label, '30% Off Crafting');
+  assert.equal(model.fixedNonUltraEvent('2026-09-11').label, 'Research Sale');
+  assert.equal(model.fixedNonUltraEvent('2026-09-12').label, 'Prestige Boost');
+  assert.equal(model.fixedNonUltraEvent('2026-09-13').label, 'Epic Research Sale');
+  assert.equal(model.fixedNonUltraEvent('2026-09-14').label, 'Cash Boost');
+  assert.equal(model.fixedNonUltraEvent('2026-09-20').label, 'Crafting Sale');
   assert.equal(model.fixedNonUltraEvent('2026-07-14'), null);
   assert.equal(model.fixedNonUltraEvent('2026-09-15'), null);
 });
@@ -332,5 +344,123 @@ test('Double Capacity probabilities stay identical when the week horizon is exte
       twelveWeeks[date],
       `${date} changed when extending the Double Capacity horizon`
     );
+  }
+});
+
+
+test('forecast display skips dates where every selected event is zero', () => {
+  const probabilities = {
+    '2026-09-11': { housing_blue: 0, shipping_blue: 0 },
+    '2026-09-12': { housing_blue: 0, shipping_blue: 0 },
+    '2026-09-13': { housing_blue: 0.2, shipping_blue: 0 },
+    '2026-09-14': { housing_blue: 0, shipping_blue: 0 },
+    '2026-09-15': { housing_blue: 0.4, shipping_blue: 0.6 },
+    '2026-09-16': { housing_blue: 0.5, shipping_blue: 0.5 }
+  };
+  assert.deepEqual(
+    utils.forecastDisplayDates(probabilities, ['housing_blue', 'shipping_blue'], 2),
+    { dates: ['2026-09-13', '2026-09-15'], skipped: 3 }
+  );
+});
+
+test('calendar prediction overlay defaults are enabled with a 25% threshold', () => {
+  assert.equal(config.DEFAULT_UI.calendarShowConfirmed, true);
+  assert.equal(config.DEFAULT_UI.calendarShowPredictions, true);
+  assert.equal(config.DEFAULT_UI.calendarShowNonUltra, true);
+  assert.equal(config.DEFAULT_UI.calendarShowUltra, true);
+  assert.equal(config.DEFAULT_UI.calendarMinProbability, 25);
+});
+
+test('calendar prediction picks include fixed weekly events and thresholded likely events', () => {
+  const saturday = model.calendarPredictionPicks('2026-09-12', {
+    drone_pink: 0.62,
+    shipping_pink: 0.22,
+    capacity_purple: 0
+  }, 0.25);
+  assert.equal(saturday.some(row => row.fixed && row.label === 'Prestige Boost'), true);
+  assert.equal(saturday.some(row => row.id === 'drone_pink' && row.probability === 0.62), true);
+  assert.equal(saturday.some(row => row.id === 'shipping_pink'), false);
+
+  const sunday = model.calendarPredictionPicks('2026-09-20', {
+    capacity_purple: 0.53,
+    capacity_pink: 0.31
+  }, 0.25);
+  assert.equal(sunday.some(row => row.fixed && row.label === 'Crafting Sale'), true);
+  assert.equal(sunday.some(row => row.id === 'capacity_purple' && row.probability === 0.53), true);
+  assert.equal(sunday.some(row => row.id === 'capacity_pink' && row.probability === 0.31), true);
+});
+
+test('named forecast sections below Today and Tomorrow are collapsible', () => {
+  const html = require('node:fs').readFileSync(path.join(root, 'index.html'), 'utf8');
+  assert.match(html, /<details class="collapsible-section primary-collapsible" open>[\s\S]*?<h1 id="forecastWindowTitle">Next 7 days<\/h1>/);
+  assert.match(html, /<details class="collapsible-section" open>[\s\S]*?<h1>Most likely next date<\/h1>/);
+  assert.match(html, /<details class="collapsible-section capacity-forecast-section" open>[\s\S]*?<h1>Mission Capacity Boost forecast<\/h1>/);
+  assert.match(html, /<details class="card collapsible-card" open>[\s\S]*?<h2>Daily event status<\/h2>/);
+  assert.match(html, /<details class="card collapsible-card" open>[\s\S]*?<h2>Record a day<\/h2>/);
+});
+
+test('unconfirmed future predictions do not create a certain reset on the following day', () => {
+  const original = structuredClone(store.getState());
+  try {
+    const next = structuredClone(original);
+    delete next.overrides['2026-09-15'];
+    store.replaceState(next);
+    model.invalidateNextHitCache();
+
+    const forecast = model.simulateForecast('2026-09-14', 2);
+    assert.ok(forecast['2026-09-15'].shipping_blue > 0 && forecast['2026-09-15'].shipping_blue < 1,
+      'an unconfirmed Sep 15 Shipping prediction must remain probabilistic');
+    assert.ok(forecast['2026-09-16'].shipping_blue > 0,
+      'Sep 16 Shipping must retain a chance when Sep 15 Shipping was not confirmed');
+    assert.equal(model.isHardBlocked('blocker_gifts', '2026-09-15', null), false,
+      'missing fallback history is unknown, not a hard impossibility');
+  } finally {
+    store.replaceState(original);
+    model.invalidateNextHitCache();
+  }
+});
+
+test('future override resets a rotation and hard minimum gaps stay at zero', () => {
+  const original = structuredClone(store.getState());
+  try {
+    const next = structuredClone(original);
+    next.overrides = { ...next.overrides, '2026-09-15': ['shipping_blue'] };
+    store.replaceState(next);
+    model.invalidateNextHitCache();
+
+    const forecast = model.simulateForecast('2026-09-14', 2);
+    assert.equal(forecast['2026-09-15'].shipping_blue, 1, 'override should force Non-Ultra Shipping on Sep 15');
+    assert.equal(forecast['2026-09-16'].shipping_blue, 0, 'Non-Ultra Shipping must be impossible one day after it hit');
+    assert.equal(model.isHardBlocked('shipping_blue', '2026-09-16', '2026-09-15'), true);
+  } finally {
+    store.replaceState(original);
+    model.invalidateNextHitCache();
+  }
+});
+
+test('max-gap deadline stays certain after overrides confirm no earlier hit', () => {
+  const original = structuredClone(store.getState());
+  try {
+    const next = structuredClone(original);
+    next.overrides = {
+      ...next.overrides,
+      '2026-09-15': ['housing_blue'],
+      '2026-09-16': ['blocker_gifts']
+    };
+    store.replaceState(next);
+    model.invalidateNextHitCache();
+
+    const lastShipping = store.lastEventBefore('shipping_blue', '2026-09-15');
+    assert.equal(lastShipping, '2026-09-03');
+    assert.equal(model.latestEligibleGap('shipping_blue', lastShipping), 14,
+      'weekday restrictions make Sep 17 the final eligible day before the 16-day cap');
+    assert.equal(model.isHardDue('shipping_blue', '2026-09-17', lastShipping), true);
+
+    const forecast = model.simulateForecast('2026-09-14', 3);
+    assert.equal(forecast['2026-09-17'].shipping_blue, 1,
+      'Non-Ultra Shipping must be 100% on its final eligible day after Sep 15-16 are confirmed misses');
+  } finally {
+    store.replaceState(original);
+    model.invalidateNextHitCache();
   }
 });

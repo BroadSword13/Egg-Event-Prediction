@@ -17,7 +17,7 @@
       </div>
     </div>
     <div class="header-actions">
-      <span id="appVersionBadge" class="badge neutral">v0.3</span>
+      <span id="appVersionBadge" class="badge neutral">v0.4</span>
       <span id="dataThroughBadge" class="badge neutral"></span>
       <span id="clockBadge" class="badge neutral">Clock: Pacific</span>
       <span id="wasmeggSyncBadge" class="badge neutral">Wasmegg: seed data</span>
@@ -65,7 +65,7 @@
           <div class="section-heading today-events-heading">
             <div>
               <h1 id="todayEventsTitle">Today’s events</h1>
-              <p class="muted">Confirmed events for the active Pacific event day.</p>
+              <p class="muted">Confirmed events for today.</p>
             </div>
             <span id="todayEventDateBadge" class="badge neutral"></span>
           </div>
@@ -84,43 +84,50 @@
         </section>
       </div>
 
-      <div class="section-heading">
-        <div>
-          <h1 id="forecastWindowTitle">Next 7 days</h1>
-          <p class="muted">Choose the forecast window and which daily event rotations you want to see.</p>
-        </div>
-        <div class="forecast-controls">
+      <details class="collapsible-section primary-collapsible" open>
+        <summary class="collapsible-summary">
+          <div>
+            <h1 id="forecastWindowTitle">Next 7 days</h1>
+            <p class="muted">Choose the forecast window and which daily event rotations you want to see. Dates where every selected event is 0% are skipped and replaced with following dates.</p>
+          </div>
+        </summary>
+
+        <div class="forecast-controls collapsible-controls">
           <label class="forecast-days-control"><span>Days ahead</span><input id="forecastDays" class="number-input compact" type="number" min="1" max="120" step="1" value="7" /></label>
           <button id="eventPickerToggle" class="button secondary" type="button" aria-expanded="false">Events: All 14</button>
         </div>
-      </div>
 
-      <div id="forecastEventPicker" class="forecast-event-picker" hidden></div>
+        <div id="forecastEventPicker" class="forecast-event-picker" hidden></div>
 
-      <div class="table-wrap">
-        <table id="forecastTable" class="forecast-table sticky-date-column"></table>
-      </div>
-
-      <div class="section-heading likely-heading">
-        <div>
-          <h1>Most likely next date</h1>
-          <p class="muted">The single date most likely to be the <strong>next</strong> occurrence of each rotation, using the same rules and conflict model.</p>
+        <div class="table-wrap">
+          <table id="forecastTable" class="forecast-table sticky-date-column"></table>
         </div>
-        <span class="badge neutral">Looks ahead up to 400 days</span>
-      </div>
-      <div id="nextLikelyCards" class="likely-grid"></div>
+        <div id="forecastSkippedNote" class="muted small forecast-skipped-note" hidden></div>
+      </details>
 
-      <section class="capacity-forecast-section">
-        <div class="section-heading capacity-heading">
+      <details class="collapsible-section" open>
+        <summary class="collapsible-summary">
           <div>
-            <h1>Double capacity forecast</h1>
-            <p class="muted">Capacity is modeled separately. Only Pacific-time Sundays are shown because these events only occur on Sunday.</p>
+            <h1>Most likely next date</h1>
+            <p class="muted">The single date most likely to be the <strong>next</strong> occurrence of each rotation, using the same rules and conflict model.</p>
           </div>
-          <div class="forecast-controls">
-            <label class="forecast-days-control"><span>Weeks ahead</span><input id="capacityWeeks" class="number-input compact" type="number" min="1" max="52" step="1" value="4" /></label>
-            <span id="capacitySundayCount" class="badge neutral">4 Sundays</span>
-            <button id="capacityPickerToggle" class="button secondary" type="button" aria-expanded="false">Capacity: Both</button>
+          <span class="badge neutral">Looks ahead up to 400 days</span>
+        </summary>
+        <div id="nextLikelyCards" class="likely-grid"></div>
+      </details>
+
+      <details class="collapsible-section capacity-forecast-section" open>
+        <summary class="collapsible-summary">
+          <div>
+            <h1>Mission Capacity Boost forecast</h1>
+            <p class="muted">Mission Capacity Boost is modeled separately. Only Pacific-time Sundays are shown because these events only occur on Sunday.</p>
           </div>
+        </summary>
+
+        <div class="forecast-controls collapsible-controls capacity-heading">
+          <label class="forecast-days-control"><span>Weeks ahead</span><input id="capacityWeeks" class="number-input compact" type="number" min="1" max="52" step="1" value="4" /></label>
+          <span id="capacitySundayCount" class="badge neutral">4 Sundays</span>
+          <button id="capacityPickerToggle" class="button secondary" type="button" aria-expanded="false">Mission Capacity Boost: Both</button>
         </div>
 
         <div id="capacityEventPicker" class="forecast-event-picker" hidden></div>
@@ -129,40 +136,46 @@
           <table id="capacityForecastTable" class="forecast-table"></table>
         </div>
 
-        <div class="section-heading likely-heading">
-          <div>
-            <h2>Most likely next capacity date</h2>
-            <p class="muted small">The strongest future Sunday for each selected capacity rotation.</p>
-          </div>
-          <span class="badge neutral">Looks ahead up to 400 days</span>
-        </div>
-        <div id="capacityNextLikelyCards" class="likely-grid capacity-likely-grid"></div>
-
-        <div class="card capacity-status-card">
-          <div class="card-title-row">
+        <details class="collapsible-section compact-collapsible" open>
+          <summary class="collapsible-summary">
             <div>
-              <h2>Capacity rotation status</h2>
+              <h2>Most likely next Mission Capacity Boost date</h2>
+              <p class="muted small">The strongest future Sunday for each selected Mission Capacity Boost rotation.</p>
+            </div>
+            <span class="badge neutral">Looks ahead up to 400 days</span>
+          </summary>
+          <div id="capacityNextLikelyCards" class="likely-grid capacity-likely-grid"></div>
+        </details>
+
+        <details class="card capacity-status-card collapsible-card">
+          <summary class="collapsible-card-summary">
+            <div>
+              <h2>Mission Capacity Boost status</h2>
               <p class="muted small">Current gap measured from the forecast start date.</p>
             </div>
-          </div>
+          </summary>
           <div id="capacityRotationCards" class="rotation-grid capacity-rotation-grid"></div>
-        </div>
-      </section>
+        </details>
+      </details>
 
       <div class="two-col">
-        <section class="card">
-          <div class="card-title-row">
+        <details class="card collapsible-card" open>
+          <summary class="collapsible-card-summary">
             <div>
               <h2>Daily event status</h2>
-              <p class="muted small">Current gap for every daily event rotation, measured from the forecast start date. Double capacity is tracked separately above.</p>
+              <p class="muted small">Current gap for every daily event rotation, measured from the forecast start date. Mission Capacity Boost is tracked separately above.</p>
             </div>
-          </div>
+          </summary>
           <div id="rotationCards" class="rotation-grid"></div>
-        </section>
+        </details>
 
-        <section class="card">
-          <h2>Record a day</h2>
-          <p class="muted small">Choose every event that occurred. Saving a day records unselected tracked events as absent for that date.</p>
+        <details class="card collapsible-card" open>
+          <summary class="collapsible-card-summary">
+            <div>
+              <h2>Record a day</h2>
+              <p class="muted small">Choose every event that occurred. Dates are shown in your local time and mapped to the Egg, Inc. event date internally. Saving a day records unselected tracked events as absent for that event date.</p>
+            </div>
+          </summary>
           <div class="record-row">
             <input id="recordDate" class="date-input" type="date" />
             <button id="todayBtn" class="button secondary">Today</button>
@@ -173,7 +186,7 @@
             <button id="saveDayBtn" class="button primary">Confirm day</button>
             <button id="clearDayBtn" class="button danger ghost">Clear override</button>
           </div>
-        </section>
+        </details>
       </div>
     </section>
 
@@ -181,7 +194,7 @@
       <div class="section-heading">
         <div>
           <h1>Event calendar</h1>
-          <p class="muted">Seed history plus anything you record locally.</p>
+          <p class="muted">Confirmed history plus an optional future prediction overlay.</p>
         </div>
         <div class="calendar-nav">
           <button id="prevMonth" class="button secondary">←</button>
@@ -189,6 +202,15 @@
           <button id="nextMonth" class="button secondary">→</button>
         </div>
       </div>
+      <div class="calendar-controls card compact-controls" aria-label="Calendar display options">
+        <label class="calendar-toggle"><input id="calendarShowConfirmed" type="checkbox" checked /> Confirmed</label>
+        <label class="calendar-toggle"><input id="calendarShowPredictions" type="checkbox" checked /> Predictions</label>
+        <label class="calendar-toggle"><input id="calendarShowNonUltra" type="checkbox" checked /> Non-Ultra</label>
+        <label class="calendar-toggle"><input id="calendarShowUltra" type="checkbox" checked /> Ultra</label>
+        <label class="calendar-threshold"><span>Minimum prediction</span><input id="calendarMinProbability" class="number-input compact" type="number" min="0" max="100" step="5" value="25" /><span>%</span></label>
+        <span class="calendar-legend"><span class="legend-chip confirmed"></span> confirmed <span class="legend-chip predicted"></span> predicted</span>
+      </div>
+      <div id="calendarPredictionNote" class="muted small calendar-note"></div>
       <div id="calendarGrid" class="calendar-grid"></div>
     </section>
 
@@ -216,19 +238,20 @@
       <div class="rules-grid">
         <article class="card">
           <h2>Exclusivity rules</h2>
-          <div class="rule-item"><span class="rule-icon">⛔</span><div><strong>Daily event pools</strong><div class="muted small">Non-Ultra housing, shipping, and drones cannot occur together. Non-Ultra 2× boost duration, 2× gifts, 15% off shells, and 3× fueling share the same Tuesday–Thursday pool and each conflicts with those three events. The equivalent Ultra event types share the Ultra pool and follow the every-other-day cadence described below. No additional same-day exclusions among boost duration, gifts, shells, and fueling are assumed without evidence.</div></div></div>
+          <div class="rule-item"><span class="rule-icon">⛔</span><div><strong>Daily event pools</strong><div class="muted small">Non-Ultra Hab Sale, Vehicle Sale, and Generous Drones cannot occur together. Non-Ultra Boost Time+, Generous Gifts, Shell Sale, and Mission Fuel Boost share the same Tuesday–Thursday pool and each conflicts with those three events. The equivalent Ultra event types share the Ultra pool and follow the every-other-day cadence described below. No additional same-day exclusions among Boost Time+, Generous Gifts, Shell Sale, and Mission Fuel Boost are assumed without evidence.</div></div></div>
           <div class="rule-item"><span class="rule-icon">⛔</span><div><strong>Same-type tier conflict</strong><div class="muted small">Ultra + Non-Ultra versions of the same event type cannot occur together.</div></div></div>
-          <div class="rule-item"><span class="rule-icon">✅</span><div><strong>Cross-type combinations allowed</strong><div class="muted small">Example: Ultra housing + Non-Ultra drones can occur together, as confirmed Sep 10, 2026.</div></div></div>
+          <div class="rule-item"><span class="rule-icon">✅</span><div><strong>Cross-type combinations allowed</strong><div class="muted small">Example: Ultra Hab Sale + Non-Ultra Generous Drones can occur together, as confirmed Sep 10, 2026.</div></div></div>
         </article>
 
         <article class="card">
           <h2>Prediction constraints</h2>
-          <label class="switch-row"><span><strong>Apply 16-day prediction cap</strong><small>Non-Ultra housing, Non-Ultra shipping, Non-Ultra drones</small></span><input id="capToggle" type="checkbox" checked /></label>
-          <label class="switch-row"><span><strong>Apply Tue–Thu observed weekday pattern</strong><small>Non-Ultra housing, Non-Ultra shipping, Non-Ultra drones</small></span><input id="weekdayToggle" type="checkbox" checked /></label>
-          <label class="switch-row"><span><strong>Exclude 5-day Ultra gaps</strong><small>No 5-day gap has appeared in tracked Ultra rotations</small></span><input id="pink5Toggle" type="checkbox" checked /></label>
-          <div class="rule-item compact-rule"><span class="rule-icon">↔️</span><div><strong>Ultra every-other-day cadence</strong><div class="muted small">From May 4, 2026 forward, modeled Ultra events are only eligible every other Pacific event day. Ultra 2× Capacity must also land on one of those cadence days while retaining its Sunday-only rule. Same-rotation gaps from this era that do not align to the 2-day cadence are ignored by gap training.</div></div></div>
+          <div class="setting-with-note">
+            <label class="switch-row"><span><strong>Apply 16-day prediction cap</strong><small>Non-Ultra Hab Sale, Non-Ultra Vehicle Sale, Non-Ultra Generous Drones</small></span><input id="capToggle" type="checkbox" checked /></label>
+            <div class="notice warning inline-setting-note">The raw Non-Ultra Hab Sale history contains at least one gap longer than 16 days. This cap is a prediction rule, not a claim that every historical gap obeyed it.</div>
+          </div>
+          <label class="switch-row"><span><strong>Apply Tue–Thu observed weekday pattern</strong><small>Non-Ultra Hab Sale, Non-Ultra Vehicle Sale, Non-Ultra Generous Drones</small></span><input id="weekdayToggle" type="checkbox" checked /></label>
+          <div class="rule-item compact-rule"><span class="rule-icon">↔️</span><div><strong>Ultra every-other-day cadence</strong><div class="muted small">From May 4, 2026 forward, modeled Ultra events are only eligible every other Pacific event day. Ultra Mission Capacity Boost must also land on one of those cadence days while retaining its Sunday-only rule. Same-rotation gaps from this era that do not align to the 2-day cadence are ignored by gap training.</div></div></div>
           <div class="rule-item compact-rule"><span class="rule-icon">🎂</span><div><strong>Ignore July 14 (Egg Day)</strong><div class="muted small">All July 14 events are excluded from gap training, current-gap resets, and event modeling because the anniversary uses special events.</div></div></div>
-          <div class="notice warning">The raw Non-Ultra housing history contains at least one gap longer than 16 days. The 16-day cap is therefore treated as a configured prediction rule, not a claim that every historical gap obeyed it.</div>
         </article>
 
         <article class="card">
@@ -260,7 +283,7 @@
         <div class="card-title-row sync-title-row">
           <div>
             <h2>Wasmegg automatic sync</h2>
-            <p class="muted small">Pulls all supported daily and double-capacity event rotations from Jan 1, 2024 forward from the same dataset used by the Wasmegg Events Calendar. July 14 is excluded from the probability model. Manual overrides remain authoritative for all tracked rotations.</p>
+            <p class="muted small">Pulls all supported daily and Mission Capacity Boost rotations from Jan 1, 2024 forward from the same dataset used by the Wasmegg Events Calendar. July 14 is excluded from the probability model. Manual overrides remain authoritative for all tracked rotations.</p>
             <p id="timeZoneDetails" class="muted small"></p>
           </div>
           <button id="syncWasmeggDataBtn" class="button secondary">Sync now</button>
@@ -270,6 +293,10 @@
       </div>
       <div class="card data-card">
         <div id="dataStats" class="hero-grid compact"></div>
+        <div class="data-table-status-row">
+          <span id="dataRowsStatus" class="muted small"></span>
+          <button id="dataShowMoreBtn" class="button secondary" type="button">Show 100 more</button>
+        </div>
         <div class="table-wrap">
           <table id="dataTable" class="forecast-table"></table>
         </div>

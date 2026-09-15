@@ -1,7 +1,7 @@
 (function (root) {
   'use strict';
 
-  const APP_VERSION = '0.3';
+  const APP_VERSION = '0.4';
   const EXPORT_SCHEMA_VERSION = 6;
   const STORAGE_KEY = 'egg-event-lab-v1';
   const DAY = 86400000;
@@ -20,22 +20,22 @@
   const ULTRA_CADENCE_INTERVAL_DAYS = 2;
 
   const EVENTS = {
-    housing_blue: { label: 'Non-Ultra Housing', short: 'Non-Ultra House', family: 'housing', tier: 'non-ultra', color: 'blue', icon: '🏠', minGap: 7, maxGap: 16, weekdayObserved: true, coverageStart: REMOTE_DATA_START },
-    housing_pink: { label: 'Ultra Housing', short: 'Ultra House', family: 'housing', tier: 'ultra', color: 'pink', icon: '🏠', coverageStart: REMOTE_DATA_START },
-    shipping_blue: { label: 'Non-Ultra Shipping', short: 'Non-Ultra Ship', family: 'shipping', tier: 'non-ultra', color: 'blue', icon: '🚚', minGap: 6, maxGap: 16, weekdayObserved: true, coverageStart: REMOTE_DATA_START },
-    shipping_pink: { label: 'Ultra Shipping', short: 'Ultra Ship', family: 'shipping', tier: 'ultra', color: 'pink', icon: '🚚', coverageStart: REMOTE_DATA_START },
-    drone_green: { label: 'Non-Ultra Drones', short: 'Non-Ultra Drone', family: 'drone', tier: 'non-ultra', color: 'green', icon: '🚁', minGap: 7, maxGap: 16, weekdayObserved: true, coverageStart: REMOTE_DATA_START },
-    drone_pink: { label: 'Ultra Drones', short: 'Ultra Drone', family: 'drone', tier: 'ultra', color: 'pink', icon: '🚁', coverageStart: REMOTE_DATA_START },
-    capacity_purple: { label: 'Non-Ultra 2× Capacity', short: 'Non-Ultra 2×', family: 'capacity', tier: 'non-ultra', color: 'purple', icon: '🚀', sundayOnly: true, coverageStart: REMOTE_DATA_START },
-    capacity_pink: { label: 'Ultra 2× Capacity', short: 'Ultra 2×', family: 'capacity', tier: 'ultra', color: 'orange', icon: '🚀', sundayOnly: true, coverageStart: REMOTE_DATA_START, sparse: true },
-    blocker_boost_duration: { label: 'Non-Ultra 2× Boost Duration', short: '2× Boost Time', family: 'boost-duration', tier: 'non-ultra', color: 'teal', icon: '⏱️', weekdayObserved: true, coverageStart: REMOTE_DATA_START },
-    blocker_gifts: { label: 'Non-Ultra 2× Gifts', short: '2× Gifts', family: 'gifts', tier: 'non-ultra', color: 'gold', icon: '🎁', weekdayObserved: true, coverageStart: REMOTE_DATA_START },
-    blocker_shells: { label: 'Non-Ultra 15% Off Shells', short: '15% Shells', family: 'shells', tier: 'non-ultra', color: 'slate', icon: '🎨', weekdayObserved: true, coverageStart: REMOTE_DATA_START },
-    blocker_fueling: { label: 'Non-Ultra 3× Fueling', short: '3× Fueling', family: 'fueling', tier: 'non-ultra', color: 'amber', icon: '⛽', weekdayObserved: true, coverageStart: REMOTE_DATA_START },
-    blocker_ultra_boost_duration: { label: 'Ultra 2× Boost Duration', short: 'Ultra 2× Boost Time', family: 'boost-duration', tier: 'ultra', color: 'pink', icon: '⏱️', coverageStart: REMOTE_DATA_START },
-    blocker_ultra_gifts: { label: 'Ultra 2× Gifts', short: 'Ultra 2× Gifts', family: 'gifts', tier: 'ultra', color: 'pink', icon: '🎁', coverageStart: REMOTE_DATA_START },
-    blocker_ultra_shells: { label: 'Ultra 15% Off Shells', short: 'Ultra 15% Shells', family: 'shells', tier: 'ultra', color: 'pink', icon: '🎨', coverageStart: REMOTE_DATA_START },
-    blocker_ultra_fueling: { label: 'Ultra 3× Fueling', short: 'Ultra 3× Fueling', family: 'fueling', tier: 'ultra', color: 'pink', icon: '⛽', coverageStart: REMOTE_DATA_START }
+    housing_blue: { label: 'Non-Ultra Hab Sale', short: 'Non-Ultra Hab Sale', family: 'housing', tier: 'non-ultra', color: 'blue', icon: '🏠', minGap: 7, maxGap: 16, weekdayObserved: true, coverageStart: REMOTE_DATA_START },
+    housing_pink: { label: 'Ultra Hab Sale', short: 'Ultra Hab Sale', family: 'housing', tier: 'ultra', color: 'pink', icon: '🏠', coverageStart: REMOTE_DATA_START },
+    shipping_blue: { label: 'Non-Ultra Vehicle Sale', short: 'Non-Ultra Vehicle Sale', family: 'shipping', tier: 'non-ultra', color: 'blue', icon: '🚚', minGap: 6, maxGap: 16, weekdayObserved: true, coverageStart: REMOTE_DATA_START },
+    shipping_pink: { label: 'Ultra Vehicle Sale', short: 'Ultra Vehicle Sale', family: 'shipping', tier: 'ultra', color: 'pink', icon: '🚚', coverageStart: REMOTE_DATA_START },
+    drone_green: { label: 'Non-Ultra Generous Drones', short: 'Non-Ultra Generous Drones', family: 'drone', tier: 'non-ultra', color: 'green', icon: '🚁', minGap: 7, maxGap: 16, weekdayObserved: true, coverageStart: REMOTE_DATA_START },
+    drone_pink: { label: 'Ultra Generous Drones', short: 'Ultra Generous Drones', family: 'drone', tier: 'ultra', color: 'pink', icon: '🚁', coverageStart: REMOTE_DATA_START },
+    capacity_purple: { label: 'Non-Ultra Mission Capacity Boost', short: 'Non-Ultra Mission Capacity Boost', family: 'capacity', tier: 'non-ultra', color: 'purple', icon: '🚀', sundayOnly: true, coverageStart: REMOTE_DATA_START },
+    capacity_pink: { label: 'Ultra Mission Capacity Boost', short: 'Ultra Mission Capacity Boost', family: 'capacity', tier: 'ultra', color: 'orange', icon: '🚀', sundayOnly: true, coverageStart: REMOTE_DATA_START, sparse: true },
+    blocker_boost_duration: { label: 'Non-Ultra Boost Time+', short: 'Non-Ultra Boost Time+', family: 'boost-duration', tier: 'non-ultra', color: 'teal', icon: '⏱️', weekdayObserved: true, coverageStart: REMOTE_DATA_START },
+    blocker_gifts: { label: 'Non-Ultra Generous Gifts', short: 'Non-Ultra Generous Gifts', family: 'gifts', tier: 'non-ultra', color: 'gold', icon: '🎁', weekdayObserved: true, coverageStart: REMOTE_DATA_START },
+    blocker_shells: { label: 'Non-Ultra Shell Sale', short: 'Non-Ultra Shell Sale', family: 'shells', tier: 'non-ultra', color: 'slate', icon: '🎨', weekdayObserved: true, coverageStart: REMOTE_DATA_START },
+    blocker_fueling: { label: 'Non-Ultra Mission Fuel Boost', short: 'Non-Ultra Mission Fuel Boost', family: 'fueling', tier: 'non-ultra', color: 'amber', icon: '⛽', weekdayObserved: true, coverageStart: REMOTE_DATA_START },
+    blocker_ultra_boost_duration: { label: 'Ultra Boost Time+', short: 'Ultra Boost Time+', family: 'boost-duration', tier: 'ultra', color: 'pink', icon: '⏱️', coverageStart: REMOTE_DATA_START },
+    blocker_ultra_gifts: { label: 'Ultra Generous Gifts', short: 'Ultra Generous Gifts', family: 'gifts', tier: 'ultra', color: 'pink', icon: '🎁', coverageStart: REMOTE_DATA_START },
+    blocker_ultra_shells: { label: 'Ultra Shell Sale', short: 'Ultra Shell Sale', family: 'shells', tier: 'ultra', color: 'pink', icon: '🎨', coverageStart: REMOTE_DATA_START },
+    blocker_ultra_fueling: { label: 'Ultra Mission Fuel Boost', short: 'Ultra Mission Fuel Boost', family: 'fueling', tier: 'ultra', color: 'pink', icon: '⛽', coverageStart: REMOTE_DATA_START }
   };
 
   const CORE_DAILY_ORDER = [
@@ -60,7 +60,6 @@
   const DEFAULT_SETTINGS = {
     cap16: true,
     weekdayPattern: true,
-    pink5: true,
     weights: { under1: 3, oneToTwo: 2, twoPlus: 0.5 }
   };
   const DEFAULT_UI = {
@@ -69,7 +68,12 @@
     forecastDays: 7,
     forecastEvents: [...CORE_DAILY_ORDER],
     capacityWeeks: 4,
-    capacityEvents: [...CAPACITY_ORDER]
+    capacityEvents: [...CAPACITY_ORDER],
+    calendarShowConfirmed: true,
+    calendarShowPredictions: true,
+    calendarShowNonUltra: true,
+    calendarShowUltra: true,
+    calendarMinProbability: 25
   };
   const DEFAULT_REMOTE = {
     autoSync: true,
