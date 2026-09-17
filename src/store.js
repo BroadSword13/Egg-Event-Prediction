@@ -47,6 +47,12 @@
     };
   }
 
+  function normalizeSettings(raw = {}) {
+    const settings = { ...clone(DEFAULT_SETTINGS), ...raw, weights: normalizeWeights(raw.weights || {}) };
+    delete settings.cap16; // Retired: imports cannot re-enable a hard deadline.
+    return settings;
+  }
+
   function migrateLegacyOverrides(overrides = {}, remoteConfirmedDays = null, legacy = true) {
     if (!legacy) return clone(overrides || {});
     const migrated = clone(overrides || {});
@@ -104,11 +110,7 @@
 
       return {
         overrides: migrateLegacyOverrides(parsed.overrides || {}, remote.confirmedDays, parsed.ui?.unifiedDailyEvents !== true),
-        settings: {
-          ...clone(DEFAULT_SETTINGS),
-          ...(parsed.settings || {}),
-          weights: normalizeWeights(parsed.settings?.weights || {})
-        },
+        settings: normalizeSettings(parsed.settings || {}),
         ui: {
           ...clone(DEFAULT_UI),
           ...(parsed.ui || {}),
@@ -279,6 +281,7 @@
     clone,
     defaultState,
     normalizeWeights,
+    normalizeSettings,
     migrateLegacyOverrides,
     getState,
     replaceState,

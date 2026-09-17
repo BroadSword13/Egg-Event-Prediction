@@ -20,11 +20,11 @@
   const ULTRA_CADENCE_INTERVAL_DAYS = 2;
 
   const EVENTS = {
-    housing_blue: { label: 'Non-Ultra Hab Sale', short: 'Non-Ultra Hab Sale', family: 'housing', tier: 'non-ultra', color: 'blue', icon: '🏠', minGap: 6, maxGap: 16, weekdayObserved: true, coverageStart: REMOTE_DATA_START },
+    housing_blue: { label: 'Non-Ultra Hab Sale', short: 'Non-Ultra Hab Sale', family: 'housing', tier: 'non-ultra', color: 'blue', icon: '🏠', minGap: 6, weekdayObserved: true, coverageStart: REMOTE_DATA_START },
     housing_pink: { label: 'Ultra Hab Sale', short: 'Ultra Hab Sale', family: 'housing', tier: 'ultra', color: 'pink', icon: '🏠', coverageStart: REMOTE_DATA_START },
-    shipping_blue: { label: 'Non-Ultra Vehicle Sale', short: 'Non-Ultra Vehicle Sale', family: 'shipping', tier: 'non-ultra', color: 'blue', icon: '🚚', minGap: 6, maxGap: 16, weekdayObserved: true, coverageStart: REMOTE_DATA_START },
+    shipping_blue: { label: 'Non-Ultra Vehicle Sale', short: 'Non-Ultra Vehicle Sale', family: 'shipping', tier: 'non-ultra', color: 'blue', icon: '🚚', minGap: 6, weekdayObserved: true, coverageStart: REMOTE_DATA_START },
     shipping_pink: { label: 'Ultra Vehicle Sale', short: 'Ultra Vehicle Sale', family: 'shipping', tier: 'ultra', color: 'pink', icon: '🚚', coverageStart: REMOTE_DATA_START },
-    drone_green: { label: 'Non-Ultra Generous Drones', short: 'Non-Ultra Generous Drones', family: 'drone', tier: 'non-ultra', color: 'green', icon: '🚁', minGap: 7, maxGap: 16, weekdayObserved: true, coverageStart: REMOTE_DATA_START },
+    drone_green: { label: 'Non-Ultra Generous Drones', short: 'Non-Ultra Generous Drones', family: 'drone', tier: 'non-ultra', color: 'green', icon: '🚁', minGap: 7, weekdayObserved: true, coverageStart: REMOTE_DATA_START },
     drone_pink: { label: 'Ultra Generous Drones', short: 'Ultra Generous Drones', family: 'drone', tier: 'ultra', color: 'pink', icon: '🚁', coverageStart: REMOTE_DATA_START },
     capacity_purple: { label: 'Non-Ultra Mission Capacity Boost', short: 'Non-Ultra Mission Capacity Boost', family: 'capacity', tier: 'non-ultra', color: 'purple', icon: '🚀', sundayOnly: true, coverageStart: REMOTE_DATA_START },
     capacity_pink: { label: 'Ultra Mission Capacity Boost', short: 'Ultra Mission Capacity Boost', family: 'capacity', tier: 'ultra', color: 'orange', icon: '🚀', sundayOnly: true, coverageStart: REMOTE_DATA_START, sparse: true },
@@ -58,7 +58,6 @@
   const SUNDAY_ROTATION_ANCHOR = '2026-09-06';
 
   const DEFAULT_SETTINGS = {
-    cap16: true,
     weekdayPattern: true,
     weights: { under1: 3, oneToTwo: 2, twoPlus: 0.5 }
   };

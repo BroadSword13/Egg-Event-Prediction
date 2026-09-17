@@ -437,33 +437,47 @@ test('confirmation on the reference day resets a rotation and preserves hard min
   }
 });
 
-test('max-gap deadline stays certain after overrides confirm no earlier hit', () => {
-  const original = structuredClone(store.getState());
+test('a missed Non-Ultra deadline stays possible without excluding other events', () => {
+  const original = store.clone(store.getState());
   try {
-    const next = structuredClone(original);
-    next.overrides = {
-      ...next.overrides,
-      '2026-09-15': ['housing_blue'],
-      '2026-09-16': ['blocker_gifts']
-    };
+    const next = store.clone(original);
+    next.settings.cap16 = true; // An old saved setting must not restore the rule.
+    next.overrides['2026-09-15'] = ['housing_blue'];
+    next.overrides['2026-09-16'] = ['blocker_boost_duration', 'shipping_pink'];
     store.replaceState(next);
     model.invalidateNextHitCache();
-
-    const lastShipping = store.lastEventBefore('shipping_blue', '2026-09-15');
-    assert.equal(lastShipping, '2026-09-03');
-    assert.equal(model.latestEligibleGap('shipping_blue', lastShipping), 14,
-      'weekday restrictions make Sep 17 the final eligible day before the 16-day cap');
-    assert.equal(model.isHardDue('shipping_blue', '2026-09-17', lastShipping), true);
-
-    const forecast = model.simulateForecast('2026-09-16', 1);
-    assert.equal(forecast['2026-09-17'].shipping_blue, 1,
-      'Non-Ultra Shipping must be 100% on its final eligible day after Sep 15-16 are confirmed misses');
-  } finally {
-    store.replaceState(original);
-    model.invalidateNextHitCache();
-  }
+    const forecast = model.simulateForecast('2026-09-16', 6);
+    assert.ok(forecast['2026-09-17'].shipping_blue > 0 && forecast['2026-09-17'].shipping_blue < 1);
+    assert.ok(forecast['2026-09-17'].drone_green > 0);
+    assert.ok(forecast['2026-09-22'].shipping_blue > 0,
+      'passing the former deadline must not make Vehicle Sale impossible');
+    assert.equal(model.isHardBlocked('shipping_blue', '2026-09-22', '2026-09-03'), false);
+  } finally { store.replaceState(original); model.invalidateNextHitCache(); }
 });
 
+test('all Non-Ultra families have positive, non-certain and increasing overdue hazards', () => {
+  const stats = {
+    rows: [{ gap: 7, weighted: 3 }, { gap: 14, weighted: 9 }],
+    exact: new Map([[7, 3], [14, 9]]),
+    survivor: new Map([[7, 12], [14, 9]])
+  };
+  for (const id of config.MODEL_ORDER.filter(id => config.EVENTS[id].tier === 'non-ultra')) {
+    const sunday = config.EVENTS[id].sundayOnly;
+    const first = sunday ? '2026-09-20' : '2026-09-16';
+    const later = sunday ? '2026-09-27' : '2026-09-17';
+    const early = model.hazardFast(id, first, '2026-09-01', stats);
+    const late = model.hazardFast(id, later, '2026-09-01', stats);
+    assert.ok(early > 0 && early < 1, `${id}: missing tail must retain uncertainty`);
+    assert.ok(late >= early && late < 1, `${id}: overdue chance must not drop to zero`);
+    assert.ok(model.hazardFast(id, first, null, stats) > 0, `${id}: unknown history must not imply impossible`);
+  }
+  assert.equal(model.hazardFast('capacity_purple', '2026-09-21', '2026-08-01', stats), 0);
+  assert.equal(model.hazardFast('shipping_blue', '2026-09-16', '2026-09-15', stats), 0);
+});
+
+test('old cap setting is removed from imported settings', () => {
+  assert.equal('cap16' in store.normalizeSettings({ cap16: true }), false);
+});
 
 test('later remote records, manual confirmations, and sync timestamps do not repaint any forecast', () => {
   const original = store.clone(store.getState());

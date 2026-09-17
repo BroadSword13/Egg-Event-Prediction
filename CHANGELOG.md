@@ -2,6 +2,9 @@
 
 ## v0.5 - 2026-09-17
 
+- Removed the hard 16-day deadline. All Non-Ultra events now use soft gap estimates: overdue events remain possible, and reaching a deadline no longer forces one event to occur or rules it out afterward. Each rotation uses its own history, including Mission Capacity Boost.
+- Gave missing history and previously unseen Non-Ultra gaps a small allowance instead of treating them as impossible. Removed the old cap switch and added tests for missed deadlines and overdue events.
+
 - Fixed historical forecasts so they only use events known through the selected reference day. Later events and sync times no longer change those predictions, though corrections to older history still can.
 - Moved prediction calculations into the background so the page stays responsive. An “Updating predictions…” message appears while calculations run, and the previous results stay visible until the new ones are ready. This also works when opening the app directly from a folder.
 - Made the reference date clearer by labeling it as Pacific time and adding a **Current event day** button. A date you select now stays selected during automatic syncs. Today’s and Tomorrow’s panels have **Live** labels to show that they follow the current day.

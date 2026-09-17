@@ -41,11 +41,10 @@
   };
 
   // Hot-path caches. Forecast simulations evaluate the same event/date pairs
-  // thousands of times, so eligibility and deadline checks should be computed
+  // thousands of times, so eligibility checks should be computed
   // once per model state rather than once per simulation run.
   const ultraCadenceCache = new Map();
   const allowedWeekdayCache = new Map();
-  const eligibleGapCache = new Map();
 
 
   function fixedNonUltraEvent(dateStr) {
@@ -108,70 +107,57 @@
     return allowed;
   }
 
-  function latestEligibleGap(eventId, lastDate) {
+  // Non-Ultra estimates include a weak prior so missing or unseen gaps are
+  // uncertain rather than impossible. One recent observation has weight 3.
+  const NON_ULTRA_PRIOR_WEIGHT = 3;
+  const NON_ULTRA_HAZARD_CEILING = 0.95;
+
+  function softGapProfile(eventId, rows) {
     const event = EVENTS[eventId];
-    const state = store.getState();
-    if (!event.maxGap || !state.settings.cap16) return null;
+    const support = rows.reduce((sum, row) => sum + row.weighted, 0);
+    const meanGap = support > 0
+      ? rows.reduce((sum, row) => sum + row.gap * row.weighted, 0) / support
+      : event.sundayOnly ? 28 : 14;
+    const eligibleFraction = event.sundayOnly ? 1 / 7
+      : event.weekdayObserved && store.getState().settings.weekdayPattern ? 3 / 7 : 1;
+    const prior = 1 / Math.max(2, meanGap * eligibleFraction);
+    const maximum = rows.length ? Math.max(...rows.map(row => row.gap)) : 0;
+    const tailMass = rows.find(row => row.gap === maximum)?.weighted || 0;
+    const tailBase = (tailMass + NON_ULTRA_PRIOR_WEIGHT * prior) / (tailMass + NON_ULTRA_PRIOR_WEIGHT);
+    return { meanGap, prior, maximum, tailBase };
+  }
 
-    const key = `${eventId}|${lastDate}|${state.settings.weekdayPattern ? 1 : 0}`;
-    if (eligibleGapCache.has(key)) return eligibleGapCache.get(key);
-
-    let lastGap = null;
-    for (let gap = event.minGap || 1; gap <= event.maxGap; gap += 1) {
-      if (allowedWeekday(eventId, addDays(lastDate, gap))) lastGap = gap;
+  function nonUltraHazard(eventId, gap, stats) {
+    const profile = stats.soft || softGapProfile(eventId, stats.rows);
+    if (gap == null) return profile.prior;
+    const exact = stats.exact.get(gap) || 0;
+    const survivor = stats.survivor.get(gap) || 0;
+    let probability = (exact + NON_ULTRA_PRIOR_WEIGHT * profile.prior)
+      / (survivor + NON_ULTRA_PRIOR_WEIGHT);
+    if (gap > profile.maximum) {
+      // Extend the final observed hazard smoothly; never drop to zero after
+      // passing the longest observed gap. With no gaps, start from the prior.
+      probability = 1 - (1 - profile.tailBase)
+        * Math.exp(-(gap - profile.maximum) / profile.meanGap);
     }
-    eligibleGapCache.set(key, lastGap);
-    return lastGap;
+    return clamp(probability, 0, NON_ULTRA_HAZARD_CEILING);
   }
 
   function hazard(eventId, targetDate, simulatedHistory = null) {
-    const event = EVENTS[eventId];
-    const state = store.getState();
-    if (!allowedWeekday(eventId, targetDate)) return 0;
-
     const last = store.lastEventBefore(eventId, targetDate, simulatedHistory);
-    if (!last) return 0;
-
-    const gap = diffDays(last, targetDate);
-    if (event.minGap && gap < event.minGap) return 0;
-
-    if (state.settings.cap16 && event.maxGap) {
-      const deadline = latestEligibleGap(eventId, last);
-      if (deadline != null && gap > deadline) return 0;
-      if (deadline != null && gap === deadline) return 1;
-    }
-
-    const stats = store.gapStats(eventId, targetDate);
-    const exact = stats.find(row => row.gap === gap)?.weighted || 0;
-    const survivor = stats
-      .filter(row => row.gap >= gap)
-      .reduce((sum, row) => sum + row.weighted, 0);
-
-    if (survivor <= 0) return event.sparse ? 0.015 : 0;
-
-    let probability = exact / survivor;
-    if (event.sparse) probability = Math.max(probability, 0.02);
-    return clamp(probability, 0, 1);
+    return hazardFast(eventId, targetDate, last, buildStatCache(eventId, targetDate));
   }
 
   function hazardFast(eventId, targetDate, lastDate, stats) {
     const event = EVENTS[eventId];
-    const state = store.getState();
-    if (!allowedWeekday(eventId, targetDate) || !lastDate) return 0;
-
-    const gap = diffDays(lastDate, targetDate);
-    if (event.minGap && gap < event.minGap) return 0;
-
-    if (state.settings.cap16 && event.maxGap) {
-      const deadline = latestEligibleGap(eventId, lastDate);
-      if (deadline != null && gap > deadline) return 0;
-      if (deadline != null && gap === deadline) return 1;
-    }
-
+    if (!allowedWeekday(eventId, targetDate)) return 0;
+    const gap = lastDate ? diffDays(lastDate, targetDate) : null;
+    if (gap != null && event.minGap && gap < event.minGap) return 0;
+    if (event.tier === 'non-ultra') return nonUltraHazard(eventId, gap, stats);
+    if (!lastDate) return 0;
     const exact = stats.exact.get(gap) || 0;
     const survivor = stats.survivor.get(gap) || 0;
     if (survivor <= 0) return event.sparse ? 0.015 : 0;
-
     let probability = exact / survivor;
     if (event.sparse) probability = Math.max(probability, 0.02);
     return clamp(probability, 0, 1);
@@ -209,7 +195,7 @@
       survivor.set(gap, total);
     }
 
-    return { rows, exact, survivor };
+    return { rows, exact, survivor, soft: EVENTS[eventId].tier === 'non-ultra' ? softGapProfile(eventId, rows) : null };
   }
 
   function resolveConflicts(triggered, probabilities, random) {
@@ -266,22 +252,7 @@
     const gap = diffDays(lastDate, targetDate);
     if (event.minGap && gap < event.minGap) return true;
 
-    if (state.settings.cap16 && event.maxGap) {
-      const deadline = latestEligibleGap(eventId, lastDate);
-      if (deadline != null && gap > deadline) return true;
-    }
-
     return false;
-  }
-
-  function isHardDue(eventId, targetDate, lastDate) {
-    const event = EVENTS[eventId];
-    const state = store.getState();
-    if (!lastDate || !state.settings.cap16 || !event.maxGap) return false;
-    if (!allowedWeekday(eventId, targetDate)) return false;
-
-    const deadline = latestEligibleGap(eventId, lastDate);
-    return deadline != null && diffDays(lastDate, targetDate) === deadline;
   }
 
   function fallbackPoolWeights(ids, statCache = null, hardBlocked = null) {
@@ -394,14 +365,9 @@
     let guaranteedNonUltra = null;
     let guaranteedUltra = null;
 
-    // A max-gap deadline is a hard scheduling rule, not merely a large weight.
-    // Once a rotation reaches its last eligible day, the shared daily slot must
-    // select it; otherwise normalization against other candidates can dilute a
-    // required 100% hit into a lower displayed probability.
-    const dueNonUltra = nonUltraCandidates.filter(id => isHardDue(id, date, last[id]));
-    const dueUltra = ultraCandidates.filter(id => isHardDue(id, date, last[id]));
-    const selectableNonUltra = dueNonUltra.length ? dueNonUltra : nonUltraCandidates;
-    const selectableUltra = dueUltra.length ? dueUltra : ultraCandidates;
+    // Elapsed time affects weights, never forces a particular Non-Ultra event.
+    const selectableNonUltra = nonUltraCandidates;
+    const selectableUltra = ultraCandidates;
 
     if (selectableNonUltra.length && selectableUltra.length) {
       const pair = weightedCompatiblePair(selectableNonUltra, selectableUltra, probabilities, statCache, random, hardBlocked);
@@ -434,7 +400,6 @@
     nextHitCacheValue = null;
     ultraCadenceCache.clear();
     allowedWeekdayCache.clear();
-    eligibleGapCache.clear();
     forecastCache.clear();
     capacityForecastCache.clear();
   }
@@ -821,11 +786,9 @@
     highestProbability,
     latestUltraCadenceDate,
     isUltraCadenceDate,
-    latestEligibleGap,
     hazard,
     hazardFast,
     isHardBlocked,
-    isHardDue,
     conflicts,
     nonUltraCandidatesForDate,
     ultraCandidatesForDate,

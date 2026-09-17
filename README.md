@@ -57,13 +57,13 @@ The model treats every supported rotation as a first-class event. Fourteen daily
 - Ultra and Non-Ultra versions of the same tracked event family cannot occur on the same day.
 - No additional same-day exclusivity among Boost Time+, Generous Gifts, Shell Sale, and Mission Fuel Boost is assumed unless future data establishes it.
 - Non-Ultra Hab Sale and Vehicle Sale have a 6-day minimum gap; Non-Ultra Generous Drones has a 7-day minimum.
-- The optional 16-day prediction cap applies to Non-Ultra Hab Sale, Vehicle Sale, and Generous Drones.
+- All eight Non-Ultra rotations use soft gap estimates instead of hard maximum-gap deadlines, including Mission Capacity Boost. An overdue event stays possible on eligible dates without being forced into the schedule.
 - The optional observed weekday rule limits those same rotations to Tuesday–Thursday.
 - The Tomorrow’s Events panel treats the regular Non-Ultra Friday–Monday schedule as fixed: Research Sale on Friday, Prestige Boost on Saturday, alternating Epic Research Sale / Crafting Sale on Sunday, and Cash Boost on Monday.
 - Mission Capacity Boost events are restricted to Pacific-time Sundays and are displayed only on Sunday rows in their dedicated forecast. Non-Ultra Mission Capacity Boost is an independent Sunday event and can occur alongside the regular fixed Non-Ultra Sunday event.
 - Every July 14 is excluded from training and current-gap resets because Egg Day uses a special event schedule.
 
-The raw history is retained even when a prediction rule is enabled. Rules affect forecasts and gap-training eligibility; they do not rewrite or delete source data.
+The old 16-day-cap setting is retired and removed when saved settings are loaded or imported. The raw history is retained even when a prediction rule is enabled. Rules affect forecasts and gap-training eligibility; they do not rewrite or delete source data.
 
 ## Prediction method
 
@@ -71,9 +71,11 @@ The predictor is based on what actually happened in past event rotations. At a h
 
 1. It measures the number of days between previous occurrences of each event.
 2. Recent history counts more than older history.
-3. It estimates how likely an event is to end its current gap on each eligible future date.
+3. It estimates how likely an event is to end its current gap on each eligible future date. Non-Ultra estimates also allow unseen gaps and waits beyond the historical maximum.
 4. It applies the scheduling rules we have observed, including guaranteed event slots, Ultra cadence, weekday restrictions, same-day conflicts, Sunday-only Mission Capacity Boost, and the Egg Day exclusion.
 5. It simulates the future schedule thousands of times and turns those outcomes into the percentages shown in the app.
+
+Non-Ultra maximum gaps are observations, not deadlines. Missing history receives a weak prior, so one well-documented rotation cannot automatically exclude the others. Minimum-gap and weekday restrictions still determine which dates are eligible.
 
 The percentages are therefore estimates from historical behavior and the currently enabled rules; they are not an official Egg, Inc. schedule.
 
@@ -88,6 +90,10 @@ P(hit at gap g | event has not already hit)
 ```
 
 Historical observations are weighted by age. The selected forecast date is the reference day; confirmed events on that date immediately reset their rotation and add their newly completed gap to the training history. **Next X Days** begins after the reference date and skips rows where every selected event is 0%.
+
+For Non-Ultra events, the raw hazard is smoothed as `(exactWeight + 3 × prior) / (survivingWeight + 3)`. The prior is the inverse of the weighted average gap measured in eligible opportunities, capped at 0.5. Its weight of 3 is equivalent to one observation in the default most-recent recency band. When no completed gaps exist, the initial mean is 14 days for daily rotations or 28 days for Sunday capacity events. These are fallback assumptions, not learned scheduling rules.
+
+Beyond the longest observed gap, the estimate starts from the smoothed hazard at that maximum and increases exponentially toward 1 on a timescale equal to the weighted mean gap. The raw Non-Ultra hazard is capped at 0.95. The shared event pools then normalize compatible choices, so these raw weights are not the final displayed percentages. This smoothing is a modeling choice that has not yet been calibrated by a full historical backtest. Ultra hazard calculations are unchanged, though their final probabilities can change when Non-Ultra competition changes.
 
 The main forecast uses 3,000 deterministic Monte Carlo runs. Each run advances one day at a time, applies eligibility and conflict rules, resets rotations after simulated hits, and records which events occur. The Most Likely Next Date cards use a separate 1,200-run first-hit simulation to keep the interface responsive.
 

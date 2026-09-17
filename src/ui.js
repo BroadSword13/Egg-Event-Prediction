@@ -294,12 +294,12 @@
       bits.push(
         `Gap if there is no earlier hit: ${gap} days`,
         `Raw historical count at gap: ${count}`,
-        `Raw hazard if there is no earlier hit: ${pct(hazard)}`,
+        `${event.tier === 'non-ultra' ? 'Smoothed' : 'Raw'} hazard if there is no earlier hit: ${pct(hazard)}`,
         'Final probabilities also account for simulated earlier hits and competing events.'
       );
     }
     if (survivor) bits.push(`Historical gaps surviving this long: ${survivor}`);
-    if (current.settings.cap16 && event.maxGap) bits.push(`Prediction cap: ${event.maxGap} days`);
+    if (event.tier === 'non-ultra') bits.push('Soft gap estimate: unseen gaps retain a chance; overdue events are favored without a forced deadline.');
     if (current.settings.weekdayPattern && event.weekdayObserved) bits.push('Observed weekday pattern: Tue–Thu');
     if (NON_ULTRA_MIDWEEK_POOL.has(eventId)) {
       bits.push('Shares the Non-Ultra Tue–Thu event pool (Hab Sale, Vehicle Sale, Generous Drones, Boost Time+, Generous Gifts, Shell Sale, Mission Fuel Boost).');
@@ -1007,11 +1007,7 @@
 
         const nextState = {
           overrides: store.migrateLegacyOverrides(object.overrides || {}, object.remote?.confirmedDays, object.ui?.unifiedDailyEvents !== true),
-          settings: {
-            ...store.clone(DEFAULT_SETTINGS),
-            ...(object.settings || {}),
-            weights: store.normalizeWeights(object.settings?.weights || {})
-          },
+          settings: store.normalizeSettings(object.settings || {}),
           ui: {
             ...store.clone(DEFAULT_UI),
             ...(object.ui || {}),
@@ -1060,7 +1056,6 @@
 
   function syncSettingsUI() {
     const current = state();
-    document.getElementById('capToggle').checked = Boolean(current.settings.cap16);
     document.getElementById('weekdayToggle').checked = Boolean(current.settings.weekdayPattern);
     document.getElementById('weightUnder1').value = current.settings.weights.under1;
     document.getElementById('weight1to2').value = current.settings.weights.oneToTwo;
@@ -1174,10 +1169,9 @@
   }
 
   function bindSettingsControls() {
-    ['capToggle', 'weekdayToggle', 'weightUnder1', 'weight1to2', 'weight2plus'].forEach(id => {
+    ['weekdayToggle', 'weightUnder1', 'weight1to2', 'weight2plus'].forEach(id => {
       document.getElementById(id).addEventListener('change', () => {
         const current = state();
-        current.settings.cap16 = document.getElementById('capToggle').checked;
         current.settings.weekdayPattern = document.getElementById('weekdayToggle').checked;
         current.settings.weights.under1 = Number(document.getElementById('weightUnder1').value) || 0;
         current.settings.weights.oneToTwo = Number(document.getElementById('weight1to2').value) || 0;
