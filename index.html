@@ -17,7 +17,7 @@
       </div>
     </div>
     <div class="header-actions">
-      <span id="appVersionBadge" class="badge neutral">v0.4</span>
+      <span id="appVersionBadge" class="badge neutral">v0.5</span>
       <span id="dataThroughBadge" class="badge neutral"></span>
       <span id="clockBadge" class="badge neutral">Clock: Pacific</span>
       <span id="wasmeggSyncBadge" class="badge neutral">Wasmegg: seed data</span>
@@ -36,11 +36,14 @@
   </nav>
 
   <main>
+    <div id="predictionStatus" class="prediction-status" role="status" aria-live="polite" hidden></div>
     <section id="forecast" class="panel-section active">
       <div class="hero-grid">
         <article class="hero-card">
-          <div class="eyebrow">Forecast reference day</div>
-          <input id="forecastStart" class="date-input" type="date" />
+          <div class="eyebrow">Forecast reference day · Pacific</div>
+          <label class="sr-only" for="forecastStart">Forecast reference day in Pacific time</label><input id="forecastStart" class="date-input" type="date" />
+          <button id="currentEventDayBtn" class="button secondary">Current event day</button>
+          <div id="referenceMode" class="muted small"></div>
           <div id="forecastTimeZoneHint" class="muted small">Model dates use Egg, Inc. Pacific event time. Display dates adjust automatically to this browser.</div>
         </article>
         <article class="hero-card">
@@ -64,8 +67,8 @@
         <section class="today-events-section" aria-labelledby="todayEventsTitle">
           <div class="section-heading today-events-heading">
             <div>
-              <h1 id="todayEventsTitle">Today’s events</h1>
-              <p class="muted">Confirmed events for today.</p>
+              <h1 id="todayEventsTitle">Today’s events <span class="live-label">Live</span></h1>
+              <p class="muted">Current event day, independent of the forecast reference.</p>
             </div>
             <span id="todayEventDateBadge" class="badge neutral"></span>
           </div>
@@ -75,7 +78,7 @@
         <section class="today-events-section tomorrow-events-section" aria-labelledby="tomorrowEventsTitle">
           <div class="section-heading today-events-heading">
             <div>
-              <h1 id="tomorrowEventsTitle">Tomorrow’s events</h1>
+              <h1 id="tomorrowEventsTitle">Tomorrow’s events <span class="live-label">Live</span></h1>
               <p class="muted">Highest-probability Ultra and Non-Ultra picks.</p>
             </div>
             <span id="tomorrowEventDateBadge" class="badge neutral"></span>
@@ -173,7 +176,7 @@
           <summary class="collapsible-card-summary">
             <div>
               <h2>Record a day</h2>
-              <p class="muted small">Choose every event that occurred. Dates are shown in your local time and mapped to the Egg, Inc. event date internally. Saving a day records unselected tracked events as absent for that event date.</p>
+              <p class="muted small">Choose every event that occurred. Dates are shown in your local time and mapped to the Egg, Inc. event date internally. Confirm past or current event days only. Saving records unselected tracked events as absent. Forecasts use history only through their reference day.</p>
             </div>
           </summary>
           <div class="record-row">
@@ -183,7 +186,7 @@
           <div id="eventChecklist" class="event-checklist"></div>
           <div id="validationMsg" class="validation-msg"></div>
           <div class="record-actions">
-            <button id="saveDayBtn" class="button primary">Confirm day</button>
+            <button id="saveDayBtn" class="button primary">Confirm</button>
             <button id="clearDayBtn" class="button danger ghost">Clear override</button>
           </div>
         </details>
@@ -204,6 +207,7 @@
       </div>
       <div class="calendar-controls card compact-controls" aria-label="Calendar display options">
         <label class="calendar-toggle"><input id="calendarShowConfirmed" type="checkbox" checked /> Confirmed</label>
+        <label class="calendar-toggle"><input id="calendarShowSchedule" type="checkbox" checked /> Regular schedule</label>
         <label class="calendar-toggle"><input id="calendarShowPredictions" type="checkbox" checked /> Predictions</label>
         <label class="calendar-toggle"><input id="calendarShowNonUltra" type="checkbox" checked /> Non-Ultra</label>
         <label class="calendar-toggle"><input id="calendarShowUltra" type="checkbox" checked /> Ultra</label>
@@ -312,6 +316,7 @@
   <script src="src/store.js"></script>
   <script src="src/wasmegg.js"></script>
   <script src="src/model.js"></script>
+  <script src="src/forecast-service.js"></script>
   <script src="src/ui.js"></script>
   <script src="app.js"></script>
 </body>

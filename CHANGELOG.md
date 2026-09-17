@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.5 - 2026-09-17
+
+- Fixed historical forecasts so they only use events known through the selected reference day. Later events and sync times no longer change those predictions, though corrections to older history still can.
+- Moved prediction calculations into the background so the page stays responsive. An “Updating predictions…” message appears while calculations run, and the previous results stay visible until the new ones are ready. This also works when opening the app directly from a folder.
+- Made the reference date clearer by labeling it as Pacific time and adding a **Current event day** button. A date you select now stays selected during automatic syncs. Today’s and Tomorrow’s panels have **Live** labels to show that they follow the current day.
+- Limited **Record a day** to past and current event days. Existing future entries are kept, but forecasts ignore them until the reference date reaches them.
+- Added a **Regular schedule** calendar toggle for past and future dates. These entries are labeled **Scheduled**, since they show the usual weekly pattern rather than confirmed events. The Pacific date is also shown when it differs from your local date.
+- Added markers between forecast rows to show how many dates were skipped. Made the collapse arrows easier to see, fixed cards that stayed stretched after being collapsed, tidied up the rule alignment, and shortened **Confirm day** to **Confirm**.
+- Added tests for historical forecasts, background calculations, and the six-day Non-Ultra Hab Sale minimum gap.
+
 ## v0.4 - 2026-09-16
 
 - Reduced the Non-Ultra Hab Sale minimum gap from 7 days to 6 days, allowing forecasts to consider six-day returns.

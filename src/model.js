@@ -32,7 +32,7 @@
     mulberry32,
     parseDate
   } = root.EggEventLab.utils;
-  const store = root.EggEventLab.store;
+  function createModel(store = root.EggEventLab.store, scoped = false) {
 
   const FIXED_NON_ULTRA = {
     1: { label: 'Cash Boost', short: 'Cash Boost', icon: '💰', color: 'gold', family: 'earnings' },
@@ -440,31 +440,28 @@
   }
 
   function simulationFingerprint(startDate) {
-    const state = store.getState();
-    return `${startDate}|${JSON.stringify(state.settings)}|${JSON.stringify(state.overrides)}|${state.remote?.syncedAt || 'seed'}`;
-  }
-
-  function nextHitSeed(startDate) {
-    const state = store.getState();
-    return hashString(`next-hit|${startDate}${JSON.stringify(state.settings)}${JSON.stringify(state.overrides)}|${state.remote?.syncedAt || 'seed'}`);
+    // Only effective history through the reference day influences the seed.
+    // Sync timestamps, later confirmations, and future corrections cannot repaint it.
+    const historical = root.EggEventLab.store.createStore(store.clone(store.getState()), startDate);
+    return JSON.stringify([startDate, historical.getState().settings,
+      MODEL_ORDER.map(id => historical.modelDates(id))]);
   }
 
   function forecastSeed(startDate) {
-    const state = store.getState();
-    return hashString(`${startDate}${JSON.stringify(state.settings)}${JSON.stringify(state.overrides)}|${state.remote?.syncedAt || 'seed'}`);
+    return hashString(simulationFingerprint(startDate));
   }
 
   function simulationRunRandom(baseSeed, run) {
     return mulberry32(hashString(`${baseSeed}|run:${run}`));
   }
 
-  function simulateFirstHitPool(startDate, dateList, activeOrder, targetOrder, seedLabel, runs = NEXT_HIT_RUNS) {
+  function* simulateFirstHitPoolSteps(startDate, dateList, activeOrder, targetOrder, seedLabel, runs = NEXT_HIT_RUNS) {
     const firstDate = addDays(startDate, 1);
     const confirmed = store.getConfirmedDays();
     const counts = Object.fromEntries(targetOrder.map(id => [id, new Map()]));
     const hitTotals = Object.fromEntries(targetOrder.map(id => [id, 0]));
     const state = store.getState();
-    const baseSeed = hashString(`${seedLabel}|${startDate}|${JSON.stringify(state.settings)}|${JSON.stringify(state.overrides)}|${state.remote?.syncedAt || 'seed'}`);
+    const baseSeed = hashString(`${seedLabel}|${simulationFingerprint(startDate)}`);
 
     const statCache = {};
     const initialLast = {};
@@ -474,11 +471,13 @@
     });
 
     for (let run = 0; run < runs; run += 1) {
+      if (run % 8 === 0) yield;
       const random = simulationRunRandom(baseSeed, run);
       const last = { ...initialLast };
       const firstSeen = new Set();
 
       for (const date of dateList) {
+        if (date.endsWith('-01')) yield;
         if (isAnniversaryDate(date)) continue;
 
         let active = [];
@@ -522,13 +521,13 @@
     }));
   }
 
-  function simulateCapacityFirstHitForecast(startDate, dateList, runs = NEXT_HIT_RUNS) {
+  function* simulateCapacityFirstHitForecastSteps(startDate, dateList, runs = NEXT_HIT_RUNS) {
     const firstDate = addDays(startDate, 1);
     const confirmed = store.getConfirmedDays();
     const counts = Object.fromEntries(CAPACITY_ORDER.map(id => [id, new Map()]));
     const hitTotals = Object.fromEntries(CAPACITY_ORDER.map(id => [id, 0]));
     const state = store.getState();
-    const baseSeed = hashString(`next-capacity|${startDate}|${JSON.stringify(state.settings)}|${JSON.stringify(state.overrides)}|${state.remote?.syncedAt || 'seed'}`);
+    const baseSeed = hashString(`next-capacity|${simulationFingerprint(startDate)}`);
 
     const statCache = {};
     const initialLast = {};
@@ -538,11 +537,13 @@
     });
 
     for (let run = 0; run < runs; run += 1) {
+      if (run % 8 === 0) yield;
       const random = simulationRunRandom(baseSeed, run);
       const last = { ...initialLast };
       const firstSeen = new Set();
 
       for (const date of dateList) {
+        if (date.endsWith('-01')) yield;
         if (isAnniversaryDate(date)) continue;
 
         let active = [];
@@ -593,17 +594,17 @@
     }));
   }
 
-  function simulateNextHitForecast(startDate, days = NEXT_DATE_HORIZON) {
+  function* simulateNextHitForecastSteps(startDate, days = NEXT_DATE_HORIZON) {
     const mainDays = Math.min(days, MAIN_NEXT_DATE_HORIZON);
     const firstDate = addDays(startDate, 1);
     const mainDates = Array.from({ length: mainDays }, (_, index) => addDays(firstDate, index));
     const mainActiveOrder = ORDER.filter(id => EVENTS[id].family !== 'capacity');
-    const mainResults = simulateFirstHitPool(startDate, mainDates, mainActiveOrder, mainActiveOrder, 'next-main');
+    const mainResults = yield* simulateFirstHitPoolSteps(startDate, mainDates, mainActiveOrder, mainActiveOrder, 'next-main');
 
     const capacityWeeks = Math.max(1, Math.ceil(days / 7));
     const capacityDates = capacitySundayDates(startDate, capacityWeeks)
       .filter(date => diffDays(startDate, date) <= days);
-    const capacityResults = simulateCapacityFirstHitForecast(startDate, capacityDates);
+    const capacityResults = yield* simulateCapacityFirstHitForecastSteps(startDate, capacityDates);
 
     return { ...mainResults, ...capacityResults };
   }
@@ -617,7 +618,7 @@
     return nextHitCacheValue;
   }
 
-  function simulateForecast(startDate, days = 7) {
+  function* simulateForecastSteps(startDate, days = 7) {
     const cacheKey = `${simulationFingerprint(startDate)}|days:${days}`;
     if (forecastCache.has(cacheKey)) return forecastCache.get(cacheKey);
 
@@ -637,10 +638,12 @@
     });
 
     for (let run = 0; run < SIM_RUNS; run += 1) {
+      if (run % 8 === 0) yield;
       const random = simulationRunRandom(baseSeed, run);
       const last = { ...initialLast };
 
       for (const date of dateList) {
+        if (date.endsWith('-01')) yield;
         if (isAnniversaryDate(date)) continue;
 
         if (confirmed[date]) {
@@ -721,10 +724,10 @@
 
   function capacityForecastSeed(startDate) {
     const state = store.getState();
-    return hashString(`capacity|${startDate}|${JSON.stringify(state.settings)}|${JSON.stringify(state.overrides)}|${state.remote?.syncedAt || 'seed'}`);
+    return hashString(`capacity|${simulationFingerprint(startDate)}`);
   }
 
-  function simulateCapacityForecast(startDate, weeks = 4) {
+  function* simulateCapacityForecastSteps(startDate, weeks = 4) {
     const cacheKey = `${simulationFingerprint(startDate)}|capacity-weeks:${weeks}`;
     if (capacityForecastCache.has(cacheKey)) return capacityForecastCache.get(cacheKey);
 
@@ -744,10 +747,12 @@
     });
 
     for (let run = 0; run < SIM_RUNS; run += 1) {
+      if (run % 8 === 0) yield;
       const random = simulationRunRandom(baseSeed, run);
       const last = { ...initialLast };
 
       for (const date of dateList) {
+        if (date.endsWith('-01')) yield;
         if (isAnniversaryDate(date)) continue;
 
         if (confirmed[date]) {
@@ -784,7 +789,33 @@
     return result;
   }
 
-  root.EggEventLab.model = {
+  const steps = { simulateForecast: simulateForecastSteps,
+    simulateCapacityForecast: simulateCapacityForecastSteps,
+    simulateNextHitForecast: simulateNextHitForecastSteps,
+    simulateCapacityFirstHitForecast: simulateCapacityFirstHitForecastSteps };
+
+  function forecastSteps(method, args) {
+    if (!steps[method]) throw new Error('Unknown forecast method');
+    if (scoped) return steps[method](...args);
+    const snapshot = root.EggEventLab.store.createStore(store.clone(store.getState()), args[0]);
+    return createModel(snapshot, true).forecastSteps(method, args);
+  }
+
+  function finish(method, args) {
+    const iterator = forecastSteps(method, args);
+    let result;
+    do { result = iterator.next(); } while (!result.done);
+    return result.value;
+  }
+  function simulateForecast(...args) { return finish('simulateForecast', args); }
+  function simulateCapacityForecast(...args) { return finish('simulateCapacityForecast', args); }
+  function simulateNextHitForecast(...args) { return finish('simulateNextHitForecast', args); }
+  function simulateCapacityFirstHitForecast(...args) { return finish('simulateCapacityFirstHitForecast', args); }
+
+  return {
+    createModel,
+    forecastSteps,
+
     allowedWeekday,
     fixedNonUltraEvent,
     highestProbability,
@@ -808,4 +839,6 @@
     simulateCapacityForecast,
     invalidateNextHitCache
   };
+  }
+  root.EggEventLab.model = createModel();
 })(typeof window !== 'undefined' ? window : globalThis);

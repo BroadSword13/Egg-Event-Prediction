@@ -22,6 +22,8 @@
   const { SEED_EVENTS, SEED_CONFIRMED_DAYS } = root.EggEventLab.seed;
   const { addDays, clamp, diffDays, isAnniversaryDate, isoDate, parseDate } = root.EggEventLab.utils;
 
+  function createStore(initialState = null, cutoff = null) {
+
   function clone(value) {
     return typeof structuredClone === 'function'
       ? structuredClone(value)
@@ -129,7 +131,7 @@
     }
   }
 
-  let state = loadState();
+  let state = initialState || loadState();
 
   function getState() {
     return state;
@@ -170,7 +172,7 @@
       merged[date] = [...tracked];
     });
 
-    return merged;
+    return Object.fromEntries(Object.entries(merged).filter(([date]) => !cutoff || date <= cutoff));
   }
 
   function getAllEventDates(eventId) {
@@ -183,7 +185,7 @@
       });
     }
 
-    return [...dates].sort();
+    return [...dates].filter(date => !cutoff || date <= cutoff).sort();
   }
 
   function modelDates(eventId) {
@@ -272,7 +274,8 @@
     return [...byGap.values()].sort((a, b) => a.gap - b.gap);
   }
 
-  root.EggEventLab.store = {
+  return {
+    createStore,
     clone,
     defaultState,
     normalizeWeights,
@@ -295,4 +298,6 @@
     recencyWeight,
     gapStats
   };
+  }
+  root.EggEventLab.store = createStore();
 })(typeof window !== 'undefined' ? window : globalThis);

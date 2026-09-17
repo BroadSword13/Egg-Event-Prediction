@@ -22,9 +22,9 @@ function timestamp(dateString) {
   return Date.parse(`${dateString}T12:00:00Z`) / 1000;
 }
 
-test('release is v0.4 and matches VERSION', () => {
-  assert.equal(config.APP_VERSION, '0.4');
-  assert.equal(require('node:fs').readFileSync(path.join(root, 'VERSION'), 'utf8').trim(), '0.4');
+test('release is v0.5 and matches VERSION', () => {
+  assert.equal(config.APP_VERSION, '0.5');
+  assert.equal(require('node:fs').readFileSync(path.join(root, 'VERSION'), 'utf8').trim(), '0.5');
 });
 
 test('date helpers preserve calendar-day arithmetic', () => {
@@ -420,7 +420,7 @@ test('unconfirmed future predictions do not create a certain reset on the follow
   }
 });
 
-test('future override resets a rotation and hard minimum gaps stay at zero', () => {
+test('confirmation on the reference day resets a rotation and preserves hard minimum gaps', () => {
   const original = structuredClone(store.getState());
   try {
     const next = structuredClone(original);
@@ -428,8 +428,7 @@ test('future override resets a rotation and hard minimum gaps stay at zero', () 
     store.replaceState(next);
     model.invalidateNextHitCache();
 
-    const forecast = model.simulateForecast('2026-09-14', 2);
-    assert.equal(forecast['2026-09-15'].shipping_blue, 1, 'override should force Non-Ultra Shipping on Sep 15');
+    const forecast = model.simulateForecast('2026-09-15', 1);
     assert.equal(forecast['2026-09-16'].shipping_blue, 0, 'Non-Ultra Shipping must be impossible one day after it hit');
     assert.equal(model.isHardBlocked('shipping_blue', '2026-09-16', '2026-09-15'), true);
   } finally {
@@ -456,11 +455,60 @@ test('max-gap deadline stays certain after overrides confirm no earlier hit', ()
       'weekday restrictions make Sep 17 the final eligible day before the 16-day cap');
     assert.equal(model.isHardDue('shipping_blue', '2026-09-17', lastShipping), true);
 
-    const forecast = model.simulateForecast('2026-09-14', 3);
+    const forecast = model.simulateForecast('2026-09-16', 1);
     assert.equal(forecast['2026-09-17'].shipping_blue, 1,
       'Non-Ultra Shipping must be 100% on its final eligible day after Sep 15-16 are confirmed misses');
   } finally {
     store.replaceState(original);
     model.invalidateNextHitCache();
   }
+});
+
+
+test('later remote records, manual confirmations, and sync timestamps do not repaint any forecast', () => {
+  const original = store.clone(store.getState());
+  try {
+    const reference = '2026-09-14';
+    const base = store.defaultState();
+    base.remote.events = Object.fromEntries(config.MODEL_ORDER.map(id => [id, [...app.seed.SEED_EVENTS[id]]]));
+    base.remote.confirmedDays = store.clone(app.seed.SEED_CONFIRMED_DAYS);
+    base.remote.syncedAt = '2026-09-14T20:00:00Z';
+    store.replaceState(base);
+    model.invalidateNextHitCache();
+    const before = model.simulateForecast(reference, 7);
+    const beforeCapacity = model.simulateCapacityForecast(reference, 4);
+    const beforeNext = model.getNextHitForecast(reference);
+    const later = store.clone(base);
+    later.remote.events.housing_blue.push('2026-09-15');
+    later.remote.events.housing_pink.push('2026-09-15');
+    later.remote.confirmedDays['2026-09-15'] = ['housing_blue', 'housing_pink'];
+    later.remote.syncedAt = '2026-09-25T20:00:00Z';
+    later.overrides['2026-09-17'] = ['shipping_blue'];
+    later.overrides['2026-09-20'] = ['capacity_purple'];
+    store.replaceState(later);
+    model.invalidateNextHitCache();
+    assert.deepEqual(model.simulateForecast(reference, 7), before);
+    assert.deepEqual(model.simulateCapacityForecast(reference, 4), beforeCapacity);
+    assert.deepEqual(model.getNextHitForecast(reference), beforeNext);
+  } finally { store.replaceState(original); model.invalidateNextHitCache(); }
+});
+
+test('cooperative simulations match synchronous results and retain an isolated snapshot', () => {
+  const original = store.clone(store.getState());
+  try {
+    const expected = model.simulateForecast('2026-09-14', 3);
+    const iterator = model.forecastSteps('simulateForecast', ['2026-09-14', 3]);
+    assert.equal(iterator.next().done, false);
+    const changed = store.clone(original);
+    changed.overrides['2026-09-14'] = ['shipping_blue'];
+    store.replaceState(changed);
+    let result;
+    do { result = iterator.next(); } while (!result.done);
+    assert.deepEqual(result.value, expected);
+  } finally { store.replaceState(original); model.invalidateNextHitCache(); }
+});
+
+test('Non-Ultra Hab Sale can return after six days, but not five', () => {
+  assert.equal(model.isHardBlocked('housing_blue', '2026-09-15', '2026-09-09'), false);
+  assert.equal(model.isHardBlocked('housing_blue', '2026-09-16', '2026-09-11'), true);
 });

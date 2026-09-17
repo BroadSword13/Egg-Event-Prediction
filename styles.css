@@ -271,3 +271,19 @@ details.collapsible-card:not([open]) .collapsible-card-summary { margin-bottom:0
 .data-table-status-row { display:flex; align-items:center; justify-content:space-between; gap:12px; margin:0 0 10px; }
 .data-table-status-row .button[hidden] { display:none; }
 @media (max-width:620px) { .data-table-status-row{align-items:flex-start;flex-direction:column}.data-table-status-row .button{width:100%} }
+
+/* v0.5: independent cards, visible controls, and calculation feedback. */
+.two-col { align-items:start; }
+.rule-icon { flex:0 0 28px; }
+.rule-item > div { min-width:0; }
+.switch-row input { flex:0 0 18px; }
+.collapsible-summary::after, .collapsible-card-summary::after { font-size:24px; color:var(--text); flex:0 0 28px; text-align:center; }
+.collapsible-summary:focus-visible, .collapsible-card-summary:focus-visible { outline:2px solid #7dd3fc; outline-offset:5px; border-radius:6px; }
+.forecast-gap-row td { position:static; text-align:center; padding:9px; color:var(--muted); font-size:11px; background:#0b1223; white-space:normal; }
+.prediction-status { position:sticky; top:86px; z-index:21; width:fit-content; margin:0 0 12px auto; padding:9px 14px; border-radius:10px; background:#1d3550; color:#e0f2fe; box-shadow:var(--shadow); }
+.prediction-status[hidden] { display:none; }
+.live-label { font-size:10px; vertical-align:middle; padding:3px 7px; border-radius:20px; color:#a7f3d0; background:#0d382d; text-transform:uppercase; letter-spacing:.05em; }
+#currentEventDayBtn { margin:8px 0; font-size:12px; }
+#referenceMode { margin-bottom:6px; }
+.schedule-zone { display:block; margin-top:3px; opacity:.85; font-size:9px; }
+.sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }

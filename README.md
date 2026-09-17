@@ -1,6 +1,6 @@
 # Egg Event Lab
 
-**Current release: v0.4**
+**Current release: v0.5**
 
 Egg Event Lab is a static browser application for analyzing and forecasting Egg, Inc. event rotations. It combines the public Wasmegg event history with local corrections, empirical gap distributions, recency weighting, and known same-day scheduling constraints.
 
@@ -25,6 +25,10 @@ The project has no build step and no runtime dependencies. It can be hosted dire
 - Calendar view with configurable confirmed/predicted overlays, tier filters, and a minimum probability threshold
 - Local event overrides; Record a Day uses the viewer’s local display date while mapping back to the Pacific event date internally
 - Lazy-loaded Data table that renders records in 100-row batches
+- Background forecast calculations, visible updating status, and a yielding fallback when Web Workers are unavailable
+- Historical forecasts restricted to data through their selected reference day
+- Independent regular-schedule calendar layer, including past dates
+- Inline skipped-date separators and a Current event day shortcut
 - JSON import/export for browser state
 - Automatic Wasmegg synchronization from January 1, 2024 forward
 - July 14 / Egg Day exclusion from model training
@@ -52,6 +56,7 @@ The model treats every supported rotation as a first-class event. Fourteen daily
 - Ultra same-rotation gaps ending in that cadence era are used for training only when their length aligns to the 2-day cadence; misaligned gaps are ignored as schedule-transition / anniversary artifacts.
 - Ultra and Non-Ultra versions of the same tracked event family cannot occur on the same day.
 - No additional same-day exclusivity among Boost Time+, Generous Gifts, Shell Sale, and Mission Fuel Boost is assumed unless future data establishes it.
+- Non-Ultra Hab Sale and Vehicle Sale have a 6-day minimum gap; Non-Ultra Generous Drones has a 7-day minimum.
 - The optional 16-day prediction cap applies to Non-Ultra Hab Sale, Vehicle Sale, and Generous Drones.
 - The optional observed weekday rule limits those same rotations to Tuesday–Thursday.
 - The Tomorrow’s Events panel treats the regular Non-Ultra Friday–Monday schedule as fixed: Research Sale on Friday, Prestige Boost on Saturday, alternating Epic Research Sale / Crafting Sale on Sunday, and Cash Boost on Monday.
@@ -111,7 +116,7 @@ Supported records dated January 1, 2024 or later are mapped as follows:
 
 The Wasmegg `ultra` field determines the Ultra/Non-Ultra classification. Future-dated records are ignored until their event date arrives. Successful syncs are cached in localStorage; if a later sync fails, the cached data remains available.
 
-A local confirmation overrides all tracked event rotations for that date. Wasmegg remains the default source for every supported event type when no local override exists.
+A local confirmation overrides all tracked event rotations for that date. Record a Day accepts only past or current event days; older imported future entries are retained but excluded from forecasts whose reference day precedes them. Wasmegg remains the default source for every supported event type when no local override exists.
 
 ## Project layout
 
@@ -129,6 +134,8 @@ A local confirmation overrides all tracked event rotations for that date. Wasmeg
 │   ├── store.js            # Browser state, event repository, gap statistics
 │   ├── wasmegg.js          # Wasmegg mapping, normalization, and synchronization
 │   ├── model.js            # Hazards, conflicts, and forecast simulations
+│   ├── forecast-worker.js  # Background simulation runner
+│   ├── forecast-service.js # Async jobs, cancellation, caching, and yielding fallback
 │   └── ui.js               # DOM rendering and interaction handlers
 ├── tests/
 │   └── core.test.js        # Core rules and data-normalization tests
@@ -162,10 +169,10 @@ Forecast and historical event dates are converted automatically to the browser's
 The test suite uses Node's built-in test runner and requires no packages:
 
 ```bash
-node --test tests/core.test.js
+node --test tests/*.test.js
 ```
 
-Current tests cover release/version consistency, date arithmetic, Egg Day exclusion, event-conflict rules, Wasmegg event mappings, Wasmegg date filtering, and rolling recency bands.
+Tests cover release consistency, date arithmetic, Egg Day exclusion, conflicts, Wasmegg mappings, recency weights, historical data isolation, deterministic forecast horizons, and equivalence of cooperative and synchronous simulations.
 
 ## Deploy
 
@@ -185,7 +192,7 @@ The fallback history is maintained separately in `data/seed-events.js` and is us
 
 ## Versioning
 
-The current release is **v0.4**. Public release numbers are stored in `src/config.js` and `VERSION`. The JSON export schema has its own independent version so application releases do not unnecessarily invalidate saved data.
+The current release is **v0.5**. Public release numbers are stored in `src/config.js` and `VERSION`. The JSON export schema has its own independent version so application releases do not unnecessarily invalidate saved data.
 
 `CHANGELOG.md` records public release changes.
 
@@ -197,3 +204,19 @@ No software license is included yet. Add one before granting third parties reuse
 
 The bundled `data/seed-events.js` file is a fallback subset used when the app has not completed a Wasmegg sync. A successful Wasmegg sync is authoritative and supplies the full supported history from January 1, 2024 forward. On each successful sync, the app audits every bundled seed date against the normalized Wasmegg data and reports any stale or incorrect seed dates in the browser console.
 
+
+## v0.5 reference dates and historical forecasts
+
+The reference picker uses the **Pacific event date**, with the day rolling over at 9:00 AM America/Los_Angeles. Forecast rows and calendar cells use the viewer’s local display date. The reference summary shows both dates when they differ. **Current event day** returns the picker to the synchronized clock’s event day (or browser fallback). Selecting a date pins it: automatic synchronization and event-day rollover do not move it until Current event day is selected again.
+
+Today’s and Tomorrow’s **Live** panels always describe the current event day and the following day. They are independent of the forecast reference.
+
+Every simulation receives an isolated snapshot containing only history through its reference day. Later Wasmegg events, manual confirmations, and cadence anchors are excluded. Random seeds use that effective history and model settings, not the latest sync timestamp. Thus, adding later events cannot change an earlier forecast. Corrections to earlier history, settings changes, and model updates can still change a historical replay; the app does not archive the exact forecasts originally displayed.
+
+Future confirmations are not a scenario engine. The app does not condition earlier simulated paths on an event entered in the future. Existing imported future entries remain stored, but do not affect a forecast until its reference date reaches them.
+
+The calendar can show historical predictions alongside subsequently confirmed outcomes; confirmation does not suppress the replay overlay.
+
+The calendar’s **Regular schedule** toggle is independent of Predictions and Confirmed. It reconstructs the current weekly pattern on past and future dates from 2024 onward, excluding Egg Day. Entries are labeled **Scheduled**, not confirmed observations; historical exceptions and schedule changes may differ. Shifted entries include their Pacific date alongside the local calendar date.
+
+Calculations use a Web Worker when available. Direct-file use and browsers without workers use the same simulation in short yielding batches. Previous results remain visible while **Updating predictions…** is shown. Superseded requests are canceled and cannot overwrite newer selections. No build step or third-party runtime dependency is required.

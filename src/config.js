@@ -1,7 +1,7 @@
 (function (root) {
   'use strict';
 
-  const APP_VERSION = '0.4';
+  const APP_VERSION = '0.5';
   const EXPORT_SCHEMA_VERSION = 6;
   const STORAGE_KEY = 'egg-event-lab-v1';
   const DAY = 86400000;
@@ -71,6 +71,7 @@
     capacityEvents: [...CAPACITY_ORDER],
     calendarShowConfirmed: true,
     calendarShowPredictions: true,
+    calendarShowSchedule: true,
     calendarShowNonUltra: true,
     calendarShowUltra: true,
     calendarMinProbability: 25
