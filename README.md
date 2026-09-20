@@ -9,6 +9,7 @@ The project has no build step and no runtime dependencies. It can be hosted dire
 ## Features
 
 - Separate Today and Tomorrow tiles displayed in the viewer’s local date/time context
+- A separate Mission Capacity Boost tile in Tomorrow’s Events, visible only when at least one tier has a positive chance; eligible Ultra and Non-Ultra percentages are shown separately
 - Side-by-side Today’s Events and Tomorrow’s Events panels, with tomorrow’s highest-probability Ultra and Non-Ultra picks
 - Configurable 1–120 row forward forecast that begins after the reference date and skips dates where every selected event is 0%
 - Per-event selection for all daily forecast rotations

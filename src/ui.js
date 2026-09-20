@@ -588,15 +588,7 @@
     const tomorrowForecast = liveForecast[tomorrow] || {};
     const fixed = model.fixedNonUltraEvent(tomorrow);
     const isSunday = parseDate(tomorrow).getDay() === 0;
-    const nonUltraCapacityProbability = isSunday ? Number(tomorrowForecast.capacity_purple || 0) : 0;
-    const fixedMeta = fixed
-      ? [
-          fixed.note || 'Fixed weekly Non-Ultra event.',
-          isSunday
-            ? `Non-Ultra Mission Capacity Boost is independent and can also occur (${pct(nonUltraCapacityProbability)} chance).`
-            : ''
-        ].filter(Boolean).join(' ')
-      : '';
+    const fixedMeta = fixed ? fixed.note || 'Fixed weekly Non-Ultra event.' : '';
     const nonUltraPick = fixed
       ? { event: fixed, probability: 1, meta: fixedMeta }
       : (() => {
@@ -605,15 +597,25 @@
         })();
 
     const ultraCandidates = [...ULTRA_MIDWEEK_POOL];
-    if (isSunday) ultraCandidates.push('capacity_pink');
     const ultraBest = model.highestProbability(tomorrowForecast, ultraCandidates);
     const ultraPick = ultraBest && ultraBest.probability > 0
-      ? { event: EVENTS[ultraBest.id], probability: ultraBest.probability, meta: 'Highest modeled Ultra chance.' }
+      ? { event: EVENTS[ultraBest.id], probability: ultraBest.probability, meta: 'Highest modeled Ultra daily-event chance.' }
       : null;
+
+    const capacityRows = isSunday ? CAPACITY_ORDER.flatMap(id => {
+      const probability = Number(tomorrowForecast[id] || 0);
+      if (!(probability > 0)) return [];
+      const tier = EVENTS[id].tier === 'ultra' ? 'Ultra' : 'Non-Ultra';
+      return [`<div class="tomorrow-capacity-chance"><span class="tomorrow-tier">${tier}</span><span class="prob ${probabilityClass(probability)}">${pct(probability)}</span><span class="today-event-meta">chance</span></div>`];
+    }) : [];
+    const capacityTile = capacityRows.length
+      ? `<article class="today-event-tile tomorrow-capacity-tile purple"><div class="today-event-icon">🚀</div><div class="tomorrow-event-content"><div class="today-event-name">Mission Capacity Boost</div><div class="today-event-meta">Double ship capacity</div>${capacityRows.join('')}</div></article>`
+      : '';
 
     box.innerHTML = [
       nonUltraPick ? dayEventTile(nonUltraPick.event, nonUltraPick.probability, 'Non-Ultra', nonUltraPick.meta) : unavailableTomorrowTile('Non-Ultra'),
-      ultraPick ? dayEventTile(ultraPick.event, ultraPick.probability, 'Ultra', ultraPick.meta) : unavailableTomorrowTile('Ultra')
+      ultraPick ? dayEventTile(ultraPick.event, ultraPick.probability, 'Ultra', ultraPick.meta) : unavailableTomorrowTile('Ultra'),
+      capacityTile
     ].join('');
     } catch (error) {
       if (error.name !== 'AbortError') {

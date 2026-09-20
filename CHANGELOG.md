@@ -2,6 +2,8 @@
 
 ## v0.5 - 2026-09-17
 
+- Added a separate Mission Capacity Boost tile to Tomorrow’s Events. It appears only when double ship capacity has a chance of occurring, with separate Ultra and Non-Ultra percentages when applicable.
+
 - Removed the hard 16-day deadline. All Non-Ultra events now use soft gap estimates: overdue events remain possible, and reaching a deadline no longer forces one event to occur or rules it out afterward. Each rotation uses its own history, including Mission Capacity Boost.
 - Gave missing history and previously unseen Non-Ultra gaps a small allowance instead of treating them as impossible. Removed the old cap switch and added tests for missed deadlines and overdue events.
 
