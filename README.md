@@ -1,6 +1,6 @@
 # Egg Event Lab
 
-**Current release: v0.5**
+**Current release: v0.6**
 
 Egg Event Lab is a static browser application for analyzing and forecasting Egg, Inc. event rotations. It combines the public Wasmegg event history with local corrections, empirical gap distributions, recency weighting, and known same-day scheduling constraints.
 
@@ -199,7 +199,7 @@ The fallback history is maintained separately in `data/seed-events.js` and is us
 
 ## Versioning
 
-The current release is **v0.5**. Public release numbers are stored in `src/config.js` and `VERSION`. The JSON export schema has its own independent version so application releases do not unnecessarily invalidate saved data.
+The current release is **v0.6**. Public release numbers are stored in `src/config.js` and `VERSION`. The JSON export schema has its own independent version so application releases do not unnecessarily invalidate saved data.
 
 `CHANGELOG.md` records public release changes.
 
@@ -227,3 +227,40 @@ The calendar can show historical predictions alongside subsequently confirmed ou
 The calendar’s **Regular schedule** toggle is independent of Predictions and Confirmed. It reconstructs the current weekly pattern on past and future dates from 2024 onward, excluding Egg Day. Entries are labeled **Scheduled**, not confirmed observations; historical exceptions and schedule changes may differ. Shifted entries include their Pacific date alongside the local calendar date.
 
 Calculations use a Web Worker when available. Direct-file use and browsers without workers use the same simulation in short yielding batches. Previous results remain visible while **Updating predictions…** is shown. Superseded requests are canceled and cannot overwrite newer selections. No build step or third-party runtime dependency is required.
+
+
+### v0.6: shared predictions and accuracy
+
+Public predictions, downloaded history, and scores are maintained by GitHub Actions. The app reads `data/shared/official.json` directly from the repository’s `main` branch, so results do not depend on a browser being open or a new site deployment. Personal settings, cached history, imported browser archives, and manual overrides do not affect public scores. Browser archives from earlier v0.6 builds remain exportable but are no longer added to or used for public scoring.
+
+#### Set up once
+
+1. Copy this release into the root of BroadSword13/Egg-Event-Prediction, including `.github/workflows/shared-predictions.yml`, `scripts`, and `data/shared`. Keep your existing `.git` directory. Commit and push to the default branch.
+2. In GitHub → Actions, enable workflows if prompted. Select **Update shared predictions** and use **Run workflow** for an initial check. The workflow requests `contents: write`; repository or organization policy and branch protection must permit its data commits. Do not bypass protections; if your repository requires pull requests, adjust the publishing design before enabling automatic writes.
+3. Confirm that the run succeeds and commits `data/shared/official.json` and `data/shared/events.json`. The next runs build stability observations before forecasts become eligible.
+4. Deploy this app release as usual. If the repository name or default branch differs, update `SOURCE` in `src/shared.js`. This direct raw-GitHub URL requires a public repository; never add a private access token to browser code.
+
+The hourly schedule runs at minute 17 UTC, with manual dispatch also available. GitHub can delay or skip scheduled runs. The script determines the actual Pacific event day when it executes; it cannot backfill a missed pre-release prediction. Scheduled workflows must be on the default branch. GitHub may disable scheduled workflows in inactive public repositories, so check Actions if the app reports stale data. See [GitHub’s schedule documentation](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule).
+
+#### Forecast capture and delayed source data
+
+- Poll history hourly. Save a forecast during the last six hours before the next 9 AM Pacific release, with a strict fifteen-minute safety margin checked again after calculation. Daylight-saving time is handled by the same Pacific-time helpers as the app.
+- Use default model settings and no personal overrides. Record the timestamp, model version, source code commit, source date, settings, and input hash. The first eligible forecast is frozen. A forecast marked incomplete may be improved only before the cutoff.
+- Keep the exact input history for each saved forecast as a compressed JSON snapshot in `data/shared/inputs`; keep the latest complete downloaded response in `data/shared/events.json`.
+- The source has no authoritative completion flag. Our conservative heuristic requires at least six hours since release, identical day records on checks separated by at least two hours, a recognized regular Non-Ultra event, and a recognized Ultra event when cadence expects one. Missing or partial data remains pending. This cannot prove completeness, particularly for optional Sunday capacity; later corrections are rechecked and regraded. An actual schedule exception that omits an expected tier remains pending and needs investigation rather than being silently scored as a miss.
+- Forecast eligibility requires seven recent input days to pass those checks, excluding Egg Day. Incomplete forecasts can be displayed but never count toward the public score. A source failure or major regression fails the workflow without replacing shared data. There are no invented forecasts for dates before setup.
+- Later corrections change outcomes and scores, never a frozen forecast. Changed days must settle again. Only the public source contributes official outcomes.
+
+The app refreshes shared data every five minutes while open and shows the last update time. Unavailable or stale shared data is labeled; local data is never substituted for the public score. Today’s cards use the public saved probabilities when present, including an incomplete-history label where needed. Without a saved forecast, they show a clearly labeled reconstruction using history through yesterday. Reconstructions are unscored and may change with model settings or history corrections.
+
+#### Score definition
+
+The panel offers trailing 30, 90, and 180 calendar days. For each eligible tier/day, the score is `100 × (1 − sum((probability − outcome)²) / 2)`, averaged across scored tier predictions. This normalized multiclass Brier score ranges from 0 to 100; it is not a hit rate. Fixed weekly Non-Ultra events, Egg Day, and correctly predicted Ultra off-days are excluded. Ultra capacity participates in the Ultra pool; independent Non-Ultra Sunday capacity uses its own binary score `100 × (1 − (p − outcome)²)` and is excluded from the overall score. Top-pick and top-three use descending probability, with ties resolved by event order.
+
+Small samples are preliminary. These are prospective scores of archived predictions, not a historical backtest or a guarantee of probability calibration. Shared archives may span model versions; each snapshot identifies its version and code commit. Resetting browser storage does not remove public history.
+
+#### Maintain shared data
+
+Do not overwrite `data/shared` with empty starter files when installing later releases after automation is active. Keep GitHub’s generated history. If a data push conflicts with another commit, the workflow fails safely without force-pushing; the next scheduled run checks out the latest branch and retries. A failure spanning the forecast window leaves that date unscored.
+
+Run `node --test tests/*.test.js` for validation. Run `node scripts/update-shared.cjs` only when intentionally refreshing shared files; it uses the real clock and public source and does not accept a backdated production timestamp.

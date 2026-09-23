@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.6 — 2026-09-23
+
+- Today’s events now show their chance before release. If the app saved a forecast beforehand, it uses that percentage; otherwise it reconstructs the forecast using history through yesterday and labels it accordingly.
+- Added a prediction accuracy score with 30-, 90-, and 180-day views, separate Non-Ultra and Ultra results, top-pick and top-three rates, and sample counts. Non-Ultra Double Capacity has its own score.
+- GitHub Actions now saves public forecasts and scores automatically, using standard settings. The app reads the shared archive so everyone sees the same score, even when nobody has the app open.
+- Added hourly retries for late source updates, stability checks for partial results, and clear pending or incomplete-history labels. Missed forecast windows stay unscored; later corrections update results without rewriting predictions.
+- Shared history and exact forecast inputs are kept in the repository. Older browser archives remain exportable but no longer affect the public score.
+
 ## v0.5 - 2026-09-17
 
 - Added a separate Mission Capacity Boost tile to Tomorrow’s Events. It appears only when double ship capacity has a chance of occurring, with separate Ultra and Non-Ultra percentages when applicable.

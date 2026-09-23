@@ -33,6 +33,7 @@
   function defaultState() {
     return {
       overrides: {},
+      predictionArchive: {},
       settings: clone(DEFAULT_SETTINGS),
       ui: clone(DEFAULT_UI),
       remote: clone(DEFAULT_REMOTE)
@@ -109,6 +110,7 @@
       }
 
       return {
+        predictionArchive: parsed.predictionArchive || {},
         overrides: migrateLegacyOverrides(parsed.overrides || {}, remote.confirmedDays, parsed.ui?.unifiedDailyEvents !== true),
         settings: normalizeSettings(parsed.settings || {}),
         ui: {

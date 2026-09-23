@@ -22,9 +22,9 @@ function timestamp(dateString) {
   return Date.parse(`${dateString}T12:00:00Z`) / 1000;
 }
 
-test('release is v0.5 and matches VERSION', () => {
-  assert.equal(config.APP_VERSION, '0.5');
-  assert.equal(require('node:fs').readFileSync(path.join(root, 'VERSION'), 'utf8').trim(), '0.5');
+test('release is v0.6 and matches VERSION', () => {
+  assert.equal(config.APP_VERSION, '0.6');
+  assert.equal(require('node:fs').readFileSync(path.join(root, 'VERSION'), 'utf8').trim(), '0.6');
 });
 
 test('date helpers preserve calendar-day arithmetic', () => {

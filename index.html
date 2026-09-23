@@ -17,7 +17,7 @@
       </div>
     </div>
     <div class="header-actions">
-      <span id="appVersionBadge" class="badge neutral">v0.5</span>
+      <span id="appVersionBadge" class="badge neutral">v0.6</span>
       <span id="dataThroughBadge" class="badge neutral"></span>
       <span id="clockBadge" class="badge neutral">Clock: Pacific</span>
       <span id="wasmeggSyncBadge" class="badge neutral">Wasmegg: seed data</span>
@@ -73,6 +73,13 @@
             <span id="todayEventDateBadge" class="badge neutral"></span>
           </div>
           <div id="todayEventTiles" class="today-event-grid"></div>
+          <details class="accuracy-panel"><summary id="accuracySummary">Prediction accuracy · Awaiting results</summary>
+            <p class="muted small">Public scores use forecasts saved automatically on GitHub with standard settings. Browser settings and manual confirmations do not change this score.</p>
+            <label>Period <select id="accuracyWindow"><option value="30">Last 30 days</option><option value="90" selected>Last 90 days</option><option value="180">Last 180 days</option></select></label>
+            <p id="sharedStatus" class="muted small" aria-live="polite">Loading shared results…</p>
+            <div id="accuracyResults" aria-live="polite"></div>
+            <p class="muted small">100 is perfect; lower scores mean larger probability errors. This is a Brier-based score, not the percentage of correct picks. Fixed weekly events and correctly predicted Ultra off-days are excluded. Double Capacity is scored separately. Small samples are preliminary. Late or partial source data stays pending. Incomplete input history is excluded. Later source corrections update results.</p>
+          </details>
         </section>
 
         <section class="today-events-section tomorrow-events-section" aria-labelledby="tomorrowEventsTitle">
@@ -314,6 +321,8 @@
   <script src="src/wasmegg.js"></script>
   <script src="src/model.js"></script>
   <script src="src/forecast-service.js"></script>
+  <script src="src/accuracy.js"></script>
+  <script src="src/shared.js"></script>
   <script src="src/ui.js"></script>
   <script src="app.js"></script>
 </body>

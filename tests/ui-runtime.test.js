@@ -20,7 +20,7 @@ for (const match of html.matchAll(/id="([^"]+)"/g)) elements.set(match[1], eleme
 global.window = globalThis;
 global.document = { getElementById: id => elements.get(id) || null,
   querySelectorAll: () => [], createElement: element, body: element() };
-for (const file of ['src/config.js','data/seed-events.js','src/utils.js','src/clock.js','src/store.js','src/model.js']) require(path.join(root,file));
+for (const file of ['src/config.js','data/seed-events.js','src/utils.js','src/clock.js','src/store.js','src/model.js','src/accuracy.js','src/shared.js']) require(path.join(root,file));
 const app = global.EggEventLab;
 const workerInstances = [];
 class WorkerHarness {

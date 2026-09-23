@@ -586,6 +586,7 @@
     const liveForecast = await forecasts.run('simulateForecast', [today, 1], token);
     if (token.aborted) return;
     const tomorrowForecast = liveForecast[tomorrow] || {};
+
     const fixed = model.fixedNonUltraEvent(tomorrow);
     const isSunday = parseDate(tomorrow).getDay() === 0;
     const fixedMeta = fixed ? fixed.note || 'Fixed weekly Non-Ultra event.' : '';
@@ -625,7 +626,9 @@
     } finally { forecasts.end(token); }
   }
 
-  function renderTodayEvents() {
+  async function renderTodayEvents() {
+    const token = forecasts.begin('today-chances');
+    try {
     const box = document.getElementById('todayEventTiles');
     const badge = document.getElementById('todayEventDateBadge');
     if (!box || !badge) return;
@@ -652,17 +655,42 @@
     }
 
     const fixedTile = fixed
-      ? `<article class="today-event-tile ${fixed.color}"><div class="today-event-icon">${fixed.icon}</div><div><div class="today-event-name"><span class="dot ${fixed.color}"></span>${fixed.label}</div><div class="today-event-meta">Non-Ultra · Fixed weekly event</div></div></article>`
+      ? `<article class="today-event-tile ${fixed.color}"><div class="today-event-icon">${fixed.icon}</div><div><div class="today-event-name"><span class="dot ${fixed.color}"></span>${fixed.label}</div><div class="today-event-meta">Non-Ultra · Fixed weekly event · 100% scheduled</div></div></article>`
       : '';
+    const saved = root.EggEventLab.shared.prediction(today);
+    let probabilities = saved?.probabilities;
+    if (ids.length && !probabilities && today.slice(5) !== '07-14') {
+      try {
+        const replay = await forecasts.run('simulateForecast', [addDays(today, -1), 1], token);
+        probabilities = replay[today];
+      } catch (error) { if (error.name === 'AbortError') throw error; console.error(error); }
+    }
+    if (token.aborted || today !== clock.currentEventDate()) return;
     const syncedTiles = ids.map(id => {
       const event = EVENTS[id];
       const tier = event.tier === 'ultra' ? 'Ultra' : 'Non-Ultra';
-      return `<article class="today-event-tile ${event.color}"><div class="today-event-icon">${event.icon}</div><div><div class="today-event-name"><span class="dot ${event.color}"></span>${event.label}</div><div class="today-event-meta">${tier} · ${familyLabel(event)}</div></div></article>`;
+      return `<article class="today-event-tile ${event.color}"><div class="today-event-icon">${event.icon}</div><div><div class="today-event-name"><span class="dot ${event.color}"></span>${event.label}</div><div class="today-event-meta">${tier} · ${familyLabel(event)}</div>${probabilities ? `<div class="today-event-meta"><strong>${pct(probabilities[id] || 0)}</strong> pre-release chance · ${saved ? (saved.status === 'eligible' ? 'Public forecast saved before release' : 'Public forecast · incomplete history · unscored') : 'Reconstructed from history through yesterday · unscored'}</div>` : ''}</div></article>`;
     }).join('');
     const pendingTile = !hasDay
       ? `<article class="today-event-tile pending compact-pending"><div class="today-event-icon">↻</div><div><div class="today-event-name">Other events pending sync</div><div class="muted small">The fixed Non-Ultra event is known; Wasmegg has not confirmed the rest of today yet.</div></div></article>`
       : '';
     box.innerHTML = fixedTile + syncedTiles + pendingTile;
+    } catch (error) {
+      if (error.name !== 'AbortError') console.error(error);
+    } finally { forecasts.end(token); }
+  }
+
+  function renderAccuracy() {
+    const box = document.getElementById('accuracyResults');
+    if (!box) return;
+    const days = Number(document.getElementById('accuracyWindow')?.value || 90);
+    const summary = root.EggEventLab.shared.summary(days);
+    document.getElementById('sharedStatus').textContent = root.EggEventLab.shared.status();
+    document.getElementById('accuracySummary').textContent = `Prediction accuracy · ${summary.overall.count ? summary.overall.score.toFixed(1) + '/100' : 'Awaiting results'}`;
+    box.innerHTML = Object.entries({overall:'Overall',nonUltra:'Non-Ultra',ultra:'Ultra',capacity:'Non-Ultra Double Capacity'}).map(([key,label]) => {
+      const r = summary[key];
+      return `<div class="accuracy-result"><strong>${label}: ${r.count ? r.score.toFixed(1) + '/100' : 'Awaiting results'}</strong><div class="muted small">${r.count} scored ${key === 'capacity' ? 'Sundays' : 'tier predictions'}${r.count && key !== 'capacity' ? ` · Top pick ${pct(r.top)} · Top three ${pct(r.top3)}` : ''}</div></div>`;
+    }).join('');
   }
 
   function renderLatest() {
@@ -945,6 +973,7 @@
     const referenceView = eventDateView(reference);
     document.getElementById('referenceMode').textContent = `${followCurrentDay ? 'Following current event day' : 'Selected reference day'} · ${reference} Pacific${referenceView.shifted ? ` · ${referenceView.localIso} local` : ''}`;
     renderTodayEvents();
+    renderAccuracy();
     renderTomorrowEvents();
     renderLatest();
     renderForecast();
@@ -971,6 +1000,7 @@
       exportedAt: new Date().toISOString(),
       seedThrough: TODAY_SEED,
       overrides: current.overrides,
+      predictionArchive: current.predictionArchive || {},
       settings: current.settings,
       ui: current.ui,
       remote: current.remote,
@@ -1008,6 +1038,7 @@
             : [...CAPACITY_ORDER];
 
         const nextState = {
+          predictionArchive: root.EggEventLab.accuracy.normalize(object.predictionArchive),
           overrides: store.migrateLegacyOverrides(object.overrides || {}, object.remote?.confirmedDays, object.ui?.unifiedDailyEvents !== true),
           settings: store.normalizeSettings(object.settings || {}),
           ui: {
@@ -1151,6 +1182,7 @@
   }
 
   function bindDataControls() {
+    document.getElementById('accuracyWindow')?.addEventListener('change', renderAccuracy);
     document.getElementById('exportBtn').addEventListener('click', exportData);
     document.getElementById('importInput').addEventListener('change', event => {
       if (event.target.files[0]) importData(event.target.files[0]);
@@ -1269,6 +1301,15 @@
     renderClockStatus();
     renderAll();
     startEventDayWatcher();
+    if (typeof window.location !== 'undefined') {
+      const refreshShared = async () => {
+        await root.EggEventLab.shared.refresh();
+        renderAccuracy();
+        renderTodayEvents();
+      };
+      refreshShared();
+      setInterval(refreshShared, 5 * 60 * 1000);
+    }
     if (state().remote?.autoSync !== false) syncWasmegg({ silent: true });
   }
 

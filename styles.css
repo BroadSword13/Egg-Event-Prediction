@@ -292,3 +292,7 @@ details.collapsible-card:not([open]) .collapsible-card-summary { margin-bottom:0
 .tomorrow-capacity-chance { display:flex; align-items:center; flex-wrap:wrap; gap:8px; margin-top:8px; }
 .tomorrow-capacity-chance .tomorrow-tier { margin:0; min-width:72px; }
 .tomorrow-capacity-chance .today-event-meta { margin:0; }
+
+.accuracy-panel { margin-top: 1rem; }
+.accuracy-panel summary { cursor: pointer; padding: .65rem 0; font-weight: 600; }
+.accuracy-result { margin-top: .75rem; }
