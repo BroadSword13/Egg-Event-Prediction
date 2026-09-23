@@ -1,1 +1,168 @@
-{"schemaVersion":1,"updatedAt":null,"sourceLatest":null,"predictions":{},"observations":{},"outcomes":{},"scores":{}}
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-09-23T23:47:08.917Z",
+  "sourceLatest": "2026-09-23",
+  "predictions": {},
+  "observations": {
+    "2026-09-23": {
+      "fingerprint": "4f9060c9dff2d7a6cb7d9bc3fea4ed2b102e4a429d3d322d5992d3ce2c0c5769",
+      "stableSince": "2026-09-23T23:47:08.917Z",
+      "checkedAt": "2026-09-23T23:47:08.917Z"
+    },
+    "2026-09-22": {
+      "fingerprint": "0da49570050b70fa59c7b809f8e978324e6ca0c924f8f2472f66f0b72ed13588",
+      "stableSince": "2026-09-23T23:47:08.917Z",
+      "checkedAt": "2026-09-23T23:47:08.917Z"
+    },
+    "2026-09-21": {
+      "fingerprint": "0fde7fd101d28bbc86ca09b94e5744145675ff7370183b4d3f45e6b9baf893a5",
+      "stableSince": "2026-09-23T23:47:08.917Z",
+      "checkedAt": "2026-09-23T23:47:08.917Z"
+    },
+    "2026-09-20": {
+      "fingerprint": "29d67df72cb1b667dd14e94ed15d6b8056f642da9a59bd1016f49824343ad999",
+      "stableSince": "2026-09-23T23:47:08.917Z",
+      "checkedAt": "2026-09-23T23:47:08.917Z"
+    },
+    "2026-09-19": {
+      "fingerprint": "1d3006a3f135daa54bcd863527000a93e615c03924e5435e1dc0be70b0579445",
+      "stableSince": "2026-09-23T23:47:08.917Z",
+      "checkedAt": "2026-09-23T23:47:08.917Z"
+    },
+    "2026-09-18": {
+      "fingerprint": "311d652d14ffac3f57f96ccc50f147345ecb50428b2a29f99f593f8be0321fac",
+      "stableSince": "2026-09-23T23:47:08.917Z",
+      "checkedAt": "2026-09-23T23:47:08.917Z"
+    },
+    "2026-09-17": {
+      "fingerprint": "fdf0ba76ab58025072a22020286a9063feab14991128c08060ed11b4e4d32f2a",
+      "stableSince": "2026-09-23T23:47:08.917Z",
+      "checkedAt": "2026-09-23T23:47:08.917Z"
+    }
+  },
+  "outcomes": {
+    "2026-09-23": {
+      "status": "pending",
+      "ids": [],
+      "reason": "Waiting for source to settle",
+      "checkedAt": "2026-09-23T23:47:08.917Z"
+    },
+    "2026-09-22": {
+      "status": "pending",
+      "ids": [],
+      "reason": "Waiting for source to settle",
+      "checkedAt": "2026-09-23T23:47:08.917Z"
+    },
+    "2026-09-21": {
+      "status": "pending",
+      "ids": [],
+      "reason": "Waiting for source to settle",
+      "checkedAt": "2026-09-23T23:47:08.917Z"
+    },
+    "2026-09-20": {
+      "status": "pending",
+      "ids": [],
+      "reason": "Waiting for source to settle",
+      "checkedAt": "2026-09-23T23:47:08.917Z"
+    },
+    "2026-09-19": {
+      "status": "pending",
+      "ids": [],
+      "reason": "Waiting for source to settle",
+      "checkedAt": "2026-09-23T23:47:08.917Z"
+    },
+    "2026-09-18": {
+      "status": "pending",
+      "ids": [],
+      "reason": "Waiting for source to settle",
+      "checkedAt": "2026-09-23T23:47:08.917Z"
+    },
+    "2026-09-17": {
+      "status": "pending",
+      "ids": [],
+      "reason": "Waiting for source to settle",
+      "checkedAt": "2026-09-23T23:47:08.917Z"
+    }
+  },
+  "scores": {
+    "30": {
+      "overall": {
+        "count": 0,
+        "score": null,
+        "top": null,
+        "top3": null
+      },
+      "nonUltra": {
+        "count": 0,
+        "score": null,
+        "top": null,
+        "top3": null
+      },
+      "ultra": {
+        "count": 0,
+        "score": null,
+        "top": null,
+        "top3": null
+      },
+      "capacity": {
+        "count": 0,
+        "score": null,
+        "top": null,
+        "top3": null
+      }
+    },
+    "90": {
+      "overall": {
+        "count": 0,
+        "score": null,
+        "top": null,
+        "top3": null
+      },
+      "nonUltra": {
+        "count": 0,
+        "score": null,
+        "top": null,
+        "top3": null
+      },
+      "ultra": {
+        "count": 0,
+        "score": null,
+        "top": null,
+        "top3": null
+      },
+      "capacity": {
+        "count": 0,
+        "score": null,
+        "top": null,
+        "top3": null
+      }
+    },
+    "180": {
+      "overall": {
+        "count": 0,
+        "score": null,
+        "top": null,
+        "top3": null
+      },
+      "nonUltra": {
+        "count": 0,
+        "score": null,
+        "top": null,
+        "top3": null
+      },
+      "ultra": {
+        "count": 0,
+        "score": null,
+        "top": null,
+        "top3": null
+      },
+      "capacity": {
+        "count": 0,
+        "score": null,
+        "top": null,
+        "top3": null
+      }
+    }
+  },
+  "sourceCount": 3213
+}
