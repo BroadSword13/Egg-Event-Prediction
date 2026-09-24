@@ -107,10 +107,10 @@
     return allowed;
   }
 
-  // Non-Ultra estimates include a weak prior so missing or unseen gaps are
+  // All rotations include a weak prior so missing or unseen gaps are
   // uncertain rather than impossible. One recent observation has weight 3.
-  const NON_ULTRA_PRIOR_WEIGHT = 3;
-  const NON_ULTRA_HAZARD_CEILING = 0.95;
+  const GAP_PRIOR_WEIGHT = 3;
+  const GAP_HAZARD_CEILING = 0.95;
 
   function softGapProfile(eventId, rows) {
     const event = EVENTS[eventId];
@@ -118,29 +118,30 @@
     const meanGap = support > 0
       ? rows.reduce((sum, row) => sum + row.gap * row.weighted, 0) / support
       : event.sundayOnly ? 28 : 14;
-    const eligibleFraction = event.sundayOnly ? 1 / 7
+    const eligibleFraction = event.tier === 'ultra' ? (event.sundayOnly ? 1 / 14 : 1 / 2)
+      : event.sundayOnly ? 1 / 7
       : event.weekdayObserved && store.getState().settings.weekdayPattern ? 3 / 7 : 1;
     const prior = 1 / Math.max(2, meanGap * eligibleFraction);
     const maximum = rows.length ? Math.max(...rows.map(row => row.gap)) : 0;
     const tailMass = rows.find(row => row.gap === maximum)?.weighted || 0;
-    const tailBase = (tailMass + NON_ULTRA_PRIOR_WEIGHT * prior) / (tailMass + NON_ULTRA_PRIOR_WEIGHT);
+    const tailBase = (tailMass + GAP_PRIOR_WEIGHT * prior) / (tailMass + GAP_PRIOR_WEIGHT);
     return { meanGap, prior, maximum, tailBase };
   }
 
-  function nonUltraHazard(eventId, gap, stats) {
+  function smoothedHazard(eventId, gap, stats) {
     const profile = stats.soft || softGapProfile(eventId, stats.rows);
     if (gap == null) return profile.prior;
     const exact = stats.exact.get(gap) || 0;
     const survivor = stats.survivor.get(gap) || 0;
-    let probability = (exact + NON_ULTRA_PRIOR_WEIGHT * profile.prior)
-      / (survivor + NON_ULTRA_PRIOR_WEIGHT);
+    let probability = (exact + GAP_PRIOR_WEIGHT * profile.prior)
+      / (survivor + GAP_PRIOR_WEIGHT);
     if (gap > profile.maximum) {
       // Extend the final observed hazard smoothly; never drop to zero after
       // passing the longest observed gap. With no gaps, start from the prior.
       probability = 1 - (1 - profile.tailBase)
         * Math.exp(-(gap - profile.maximum) / profile.meanGap);
     }
-    return clamp(probability, 0, NON_ULTRA_HAZARD_CEILING);
+    return clamp(probability, 0, GAP_HAZARD_CEILING);
   }
 
   function hazard(eventId, targetDate, simulatedHistory = null) {
@@ -153,14 +154,7 @@
     if (!allowedWeekday(eventId, targetDate)) return 0;
     const gap = lastDate ? diffDays(lastDate, targetDate) : null;
     if (gap != null && event.minGap && gap < event.minGap) return 0;
-    if (event.tier === 'non-ultra') return nonUltraHazard(eventId, gap, stats);
-    if (!lastDate) return 0;
-    const exact = stats.exact.get(gap) || 0;
-    const survivor = stats.survivor.get(gap) || 0;
-    if (survivor <= 0) return event.sparse ? 0.015 : 0;
-    let probability = exact / survivor;
-    if (event.sparse) probability = Math.max(probability, 0.02);
-    return clamp(probability, 0, 1);
+    return smoothedHazard(eventId, gap, stats);
   }
 
   function conflicts(a, b) {
@@ -195,7 +189,7 @@
       survivor.set(gap, total);
     }
 
-    return { rows, exact, survivor, soft: EVENTS[eventId].tier === 'non-ultra' ? softGapProfile(eventId, rows) : null };
+    return { rows, exact, survivor, soft: softGapProfile(eventId, rows) };
   }
 
   function resolveConflicts(triggered, probabilities, random) {

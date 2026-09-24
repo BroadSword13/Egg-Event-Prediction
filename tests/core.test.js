@@ -525,3 +525,18 @@ test('Non-Ultra Hab Sale can return after six days, but not five', () => {
   assert.equal(model.isHardBlocked('housing_blue', '2026-09-15', '2026-09-09'), false);
   assert.equal(model.isHardBlocked('housing_blue', '2026-09-16', '2026-09-11'), true);
 });
+
+test('Ultra unseen gaps and overdue tails retain probability without bypassing cadence', () => {
+  const stats={rows:[{gap:28,weighted:3},{gap:36,weighted:3}],exact:new Map([[28,3],[36,3]]),survivor:new Map([[30,3]])};
+  for(const id of config.MODEL_ORDER.filter(id=>config.EVENTS[id].tier==='ultra')) {
+    let date='2026-09-20';
+    for(let step=0;step<15 && !model.allowedWeekday(id,date);step++) date=utils.addDays(date,1);
+    assert.ok(model.allowedWeekday(id,date),id+' eligible date');
+    const unseen=model.hazardFast(id,date,utils.addDays(date,-30),stats);
+    assert.ok(unseen>0 && unseen<1,id+' unseen gap');
+    const tail=model.hazardFast(id,date,utils.addDays(date,-50),stats);
+    assert.ok(tail>0 && tail<1,id+' overdue');
+    assert.ok(model.hazardFast(id,date,null,stats)>0,id+' unknown history');
+    assert.equal(model.hazardFast(id,utils.addDays(date,1),utils.addDays(date,-30),stats),0,id+' off cadence');
+  }
+});

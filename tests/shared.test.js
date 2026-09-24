@@ -101,3 +101,15 @@ test('browser history loads only the shared GitHub copy and retains cache when o
     assert.deepEqual(app.store.getState().remote.events,saved);
   } finally {global.fetch=original;console.warn=warn;}
 });
+test('scoring can settle after one hour but never earlier or with partial data',()=>{
+  const rows=fixture();
+  let s=update(empty(),rows,new Date('2026-09-22T16:00:00Z'),predict);
+  s=update(s,rows,new Date('2026-09-22T16:59:00Z'),predict);
+  assert.equal(s.outcomes['2026-09-22'].status,'pending');
+  s=update(s,rows,new Date('2026-09-22T17:00:00Z'),predict);
+  assert.equal(s.outcomes['2026-09-22'].status,'complete');
+  const partial=rows.filter(r=>r.id!=='2026-09-22u');
+  s=update(s,partial,new Date('2026-09-22T18:00:00Z'),predict);
+  s=update(s,partial,new Date('2026-09-22T19:00:00Z'),predict);
+  assert.equal(s.outcomes['2026-09-22'].status,'pending');
+});

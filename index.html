@@ -236,7 +236,7 @@
 
         <article class="card">
           <h2>Prediction constraints</h2>
-          <div class="rule-item"><span class="rule-icon">↗</span><div><strong>Soft Non-Ultra gap estimates</strong><div class="muted small">All Non-Ultra rotations use their own gap history. Longer-than-usual waits increase an event’s chance without forcing a deadline. Missing history and unseen gaps retain a chance; weekday, minimum-gap, and same-day conflict rules still apply.</div></div></div>
+          <div class="rule-item"><span class="rule-icon">↗</span><div><strong>Soft gap estimates</strong><div class="muted small">Ultra and Non-Ultra rotations use their own gap history. Longer-than-usual waits increase an event’s chance without forcing a deadline. Missing history and unseen gaps retain a chance; weekday, minimum-gap, and same-day conflict rules still apply.</div></div></div>
           <label class="switch-row"><span><strong>Apply Tue–Thu observed weekday pattern</strong><small>Non-Ultra Hab Sale, Non-Ultra Vehicle Sale, Non-Ultra Generous Drones</small></span><input id="weekdayToggle" type="checkbox" checked /></label>
           <div class="rule-item compact-rule"><span class="rule-icon">↔️</span><div><strong>Ultra every-other-day cadence</strong><div class="muted small">From May 4, 2026 forward, modeled Ultra events are only eligible every other Pacific event day. Ultra Mission Capacity Boost must also land on one of those cadence days while retaining its Sunday-only rule. Same-rotation gaps from this era that do not align to the 2-day cadence are ignored by gap training.</div></div></div>
           <div class="rule-item compact-rule"><span class="rule-icon">🎂</span><div><strong>Ignore July 14 (Egg Day)</strong><div class="muted small">All July 14 events are excluded from gap training, current-gap resets, and event modeling because the anniversary uses special events.</div></div></div>
@@ -252,7 +252,7 @@
 
         <article class="card">
           <h2>How probability is calculated</h2>
-          <p class="muted">For a current gap <em>g</em>, the model asks: among historical gaps that lasted at least this long, what share ended exactly at <em>g</em>? That is the raw conditional hazard. Non-Ultra forecasts smooth this estimate to allow unseen gaps and extend it beyond the longest recorded wait.</p>
+          <p class="muted">For a current gap <em>g</em>, the model asks: among historical gaps that lasted at least this long, what share ended exactly at <em>g</em>? That is the raw conditional hazard. Forecasts smooth this estimate to allow unseen gaps and extend it beyond the longest recorded wait.</p>
           <div class="formula">P(hit at g | survived to g) = weighted count(g) ÷ weighted count(gaps ≥ g)</div>
           <p class="muted small">A Monte Carlo simulation then moves day by day, resets rotations after simulated hits, applies the Ultra every-other-day cadence, and resolves same-day conflicts across all modeled event rotations.</p>
         </article>

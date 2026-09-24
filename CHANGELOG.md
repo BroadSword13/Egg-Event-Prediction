@@ -2,6 +2,10 @@
 
 ## v0.6 — 2026-09-23
 
+- Reduced the scoring wait to one hour after release, with one hour of unchanged source data.
+
+- Applied gap smoothing to Ultra events too, so an unseen gap no longer gives an eligible event a 0% chance.
+
 - Added pre-release percentages to today’s events. Reconstructed forecasts are labeled when no saved prediction is available.
 - Added shared accuracy scores for the last 30, 90, and 180 days, with separate Ultra, Non-Ultra, and Double Capacity results.
 - GitHub now updates event history hourly and saves forecasts automatically, so scores no longer depend on someone opening the app. Late or incomplete data stays unscored until ready; incomplete forecasts are excluded.

@@ -44,7 +44,7 @@ function update(previous, rows, now, predict, finishedAt = () => now) {
     const modelForDay = app.model.createModel(app.store.createStore(structuredClone(inputStore.getState()), addDays(d,-1)));
     const expectedUltra = modelForDay.isUltraCadenceDate(d);
     const complete = records.length > 0 && regular && (!expectedUltra || ultra)
-      && age >= 6*HOUR && unchanged && now - new Date(stableSince) >= 2*HOUR;
+      && age >= HOUR && unchanged && now - new Date(stableSince) >= HOUR;
     state.observations[d] = { fingerprint, stableSince, checkedAt: now.toISOString() };
     state.outcomes[d] = { status: complete ? 'complete' : 'pending', ids: complete ? ids : [],
       reason: complete ? 'Stable source; expected tiers present' : !records.length ? 'Awaiting source data' : !regular || (expectedUltra && !ultra) ? 'Awaiting expected event tiers' : 'Waiting for source to settle', checkedAt: now.toISOString() };
