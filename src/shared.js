@@ -36,5 +36,5 @@
     const message = !p ? 'No saved public forecast for today; today is unscored.' : p.status !== 'eligible' ? 'Today’s forecast had incomplete input history and is excluded from the score.' : result?.status !== 'complete' ? 'Awaiting settled results for today.' : 'Today’s results are scored.';
     return `${message} Last shared update: ${new Date(data.updatedAt).toLocaleString()}.${stale || error ? ' Shared updates are delayed; showing the last available data.' : ''}`;
   }
-  app.shared = {refresh,prediction,summary,status};
+  app.shared = {refresh,prediction,summary,status, updatedAt: () => data?.updatedAt || null};
 })(typeof window !== 'undefined' ? window : globalThis);

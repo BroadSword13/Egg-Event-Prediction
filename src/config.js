@@ -11,6 +11,7 @@
   const MAIN_NEXT_DATE_HORIZON = 90;
   const TODAY_SEED = '2026-09-10';
   const WASMEGG_EVENTS_URL = 'https://raw.githubusercontent.com/wasmegg-carpet/egg/refs/heads/main/periodicals/data/events.json';
+  const SHARED_EVENTS_URL = 'https://raw.githubusercontent.com/BroadSword13/Egg-Event-Prediction/main/data/shared/events.json';
   const REMOTE_DATA_START = '2024-01-01';
   const REMOTE_SCHEMA_VERSION = 3;
   const ANNIVERSARY_MM_DD = '07-14';
@@ -82,7 +83,7 @@
     latestDate: null,
     syncedAt: null,
     lastError: null,
-    source: WASMEGG_EVENTS_URL,
+    source: SHARED_EVENTS_URL,
     rangeStart: REMOTE_DATA_START,
     schemaVersion: REMOTE_SCHEMA_VERSION
   };
@@ -99,6 +100,7 @@
     MAIN_NEXT_DATE_HORIZON,
     TODAY_SEED,
     WASMEGG_EVENTS_URL,
+    SHARED_EVENTS_URL,
     REMOTE_DATA_START,
     REMOTE_SCHEMA_VERSION,
     ANNIVERSARY_MM_DD,

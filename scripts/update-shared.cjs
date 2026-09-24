@@ -76,7 +76,8 @@ function update(previous, rows, now, predict, finishedAt = () => now) {
 async function main() {
   const folder = path.join(root,'data/shared');
   const filename = path.join(folder,'official.json');
-  const previous = JSON.parse(fs.readFileSync(filename,'utf8'));
+  fs.mkdirSync(folder,{recursive:true});
+  const previous = fs.existsSync(filename) ? JSON.parse(fs.readFileSync(filename,'utf8')) : {schemaVersion:1,predictions:{},observations:{},outcomes:{}};
   const response = await fetch(app.config.WASMEGG_EVENTS_URL, { signal: AbortSignal.timeout(30000), cache:'no-store' });
   if (!response.ok) throw new Error(`Source returned HTTP ${response.status}`);
   const rows = await response.json();

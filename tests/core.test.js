@@ -396,7 +396,6 @@ test('named forecast sections below Today and Tomorrow are collapsible', () => {
   assert.match(html, /<details class="collapsible-section" open>[\s\S]*?<h1>Most likely next date<\/h1>/);
   assert.match(html, /<details class="collapsible-section capacity-forecast-section" open>[\s\S]*?<h1>Mission Capacity Boost forecast<\/h1>/);
   assert.match(html, /<details class="card collapsible-card" open>[\s\S]*?<h2>Daily event status<\/h2>/);
-  assert.match(html, /<details class="card collapsible-card" open>[\s\S]*?<h2>Record a day<\/h2>/);
 });
 
 test('unconfirmed future predictions do not create a certain reset on the following day', () => {

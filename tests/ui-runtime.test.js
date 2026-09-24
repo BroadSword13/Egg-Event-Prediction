@@ -91,7 +91,7 @@ test('worker, cooperative fallback, cancellation, and rendered date controls', a
 
   assert.match(html,/id="currentEventDayBtn"/);
   assert.equal((html.match(/class="live-label"/g)||[]).length,2);
-  assert.match(html,/id="saveDayBtn"[^>]*>Confirm<\/button>/);
+  assert.doesNotMatch(html,/id="(?:saveDayBtn|recordDate|eventChecklist)"/);
 
   // Exercise actual handlers while keeping the clock deterministic.
   let currentDay = '2026-09-16';
@@ -113,11 +113,6 @@ test('worker, cooperative fallback, cancellation, and rendered date controls', a
   elements.get('currentEventDayBtn').handlers.click();
   assert.equal(reference.value,currentDay);
   assert.match(elements.get('referenceMode').textContent,/Following current event day/);
-  const before = structuredClone(app.store.getState().overrides);
-  elements.get('recordDate').value=app.utils.eventDisplayDateIso('2026-09-20');
-  elements.get('saveDayBtn').handlers.click();
-  assert.deepEqual(app.store.getState().overrides,before,'future confirmations must not be stored');
-  assert.match(elements.get('validationMsg').textContent,/only after/);
   const deadline=Date.now()+30000;
   while (!elements.get('predictionStatus').hidden && Date.now()<deadline) {
     await new Promise(resolve=>setTimeout(resolve,20));

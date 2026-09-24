@@ -4,7 +4,7 @@
   const {
     MODEL_ORDER,
     DEFAULT_REMOTE,
-    WASMEGG_EVENTS_URL,
+    SHARED_EVENTS_URL,
     REMOTE_DATA_START,
     REMOTE_SCHEMA_VERSION
   } = root.EggEventLab.config;
@@ -90,8 +90,9 @@
   async function sync() {
     const state = store.getState();
     try {
-      const response = await fetch(`${WASMEGG_EVENTS_URL}?cacheBust=${Date.now()}`, {
-        cache: 'no-store',
+      const response = await fetch(SHARED_EVENTS_URL, {
+        cache: 'no-cache',
+        signal: AbortSignal.timeout(15000),
         mode: 'cors'
       });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -107,7 +108,7 @@
         ...normalized,
         syncedAt: new Date().toISOString(),
         lastError: null,
-        source: WASMEGG_EVENTS_URL,
+        source: SHARED_EVENTS_URL,
         rangeStart: REMOTE_DATA_START,
         schemaVersion: REMOTE_SCHEMA_VERSION,
         seedAudit: {

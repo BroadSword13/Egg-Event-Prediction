@@ -225,16 +225,16 @@
 
     badge.classList.remove('sync-good', 'sync-busy', 'sync-error');
     if (mode === 'busy') {
-      badge.textContent = 'Wasmegg: syncing…';
+      badge.textContent = 'History: loading…';
       badge.classList.add('sync-busy');
     } else if (current.remote?.lastError) {
-      badge.textContent = store.hasRemoteData() ? 'Wasmegg: cached' : 'Wasmegg: sync failed';
+      badge.textContent = store.hasRemoteData() ? 'History: cached' : 'History: unavailable';
       badge.classList.add('sync-error');
     } else if (store.hasRemoteData()) {
-      badge.textContent = `Wasmegg: through ${fmtEventDate(current.remote.latestDate, { month: 'short', day: 'numeric' })}`;
+      badge.textContent = `History: through ${fmtEventDate(current.remote.latestDate, { month: 'short', day: 'numeric' })}`;
       badge.classList.add('sync-good');
     } else {
-      badge.textContent = 'Wasmegg: seed data';
+      badge.textContent = 'History: seed data';
     }
 
     if (details) {
@@ -245,13 +245,12 @@
       const error = current.remote?.lastError
         ? `<br><span class="sync-error-text">Last error: ${escapeHtml(current.remote.lastError)}</span>`
         : '';
-      details.innerHTML = `Source: Wasmegg Events Calendar dataset<br>Imported range: <strong>${fmtDate(REMOTE_DATA_START, { month: 'short', day: 'numeric', year: 'numeric' })} → ${through}</strong><br>Daily rotations: Hab Sale · Vehicle Sale · Generous Drones · Boost Time+ · Generous Gifts · Shell Sale · Mission Fuel Boost<br>Egg Day exclusion: <strong>July 14 ignored by the probability model</strong><br>Last successful sync: <strong>${synced}</strong>${error}`;
+      details.innerHTML = `Source: shared GitHub history (updated hourly from Wasmegg)<br>Imported range: <strong>${fmtDate(REMOTE_DATA_START, { month: 'short', day: 'numeric', year: 'numeric' })} → ${through}</strong><br>Daily rotations: Hab Sale · Vehicle Sale · Generous Drones · Boost Time+ · Generous Gifts · Shell Sale · Mission Fuel Boost<br>Egg Day exclusion: <strong>July 14 ignored by the probability model</strong><br>Last history download: <strong>${synced}</strong>${error}`;
     }
     renderClockStatus();
   }
 
   async function syncWasmegg({ silent = false } = {}) {
-    const previousLatest = store.latestConfirmedDay();
     renderWasmeggSyncStatus('busy');
     await clock.sync();
     renderClockStatus();
@@ -262,18 +261,15 @@
     if (result.ok) {
       model.invalidateNextHitCache();
       invalidateDataRows();
-      const newLatest = store.latestConfirmedDay();
-      const record = document.getElementById('recordDate');
-      if (record && (!record.value || record.value === previousLatest)) loadRecordDate(newLatest);
       renderAll();
       renderWasmeggSyncStatus();
-      if (!silent) toast(`Wasmegg synced through ${fmtEventDate(state().remote.latestDate, { month: 'short', day: 'numeric' })}`);
+      if (!silent) toast(`Shared history loaded through ${fmtEventDate(state().remote.latestDate, { month: 'short', day: 'numeric' })}`);
       return true;
     }
 
     if (referenceAdvanced) renderAll();
     renderWasmeggSyncStatus();
-    if (!silent) toast('Wasmegg sync failed; using cached/seed data');
+    if (!silent) toast('Shared history unavailable; using cached/seed data');
     return false;
   }
 
@@ -645,7 +641,7 @@
       : view.text;
 
     if (!hasDay && !fixed) {
-      box.innerHTML = `<article class="today-event-tile pending"><div class="today-event-icon">↻</div><div><div class="today-event-name">Waiting for today’s data</div><div class="muted small">Sync Wasmegg to load today’s events.</div></div></article>`;
+      box.innerHTML = `<article class="today-event-tile pending"><div class="today-event-icon">↻</div><div><div class="today-event-name">Waiting for today’s data</div><div class="muted small">Today’s events will appear when the shared history updates.</div></div></article>`;
       return;
     }
 
@@ -672,7 +668,7 @@
       return `<article class="today-event-tile ${event.color}"><div class="today-event-icon">${event.icon}</div><div><div class="today-event-name"><span class="dot ${event.color}"></span>${event.label}</div><div class="today-event-meta">${tier} · ${familyLabel(event)}</div>${probabilities ? `<div class="today-event-meta"><strong>${pct(probabilities[id] || 0)}</strong> pre-release chance · ${saved ? (saved.status === 'eligible' ? 'Public forecast saved before release' : 'Public forecast · incomplete history · unscored') : 'Reconstructed from history through yesterday · unscored'}</div>` : ''}</div></article>`;
     }).join('');
     const pendingTile = !hasDay
-      ? `<article class="today-event-tile pending compact-pending"><div class="today-event-icon">↻</div><div><div class="today-event-name">Other events pending sync</div><div class="muted small">The fixed Non-Ultra event is known; Wasmegg has not confirmed the rest of today yet.</div></div></article>`
+      ? `<article class="today-event-tile pending compact-pending"><div class="today-event-icon">↻</div><div><div class="today-event-name">Other events pending update</div><div class="muted small">The fixed Non-Ultra event is known; the shared history does not include the rest of today yet.</div></div></article>`
       : '';
     box.innerHTML = fixedTile + syncedTiles + pendingTile;
     } catch (error) {
@@ -708,47 +704,6 @@
     document.getElementById('latestConfirmedEvents').textContent = latestText;
     document.getElementById('dataThroughBadge').textContent = `Data through ${fmtEventDate(store.latestDataDate(), { month: 'short', day: 'numeric', year: 'numeric' })}`;
     renderWasmeggSyncStatus();
-  }
-
-  function setupChecklist() {
-    const wrap = document.getElementById('eventChecklist');
-    wrap.innerHTML = ORDER.map(id => `<label class="event-option" data-event="${id}"><input type="checkbox" value="${id}"/><span><span class="dot ${EVENTS[id].color}"></span>${EVENTS[id].label}</span></label>`).join('');
-    wrap.querySelectorAll('input').forEach(input => input.addEventListener('change', validateChecklist));
-  }
-
-  function selectedEvents() {
-    return [...document.querySelectorAll('#eventChecklist input:checked')].map(input => input.value);
-  }
-
-  function validateChecklist() {
-    const selected = selectedEvents();
-    let message = '';
-
-    for (let first = 0; first < selected.length; first += 1) {
-      for (let second = first + 1; second < selected.length; second += 1) {
-        if (model.conflicts(selected[first], selected[second])) {
-          message = `${EVENTS[selected[first]].label} conflicts with ${EVENTS[selected[second]].label}.`;
-        }
-      }
-    }
-
-    document.getElementById('validationMsg').textContent = message;
-    return !message;
-  }
-
-  function loadRecordDate(value, { displayDate = false } = {}) {
-    const modelDate = displayDate ? modelDateForDisplayDate(value) : value;
-    const input = document.getElementById('recordDate');
-    input.value = eventDisplayDateIso(modelDate);
-    input.dataset.modelDate = modelDate;
-    const current = state();
-    const selected = current.overrides[modelDate]
-      ?? (store.getConfirmedDays()[modelDate] || []).filter(id => ORDER.includes(id))
-      ?? ORDER.filter(id => store.getAllEventDates(id).includes(modelDate));
-    document.querySelectorAll('#eventChecklist input').forEach(inputElement => {
-      inputElement.checked = selected.includes(inputElement.value);
-    });
-    validateChecklist();
   }
 
   async function renderCalendar() {
@@ -870,11 +825,6 @@
     }
 
     grid.innerHTML = html;
-    grid.querySelectorAll('.calendar-day').forEach(element => element.addEventListener('dblclick', () => {
-      switchTab('forecast');
-      loadRecordDate(element.dataset.date);
-      document.querySelector('#recordDate').scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }));
     } catch (error) {
       if (error.name !== 'AbortError') {
         console.error(error);
@@ -928,7 +878,7 @@
     Object.keys(map).sort().reverse().forEach(date => map[date].forEach(id => {
       let source = 'Seed';
       if (ORDER.includes(id) && current.overrides[date] !== undefined) source = 'Local override';
-      else if (store.hasRemoteData() && Array.isArray(current.remote.events?.[id]) && current.remote.events[id].includes(date)) source = 'Wasmegg';
+      else if (store.hasRemoteData() && Array.isArray(current.remote.events?.[id]) && current.remote.events[id].includes(date)) source = 'GitHub history';
       rows.push({ date, id, source });
     }));
 
@@ -966,7 +916,6 @@
 
   function renderAll() {
     const currentDay = clock.currentEventDate();
-    document.getElementById('recordDate').max = eventDisplayDateIso(currentDay);
     const referenceInput = document.getElementById('forecastStart');
     if (!referenceInput.value) { referenceInput.value = currentDay; followCurrentDay = true; }
     const reference = referenceInput.value;
@@ -1149,38 +1098,6 @@
     });
   }
 
-  function bindRecordControls() {
-    document.getElementById('recordDate').addEventListener('change', event => loadRecordDate(event.target.value, { displayDate: true }));
-    document.getElementById('todayBtn').addEventListener('click', () => loadRecordDate(clock.currentEventDate()));
-    document.getElementById('saveDayBtn').addEventListener('click', () => {
-      if (!validateChecklist()) return;
-      const displayDate = document.getElementById('recordDate').value;
-      if (!displayDate) return;
-      const date = modelDateForDisplayDate(displayDate);
-      if (date > clock.currentEventDate()) {
-        document.getElementById('validationMsg').textContent = 'Confirm events only after their event day has started. Future entries are not used by forecasts.';
-        return;
-      }
-      state().overrides[date] = selectedEvents();
-      model.invalidateNextHitCache();
-      invalidateDataRows();
-      store.saveState();
-      renderAll();
-      toast(`Saved ${fmtEventDate(date, { month: 'short', day: 'numeric' })}`);
-    });
-    document.getElementById('clearDayBtn').addEventListener('click', () => {
-      const displayDate = document.getElementById('recordDate').value;
-      const date = modelDateForDisplayDate(displayDate);
-      delete state().overrides[date];
-      model.invalidateNextHitCache();
-      invalidateDataRows();
-      store.saveState();
-      loadRecordDate(date);
-      renderAll();
-      toast('Local override cleared');
-    });
-  }
-
   function bindDataControls() {
     document.getElementById('accuracyWindow')?.addEventListener('change', renderAccuracy);
     document.getElementById('exportBtn').addEventListener('click', exportData);
@@ -1269,7 +1186,6 @@
       if (forecastDays) forecastDays.value = state().ui.forecastDays;
       const capacityWeeks = document.getElementById('capacityWeeks');
       if (capacityWeeks) capacityWeeks.value = state().ui.capacityWeeks;
-      loadRecordDate(store.latestConfirmedDay());
       renderAll();
       toast('Local data reset');
       if (state().remote.autoSync) syncWasmegg({ silent: true });
@@ -1280,20 +1196,17 @@
     const versionBadge = document.getElementById('appVersionBadge');
     if (versionBadge) versionBadge.textContent = `v${APP_VERSION}`;
 
-    setupChecklist();
     syncSettingsUI();
 
     const modelToday = clock.currentEventDate();
     const latest = store.latestConfirmedDay();
     const defaultStart = modelToday;
     document.getElementById('forecastStart').value = defaultStart;
-    loadRecordDate(latest > modelToday ? modelToday : latest);
     calendarCursor = parseDate(eventDisplayDateIso(latest));
 
     bindNavigationControls();
     bindCalendarControls();
     bindForecastControls();
-    bindRecordControls();
     bindDataControls();
     bindSettingsControls();
     bindResetControl();
@@ -1302,8 +1215,12 @@
     renderAll();
     startEventDayWatcher();
     if (typeof window.location !== 'undefined') {
+      let lastSharedUpdate = null;
       const refreshShared = async () => {
         await root.EggEventLab.shared.refresh();
+        const updated = root.EggEventLab.shared.updatedAt();
+        if (lastSharedUpdate && updated !== lastSharedUpdate && state().remote?.autoSync !== false) await syncWasmegg({ silent: true });
+        lastSharedUpdate = updated;
         renderAccuracy();
         renderTodayEvents();
       };

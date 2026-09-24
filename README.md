@@ -235,7 +235,7 @@ Public predictions, downloaded history, and scores are maintained by GitHub Acti
 
 #### Set up once
 
-1. Copy this release into the root of BroadSword13/Egg-Event-Prediction, including `.github/workflows/shared-predictions.yml`, `scripts`, and `data/shared`. Keep your existing `.git` directory. Commit and push to the default branch.
+1. Copy this release into the root of BroadSword13/Egg-Event-Prediction, including `.github/workflows/shared-predictions.yml` and `scripts`. The workflow creates `data/shared` automatically if needed. Keep your existing `.git` directory. Commit and push to the default branch.
 2. In GitHub → Actions, enable workflows if prompted. Select **Update shared predictions** and use **Run workflow** for an initial check. The workflow requests `contents: write`; repository or organization policy and branch protection must permit its data commits. Do not bypass protections; if your repository requires pull requests, adjust the publishing design before enabling automatic writes.
 3. Confirm that the run succeeds and commits `data/shared/official.json` and `data/shared/events.json`. The next runs build stability observations before forecasts become eligible.
 4. Deploy this app release as usual. If the repository name or default branch differs, update `SOURCE` in `src/shared.js`. This direct raw-GitHub URL requires a public repository; never add a private access token to browser code.
@@ -264,3 +264,7 @@ Small samples are preliminary. These are prospective scores of archived predicti
 Do not overwrite `data/shared` with empty starter files when installing later releases after automation is active. Keep GitHub’s generated history. If a data push conflicts with another commit, the workflow fails safely without force-pushing; the next scheduled run checks out the latest branch and retries. A failure spanning the forecast window leaves that date unscored.
 
 Run `node --test tests/*.test.js` for validation. Run `node scripts/update-shared.cjs` only when intentionally refreshing shared files; it uses the real clock and public source and does not accept a backdated production timestamp.
+
+The browser loads event history from `SHARED_EVENTS_URL` in `src/config.js`, using HTTP revalidation and retaining an offline cache. Only the GitHub workflow contacts Wasmegg. New shared updates trigger a history refresh while the page is open when automatic loading is enabled. A manual **Refresh history** button retrieves GitHub’s copy; it does not force an upstream update. Release ZIPs omit generated `data/shared` files to preserve the repository’s existing archive.
+
+The Record a day form and calendar editing shortcut have been removed from the public interface. Existing saved overrides are preserved for compatibility with older exports.

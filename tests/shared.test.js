@@ -84,3 +84,20 @@ test('public score ignores browser overrides and retains labeled shared data on 
     assert.equal(app.shared.summary(90).overall.count,0);
   } finally {global.fetch=original;}
 });
+test('browser history loads only the shared GitHub copy and retains cache when offline',async()=>{
+  const original=global.fetch, warn=console.warn;
+  const requests=[];
+  try {
+    console.warn=()=>{};
+    global.fetch=async(url,options)=>{requests.push({url,options});return {ok:true,json:async()=>fixture()};};
+    const result=await app.wasmegg.sync();
+    assert.equal(result.ok,true);
+    assert.equal(requests[0].url,app.config.SHARED_EVENTS_URL);
+    assert.notEqual(requests[0].url,app.config.WASMEGG_EVENTS_URL);
+    assert.equal(requests[0].options.cache,'no-cache');
+    const saved=structuredClone(app.store.getState().remote.events);
+    global.fetch=async()=>{throw new Error('offline');};
+    assert.equal((await app.wasmegg.sync()).ok,false);
+    assert.deepEqual(app.store.getState().remote.events,saved);
+  } finally {global.fetch=original;console.warn=warn;}
+});

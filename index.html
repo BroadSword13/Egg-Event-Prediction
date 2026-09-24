@@ -20,8 +20,8 @@
       <span id="appVersionBadge" class="badge neutral">v0.6</span>
       <span id="dataThroughBadge" class="badge neutral"></span>
       <span id="clockBadge" class="badge neutral">Clock: Pacific</span>
-      <span id="wasmeggSyncBadge" class="badge neutral">Wasmegg: seed data</span>
-      <button id="syncWasmeggBtn" class="button secondary">Sync Wasmegg</button>
+      <span id="wasmeggSyncBadge" class="badge neutral">History: seed data</span>
+      <button id="syncWasmeggBtn" class="button secondary">Refresh history</button>
       <button id="exportBtn" class="button secondary">Export</button>
       <label class="button secondary file-button">Import<input id="importInput" type="file" accept="application/json" hidden /></label>
     </div>
@@ -168,7 +168,6 @@
         </details>
       </details>
 
-      <div class="two-col">
         <details class="card collapsible-card" open>
           <summary class="collapsible-card-summary">
             <div>
@@ -179,25 +178,6 @@
           <div id="rotationCards" class="rotation-grid"></div>
         </details>
 
-        <details class="card collapsible-card" open>
-          <summary class="collapsible-card-summary">
-            <div>
-              <h2>Record a day</h2>
-              <p class="muted small">Choose every event that occurred. Dates are shown in your local time and mapped to the Egg, Inc. event date internally. Confirm past or current event days only. Saving records unselected tracked events as absent. Forecasts use history only through their reference day.</p>
-            </div>
-          </summary>
-          <div class="record-row">
-            <input id="recordDate" class="date-input" type="date" />
-            <button id="todayBtn" class="button secondary">Today</button>
-          </div>
-          <div id="eventChecklist" class="event-checklist"></div>
-          <div id="validationMsg" class="validation-msg"></div>
-          <div class="record-actions">
-            <button id="saveDayBtn" class="button primary">Confirm</button>
-            <button id="clearDayBtn" class="button danger ghost">Clear override</button>
-          </div>
-        </details>
-      </div>
     </section>
 
     <section id="calendar" class="panel-section">
@@ -290,13 +270,13 @@
       <div class="card sync-card">
         <div class="card-title-row sync-title-row">
           <div>
-            <h2>Wasmegg automatic sync</h2>
-            <p class="muted small">Pulls all supported daily and Mission Capacity Boost rotations from Jan 1, 2024 forward from the same dataset used by the Wasmegg Events Calendar. July 14 is excluded from the probability model. Manual overrides remain authoritative for all tracked rotations.</p>
+            <h2>Shared event history</h2>
+            <p class="muted small">Loads the shared GitHub history, updated hourly from Wasmegg by the workflow, covering supported daily and Mission Capacity Boost rotations from Jan 1, 2024 forward. July 14 is excluded from the probability model. Manual overrides remain authoritative for all tracked rotations.</p>
             <p id="timeZoneDetails" class="muted small"></p>
           </div>
-          <button id="syncWasmeggDataBtn" class="button secondary">Sync now</button>
+          <button id="syncWasmeggDataBtn" class="button secondary">Refresh history</button>
         </div>
-        <label class="switch-row"><span><strong>Auto-sync on startup</strong><small>Requires an internet connection; cached data is used if the sync fails.</small></span><input id="autoSyncToggle" type="checkbox" checked /></label>
+        <label class="switch-row"><span><strong>Load shared history automatically</strong><small>Loads GitHub history on startup and when shared updates arrive. Cached history is used if unavailable.</small></span><input id="autoSyncToggle" type="checkbox" checked /></label>
         <div id="wasmeggSyncDetails" class="sync-details muted small"></div>
       </div>
       <div class="card data-card">

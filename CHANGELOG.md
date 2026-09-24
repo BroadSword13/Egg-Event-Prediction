@@ -2,57 +2,41 @@
 
 ## v0.6 — 2026-09-23
 
-- Today’s events now show their chance before release. If the app saved a forecast beforehand, it uses that percentage; otherwise it reconstructs the forecast using history through yesterday and labels it accordingly.
-- Added a prediction accuracy score with 30-, 90-, and 180-day views, separate Non-Ultra and Ultra results, top-pick and top-three rates, and sample counts. Non-Ultra Double Capacity has its own score.
-- GitHub Actions now saves public forecasts and scores automatically, using standard settings. The app reads the shared archive so everyone sees the same score, even when nobody has the app open.
-- Added hourly retries for late source updates, stability checks for partial results, and clear pending or incomplete-history labels. Missed forecast windows stay unscored; later corrections update results without rewriting predictions.
-- Shared history and exact forecast inputs are kept in the repository. Older browser archives remain exportable but no longer affect the public score.
+- Added pre-release percentages to today’s events. Reconstructed forecasts are labeled when no saved prediction is available.
+- Added shared accuracy scores for the last 30, 90, and 180 days, with separate Ultra, Non-Ultra, and Double Capacity results.
+- GitHub now updates event history hourly and saves forecasts automatically, so scores no longer depend on someone opening the app. Late or incomplete data stays unscored until ready; incomplete forecasts are excluded.
+- Removed Record a day and its calendar shortcut. Daily event status now fills the available width.
 
-## v0.5 - 2026-09-17
+## v0.5 — 2026-09-17
 
-- Added a separate Mission Capacity Boost tile to Tomorrow’s Events. It appears only when double ship capacity has a chance of occurring, with separate Ultra and Non-Ultra percentages when applicable.
+- Replaced the hard 16-day Non-Ultra limit with estimates based on each event’s history. Overdue events and previously unseen gaps are no longer treated as impossible.
+- Fixed historical forecasts to exclude events after the selected date.
+- Moved calculations into the background and added an updating indicator so the page stays usable.
+- Clarified Pacific reference dates, added a Current event day button, and kept selected dates from moving during syncs. Today and Tomorrow now have Live labels.
+- Added scheduled calendar entries, skipped-date markers, and a Double Capacity tile when tomorrow has a chance of one.
+- Improved collapsible sections and alignment, and blocked future manual entries.
 
-- Removed the hard 16-day deadline. All Non-Ultra events now use soft gap estimates: overdue events remain possible, and reaching a deadline no longer forces one event to occur or rules it out afterward. Each rotation uses its own history, including Mission Capacity Boost.
-- Gave missing history and previously unseen Non-Ultra gaps a small allowance instead of treating them as impossible. Removed the old cap switch and added tests for missed deadlines and overdue events.
+## v0.4 — 2026-09-16
 
-- Fixed historical forecasts so they only use events known through the selected reference day. Later events and sync times no longer change those predictions, though corrections to older history still can.
-- Moved prediction calculations into the background so the page stays responsive. An “Updating predictions…” message appears while calculations run, and the previous results stay visible until the new ones are ready. This also works when opening the app directly from a folder.
-- Made the reference date clearer by labeling it as Pacific time and adding a **Current event day** button. A date you select now stays selected during automatic syncs. Today’s and Tomorrow’s panels have **Live** labels to show that they follow the current day.
-- Limited **Record a day** to past and current event days. Existing future entries are kept, but forecasts ignore them until the reference date reaches them.
-- Added a **Regular schedule** calendar toggle for past and future dates. These entries are labeled **Scheduled**, since they show the usual weekly pattern rather than confirmed events. The Pacific date is also shown when it differs from your local date.
-- Added markers between forecast rows to show how many dates were skipped. Made the collapse arrows easier to see, fixed cards that stayed stretched after being collapsed, tidied up the rule alignment, and shortened **Confirm day** to **Confirm**.
-- Added tests for historical forecasts, background calculations, and the six-day Non-Ultra Hab Sale minimum gap.
+- Lowered the Non-Ultra Hab Sale minimum gap to six days and removed the redundant Ultra five-day restriction.
+- Added collapsible forecast sections and calendar filters. Next X Days now skips dates with no chance of a selected event.
+- Improved data loading, event names, date labels, and model explanations.
 
-## v0.4 - 2026-09-16
+## v0.3 — 2026-09-11
 
-- Reduced the Non-Ultra Hab Sale minimum gap from 7 days to 6 days, allowing forecasts to consider six-day returns.
+- Extending the forecast range no longer changes probabilities for dates already shown.
+- Forecast dates now advance automatically when the Pacific event day changes.
 
-- Streamlined the Forecast page with collapsible named sections, local-date manual entry, clearer **Today** status labels, and Next X Days views that skip all-zero dates while continuing forward to fill the requested range.
-- Expanded the calendar with configurable confirmed/predicted overlays, Ultra/Non-Ultra filters, probability thresholds, fixed Friday–Monday events, likely future events, and clearer solid-border styling for fixed predictions.
-- Improved usability and performance with lazy/batched Data rendering, simpler model documentation, official in-game event terminology throughout the UI/docs, clearer rule presentation, and removal of the redundant 5-day Ultra-gap constraint.
+## v0.2 — 2026-09-10
 
-## v0.3 - 2026-09-11
+- Added Boost Time, Gifts, Shells, and Fueling as full event rotations.
+- Updated daily probabilities to account for competing events and the every-other-day Ultra schedule.
+- Gave Double Capacity its own Sunday forecast and adjustable outlook.
+- Added Today and Tomorrow tiles, live counter resets, and fixed weekly events.
+- Added Pacific server timing, local date conversion, and faster forecast calculations.
 
-- Stabilized Monte Carlo seeding so changing the Next X Days horizon only adds or removes dates; probabilities for dates already in view remain identical. The same prefix-stability rule now applies to the adjustable Double Capacity week horizon.
-- Made the forecast reference follow the Pacific event-day rollover automatically. When the app detects or syncs a new event day, Next X Days advances immediately so today is never left in the future forecast, without requiring a page refresh.
+## v0.1 — 2026-09-10
 
-## v0.2 - 2026-09-10
-
-- Reworked forecast probabilities so Tuesday–Thursday Non-Ultra events and eligible Ultra cadence days each divide a guaranteed 100% event slot; Ultra scheduling now follows the observed every-other-Pacific-day cadence from May 4, 2026 forward.
-- Promoted Boost Duration, Gifts, Shells, and Fueling to full Ultra / Non-Ultra event rotations across forecasts, next-date cards, status, calendar, gap history, manual entry, and data views.
-- Split Double Capacity into its own Sunday-only forecast with independent Ultra / Non-Ultra modeling, a default 4-Sunday outlook, adjustable week count, Sunday overlay support, and corrected Non-Ultra next-date prediction.
-- Added Today and Tomorrow event tiles, future-only Next X Days forecasting, immediate counter resets for events that hit today, fixed Friday–Monday Non-Ultra tomorrow events, and a sticky date column when forecast events scroll horizontally.
-- Standardized event timing on Pacific Time, added server-clock synchronization with browser fallback, and automatically converts displayed dates for international visitors while retaining the Pacific event date.
-- Improved reliability and performance with Wasmegg seed-data auditing/corrections, cached forecast calculations, optimized next-hit simulations, and responsive handling of the expanded event set.
-
-## v0.1 - 2026-09-10
-
-Initial public-ready release of Egg Event Lab.
-
-- Configurable event forecasts and most-likely-next-date cards
-- Housing, shipping, drone, and double-capacity Ultra / Non-Ultra rotations
-- Wasmegg synchronization from January 1, 2024 forward
-- Rolling recency weighting and conditional gap-hazard modeling
-- Non-Ultra Tue–Thu competition/blocker modeling
-- Egg Day (July 14) exclusion from model training
-- Calendar, gap history, rules, local overrides, and JSON import/export
+- Initial release with event forecasts, likely next dates, a calendar, and gap history.
+- Added Wasmegg history from January 2024, recent-history weighting, and Egg Day exclusions.
+- Included model settings, manual overrides, and JSON import/export.
