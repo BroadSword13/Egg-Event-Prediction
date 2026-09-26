@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-26T10:26:33.665Z",
+  "updatedAt": "2026-09-26T11:25:56.967Z",
   "sourceLatest": "2026-09-25",
   "predictions": {
     "2026-09-24": {
@@ -113,27 +113,27 @@
     "2026-09-23": {
       "fingerprint": "4f9060c9dff2d7a6cb7d9bc3fea4ed2b102e4a429d3d322d5992d3ce2c0c5769",
       "stableSince": "2026-09-23T23:47:08.917Z",
-      "checkedAt": "2026-09-26T10:26:33.665Z"
+      "checkedAt": "2026-09-26T11:25:56.967Z"
     },
     "2026-09-22": {
       "fingerprint": "0da49570050b70fa59c7b809f8e978324e6ca0c924f8f2472f66f0b72ed13588",
       "stableSince": "2026-09-23T23:47:08.917Z",
-      "checkedAt": "2026-09-26T10:26:33.665Z"
+      "checkedAt": "2026-09-26T11:25:56.967Z"
     },
     "2026-09-21": {
       "fingerprint": "0fde7fd101d28bbc86ca09b94e5744145675ff7370183b4d3f45e6b9baf893a5",
       "stableSince": "2026-09-23T23:47:08.917Z",
-      "checkedAt": "2026-09-26T10:26:33.665Z"
+      "checkedAt": "2026-09-26T11:25:56.967Z"
     },
     "2026-09-20": {
       "fingerprint": "29d67df72cb1b667dd14e94ed15d6b8056f642da9a59bd1016f49824343ad999",
       "stableSince": "2026-09-23T23:47:08.917Z",
-      "checkedAt": "2026-09-26T10:26:33.665Z"
+      "checkedAt": "2026-09-26T11:25:56.967Z"
     },
     "2026-09-19": {
       "fingerprint": "1d3006a3f135daa54bcd863527000a93e615c03924e5435e1dc0be70b0579445",
       "stableSince": "2026-09-23T23:47:08.917Z",
-      "checkedAt": "2026-09-26T10:26:33.665Z"
+      "checkedAt": "2026-09-26T11:25:56.967Z"
     },
     "2026-09-18": {
       "fingerprint": "311d652d14ffac3f57f96ccc50f147345ecb50428b2a29f99f593f8be0321fac",
@@ -148,12 +148,12 @@
     "2026-09-24": {
       "fingerprint": "8e80df28bb71476da603a3a18aa88103a3ec5748e1aca12890244e9d27a1a013",
       "stableSince": "2026-09-24T16:16:26.389Z",
-      "checkedAt": "2026-09-26T10:26:33.665Z"
+      "checkedAt": "2026-09-26T11:25:56.967Z"
     },
     "2026-09-25": {
       "fingerprint": "406083187654ccb92469c7613eff05409a5d00aab0cc23dab57e255176e288d5",
       "stableSince": "2026-09-25T16:29:48.546Z",
-      "checkedAt": "2026-09-26T10:26:33.665Z"
+      "checkedAt": "2026-09-26T11:25:56.967Z"
     }
   },
   "outcomes": {
@@ -163,7 +163,7 @@
         "housing_blue"
       ],
       "reason": "Stable source; expected tiers present",
-      "checkedAt": "2026-09-26T10:26:33.665Z"
+      "checkedAt": "2026-09-26T11:25:56.967Z"
     },
     "2026-09-22": {
       "status": "complete",
@@ -172,13 +172,13 @@
         "blocker_ultra_gifts"
       ],
       "reason": "Stable source; expected tiers present",
-      "checkedAt": "2026-09-26T10:26:33.665Z"
+      "checkedAt": "2026-09-26T11:25:56.967Z"
     },
     "2026-09-21": {
       "status": "complete",
       "ids": [],
       "reason": "Stable source; expected tiers present",
-      "checkedAt": "2026-09-26T10:26:33.665Z"
+      "checkedAt": "2026-09-26T11:25:56.967Z"
     },
     "2026-09-20": {
       "status": "complete",
@@ -187,13 +187,13 @@
         "capacity_purple"
       ],
       "reason": "Stable source; expected tiers present",
-      "checkedAt": "2026-09-26T10:26:33.665Z"
+      "checkedAt": "2026-09-26T11:25:56.967Z"
     },
     "2026-09-19": {
       "status": "complete",
       "ids": [],
       "reason": "Stable source; expected tiers present",
-      "checkedAt": "2026-09-26T10:26:33.665Z"
+      "checkedAt": "2026-09-26T11:25:56.967Z"
     },
     "2026-09-18": {
       "status": "complete",
@@ -218,13 +218,13 @@
         "blocker_ultra_shells"
       ],
       "reason": "Stable source; expected tiers present",
-      "checkedAt": "2026-09-26T10:26:33.665Z"
+      "checkedAt": "2026-09-26T11:25:56.967Z"
     },
     "2026-09-25": {
       "status": "complete",
       "ids": [],
       "reason": "Stable source; expected tiers present",
-      "checkedAt": "2026-09-26T10:26:33.665Z"
+      "checkedAt": "2026-09-26T11:25:56.967Z"
     }
   },
   "scores": {
