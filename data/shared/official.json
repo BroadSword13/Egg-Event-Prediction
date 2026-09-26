@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-26T17:26:28.480Z",
+  "updatedAt": "2026-09-26T18:30:07.960Z",
   "sourceLatest": "2026-09-26",
   "predictions": {
     "2026-09-24": {
@@ -113,22 +113,22 @@
     "2026-09-23": {
       "fingerprint": "4f9060c9dff2d7a6cb7d9bc3fea4ed2b102e4a429d3d322d5992d3ce2c0c5769",
       "stableSince": "2026-09-23T23:47:08.917Z",
-      "checkedAt": "2026-09-26T17:26:28.480Z"
+      "checkedAt": "2026-09-26T18:30:07.960Z"
     },
     "2026-09-22": {
       "fingerprint": "0da49570050b70fa59c7b809f8e978324e6ca0c924f8f2472f66f0b72ed13588",
       "stableSince": "2026-09-23T23:47:08.917Z",
-      "checkedAt": "2026-09-26T17:26:28.480Z"
+      "checkedAt": "2026-09-26T18:30:07.960Z"
     },
     "2026-09-21": {
       "fingerprint": "0fde7fd101d28bbc86ca09b94e5744145675ff7370183b4d3f45e6b9baf893a5",
       "stableSince": "2026-09-23T23:47:08.917Z",
-      "checkedAt": "2026-09-26T17:26:28.480Z"
+      "checkedAt": "2026-09-26T18:30:07.960Z"
     },
     "2026-09-20": {
       "fingerprint": "29d67df72cb1b667dd14e94ed15d6b8056f642da9a59bd1016f49824343ad999",
       "stableSince": "2026-09-23T23:47:08.917Z",
-      "checkedAt": "2026-09-26T17:26:28.480Z"
+      "checkedAt": "2026-09-26T18:30:07.960Z"
     },
     "2026-09-19": {
       "fingerprint": "1d3006a3f135daa54bcd863527000a93e615c03924e5435e1dc0be70b0579445",
@@ -148,17 +148,17 @@
     "2026-09-24": {
       "fingerprint": "8e80df28bb71476da603a3a18aa88103a3ec5748e1aca12890244e9d27a1a013",
       "stableSince": "2026-09-24T16:16:26.389Z",
-      "checkedAt": "2026-09-26T17:26:28.480Z"
+      "checkedAt": "2026-09-26T18:30:07.960Z"
     },
     "2026-09-25": {
       "fingerprint": "406083187654ccb92469c7613eff05409a5d00aab0cc23dab57e255176e288d5",
       "stableSince": "2026-09-25T16:29:48.546Z",
-      "checkedAt": "2026-09-26T17:26:28.480Z"
+      "checkedAt": "2026-09-26T18:30:07.960Z"
     },
     "2026-09-26": {
       "fingerprint": "55e2b6983d68df6a27dd6e9b4fc0cf2fb860d3e0c708cee644c1dc1630790754",
       "stableSince": "2026-09-26T16:27:46.370Z",
-      "checkedAt": "2026-09-26T17:26:28.480Z"
+      "checkedAt": "2026-09-26T18:30:07.960Z"
     }
   },
   "outcomes": {
@@ -168,7 +168,7 @@
         "housing_blue"
       ],
       "reason": "Stable source; expected tiers present",
-      "checkedAt": "2026-09-26T17:26:28.480Z"
+      "checkedAt": "2026-09-26T18:30:07.960Z"
     },
     "2026-09-22": {
       "status": "complete",
@@ -177,13 +177,13 @@
         "blocker_ultra_gifts"
       ],
       "reason": "Stable source; expected tiers present",
-      "checkedAt": "2026-09-26T17:26:28.480Z"
+      "checkedAt": "2026-09-26T18:30:07.960Z"
     },
     "2026-09-21": {
       "status": "complete",
       "ids": [],
       "reason": "Stable source; expected tiers present",
-      "checkedAt": "2026-09-26T17:26:28.480Z"
+      "checkedAt": "2026-09-26T18:30:07.960Z"
     },
     "2026-09-20": {
       "status": "complete",
@@ -192,7 +192,7 @@
         "capacity_purple"
       ],
       "reason": "Stable source; expected tiers present",
-      "checkedAt": "2026-09-26T17:26:28.480Z"
+      "checkedAt": "2026-09-26T18:30:07.960Z"
     },
     "2026-09-19": {
       "status": "complete",
@@ -223,28 +223,30 @@
         "blocker_ultra_shells"
       ],
       "reason": "Stable source; expected tiers present",
-      "checkedAt": "2026-09-26T17:26:28.480Z"
+      "checkedAt": "2026-09-26T18:30:07.960Z"
     },
     "2026-09-25": {
       "status": "complete",
       "ids": [],
       "reason": "Stable source; expected tiers present",
-      "checkedAt": "2026-09-26T17:26:28.480Z"
+      "checkedAt": "2026-09-26T18:30:07.960Z"
     },
     "2026-09-26": {
-      "status": "pending",
-      "ids": [],
-      "reason": "Waiting for source to settle",
-      "checkedAt": "2026-09-26T17:26:28.480Z"
+      "status": "complete",
+      "ids": [
+        "blocker_ultra_gifts"
+      ],
+      "reason": "Stable source; expected tiers present",
+      "checkedAt": "2026-09-26T18:30:07.960Z"
     }
   },
   "scores": {
     "30": {
       "overall": {
-        "count": 2,
-        "score": 38.85027777777778,
+        "count": 3,
+        "score": 37.76261481481481,
         "top": 0,
-        "top3": 0.5
+        "top3": 0.3333333333333333
       },
       "nonUltra": {
         "count": 1,
@@ -253,8 +255,8 @@
         "top3": 1
       },
       "ultra": {
-        "count": 1,
-        "score": 33.65085555555556,
+        "count": 2,
+        "score": 34.61907222222222,
         "top": 0,
         "top3": 0
       },
@@ -267,10 +269,10 @@
     },
     "90": {
       "overall": {
-        "count": 2,
-        "score": 38.85027777777778,
+        "count": 3,
+        "score": 37.76261481481481,
         "top": 0,
-        "top3": 0.5
+        "top3": 0.3333333333333333
       },
       "nonUltra": {
         "count": 1,
@@ -279,8 +281,8 @@
         "top3": 1
       },
       "ultra": {
-        "count": 1,
-        "score": 33.65085555555556,
+        "count": 2,
+        "score": 34.61907222222222,
         "top": 0,
         "top3": 0
       },
@@ -293,10 +295,10 @@
     },
     "180": {
       "overall": {
-        "count": 2,
-        "score": 38.85027777777778,
+        "count": 3,
+        "score": 37.76261481481481,
         "top": 0,
-        "top3": 0.5
+        "top3": 0.3333333333333333
       },
       "nonUltra": {
         "count": 1,
@@ -305,8 +307,8 @@
         "top3": 1
       },
       "ultra": {
-        "count": 1,
-        "score": 33.65085555555556,
+        "count": 2,
+        "score": 34.61907222222222,
         "top": 0,
         "top3": 0
       },
