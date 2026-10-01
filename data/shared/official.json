@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-01T09:32:01.922Z",
+  "updatedAt": "2026-10-01T10:31:30.554Z",
   "sourceLatest": "2026-09-30",
   "predictions": {
     "2026-09-24": {
@@ -247,6 +247,41 @@
         "capacity_purple": 0,
         "capacity_pink": 0
       }
+    },
+    "2026-10-01": {
+      "reference": "2026-09-30",
+      "savedAt": "2026-10-01T10:31:31.161Z",
+      "version": "0.6",
+      "commit": "d2fb9c6fc847454040a04caa18b316cbbc25dc82",
+      "status": "eligible",
+      "sourceLatest": "2026-09-30",
+      "inputHash": "21a4d8446fe4d7e43c6e5ca8ebb87d6d2b2f5ae99ce7a025299a0e37270edf50",
+      "settings": {
+        "weekdayPattern": true,
+        "weights": {
+          "under1": 3,
+          "oneToTwo": 2,
+          "twoPlus": 0.5
+        }
+      },
+      "probabilities": {
+        "housing_blue": 0.445,
+        "housing_pink": 0,
+        "shipping_blue": 0,
+        "shipping_pink": 0,
+        "drone_green": 0.5046666666666667,
+        "drone_pink": 0,
+        "blocker_boost_duration": 0.006333333333333333,
+        "blocker_gifts": 0.026,
+        "blocker_shells": 0.009666666666666667,
+        "blocker_fueling": 0.008333333333333333,
+        "blocker_ultra_boost_duration": 0,
+        "blocker_ultra_gifts": 0,
+        "blocker_ultra_shells": 0,
+        "blocker_ultra_fueling": 0,
+        "capacity_purple": 0,
+        "capacity_pink": 0
+      }
     }
   },
   "observations": {
@@ -288,37 +323,37 @@
     "2026-09-24": {
       "fingerprint": "8e80df28bb71476da603a3a18aa88103a3ec5748e1aca12890244e9d27a1a013",
       "stableSince": "2026-09-24T16:16:26.389Z",
-      "checkedAt": "2026-10-01T09:32:01.922Z"
+      "checkedAt": "2026-10-01T10:31:30.554Z"
     },
     "2026-09-25": {
       "fingerprint": "406083187654ccb92469c7613eff05409a5d00aab0cc23dab57e255176e288d5",
       "stableSince": "2026-09-25T16:29:48.546Z",
-      "checkedAt": "2026-10-01T09:32:01.922Z"
+      "checkedAt": "2026-10-01T10:31:30.554Z"
     },
     "2026-09-26": {
       "fingerprint": "55e2b6983d68df6a27dd6e9b4fc0cf2fb860d3e0c708cee644c1dc1630790754",
       "stableSince": "2026-09-26T16:27:46.370Z",
-      "checkedAt": "2026-10-01T09:32:01.922Z"
+      "checkedAt": "2026-10-01T10:31:30.554Z"
     },
     "2026-09-27": {
       "fingerprint": "c109176b9230a7fd009070a05ceee2d1537ea0ab46976f006e39ae4eba33f0e5",
       "stableSince": "2026-09-27T16:28:02.769Z",
-      "checkedAt": "2026-10-01T09:32:01.922Z"
+      "checkedAt": "2026-10-01T10:31:30.554Z"
     },
     "2026-09-28": {
       "fingerprint": "9a68060f9b723865cfbf96a80c91d24a7d7019a28dab374f6ee2c7a2b05101d7",
       "stableSince": "2026-09-28T16:31:52.473Z",
-      "checkedAt": "2026-10-01T09:32:01.922Z"
+      "checkedAt": "2026-10-01T10:31:30.554Z"
     },
     "2026-09-29": {
       "fingerprint": "058efc3248aee915ce2dd4d40ef288cac3ac597d951b240f463475b0c3f6e049",
       "stableSince": "2026-09-29T16:32:28.179Z",
-      "checkedAt": "2026-10-01T09:32:01.922Z"
+      "checkedAt": "2026-10-01T10:31:30.554Z"
     },
     "2026-09-30": {
       "fingerprint": "9730b58f49ae8639851beb7c38353cbe42f283fb3738a8f1fc85a447f216f6d7",
       "stableSince": "2026-09-30T16:32:42.597Z",
-      "checkedAt": "2026-10-01T09:32:01.922Z"
+      "checkedAt": "2026-10-01T10:31:30.554Z"
     }
   },
   "outcomes": {
@@ -383,13 +418,13 @@
         "blocker_ultra_shells"
       ],
       "reason": "Stable source; expected tiers present",
-      "checkedAt": "2026-10-01T09:32:01.922Z"
+      "checkedAt": "2026-10-01T10:31:30.554Z"
     },
     "2026-09-25": {
       "status": "complete",
       "ids": [],
       "reason": "Stable source; expected tiers present",
-      "checkedAt": "2026-10-01T09:32:01.922Z"
+      "checkedAt": "2026-10-01T10:31:30.554Z"
     },
     "2026-09-26": {
       "status": "complete",
@@ -397,13 +432,13 @@
         "blocker_ultra_gifts"
       ],
       "reason": "Stable source; expected tiers present",
-      "checkedAt": "2026-10-01T09:32:01.922Z"
+      "checkedAt": "2026-10-01T10:31:30.554Z"
     },
     "2026-09-27": {
       "status": "complete",
       "ids": [],
       "reason": "Stable source; expected tiers present",
-      "checkedAt": "2026-10-01T09:32:01.922Z"
+      "checkedAt": "2026-10-01T10:31:30.554Z"
     },
     "2026-09-28": {
       "status": "complete",
@@ -411,7 +446,7 @@
         "shipping_pink"
       ],
       "reason": "Stable source; expected tiers present",
-      "checkedAt": "2026-10-01T09:32:01.922Z"
+      "checkedAt": "2026-10-01T10:31:30.554Z"
     },
     "2026-09-29": {
       "status": "complete",
@@ -419,7 +454,7 @@
         "shipping_blue"
       ],
       "reason": "Stable source; expected tiers present",
-      "checkedAt": "2026-10-01T09:32:01.922Z"
+      "checkedAt": "2026-10-01T10:31:30.554Z"
     },
     "2026-09-30": {
       "status": "complete",
@@ -428,7 +463,7 @@
         "blocker_boost_duration"
       ],
       "reason": "Stable source; expected tiers present",
-      "checkedAt": "2026-10-01T09:32:01.922Z"
+      "checkedAt": "2026-10-01T10:31:30.554Z"
     }
   },
   "scores": {
