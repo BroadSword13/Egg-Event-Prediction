@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-03T00:35:56.983Z",
+  "updatedAt": "2026-10-03T01:28:37.225Z",
   "sourceLatest": "2026-10-02",
   "predictions": {
     "2026-09-24": {
@@ -358,47 +358,47 @@
     "2026-09-24": {
       "fingerprint": "8e80df28bb71476da603a3a18aa88103a3ec5748e1aca12890244e9d27a1a013",
       "stableSince": "2026-09-24T16:16:26.389Z",
-      "checkedAt": "2026-10-03T00:35:56.983Z"
+      "checkedAt": "2026-10-03T01:28:37.225Z"
     },
     "2026-09-25": {
       "fingerprint": "406083187654ccb92469c7613eff05409a5d00aab0cc23dab57e255176e288d5",
       "stableSince": "2026-09-25T16:29:48.546Z",
-      "checkedAt": "2026-10-03T00:35:56.983Z"
+      "checkedAt": "2026-10-03T01:28:37.225Z"
     },
     "2026-09-26": {
       "fingerprint": "55e2b6983d68df6a27dd6e9b4fc0cf2fb860d3e0c708cee644c1dc1630790754",
       "stableSince": "2026-09-26T16:27:46.370Z",
-      "checkedAt": "2026-10-03T00:35:56.983Z"
+      "checkedAt": "2026-10-03T01:28:37.225Z"
     },
     "2026-09-27": {
       "fingerprint": "c109176b9230a7fd009070a05ceee2d1537ea0ab46976f006e39ae4eba33f0e5",
       "stableSince": "2026-09-27T16:28:02.769Z",
-      "checkedAt": "2026-10-03T00:35:56.983Z"
+      "checkedAt": "2026-10-03T01:28:37.225Z"
     },
     "2026-09-28": {
       "fingerprint": "9a68060f9b723865cfbf96a80c91d24a7d7019a28dab374f6ee2c7a2b05101d7",
       "stableSince": "2026-09-28T16:31:52.473Z",
-      "checkedAt": "2026-10-03T00:35:56.983Z"
+      "checkedAt": "2026-10-03T01:28:37.225Z"
     },
     "2026-09-29": {
       "fingerprint": "058efc3248aee915ce2dd4d40ef288cac3ac597d951b240f463475b0c3f6e049",
       "stableSince": "2026-09-29T16:32:28.179Z",
-      "checkedAt": "2026-10-03T00:35:56.983Z"
+      "checkedAt": "2026-10-03T01:28:37.225Z"
     },
     "2026-09-30": {
       "fingerprint": "9730b58f49ae8639851beb7c38353cbe42f283fb3738a8f1fc85a447f216f6d7",
       "stableSince": "2026-09-30T16:32:42.597Z",
-      "checkedAt": "2026-10-03T00:35:56.983Z"
+      "checkedAt": "2026-10-03T01:28:37.225Z"
     },
     "2026-10-01": {
       "fingerprint": "a95d6cc693d7e80a2dad2d1609c587f07048a3e1a5c35cfaabe6960b79c6900c",
       "stableSince": "2026-10-01T16:30:20.006Z",
-      "checkedAt": "2026-10-03T00:35:56.983Z"
+      "checkedAt": "2026-10-03T01:28:37.225Z"
     },
     "2026-10-02": {
       "fingerprint": "6ee748ba68d2ac5b1a8799e1771f6a08f58da0619265cfb5d8fd4aed4eb5e59f",
       "stableSince": "2026-10-02T16:31:14.654Z",
-      "checkedAt": "2026-10-03T00:35:56.983Z"
+      "checkedAt": "2026-10-03T01:28:37.225Z"
     }
   },
   "outcomes": {
@@ -463,13 +463,13 @@
         "blocker_ultra_shells"
       ],
       "reason": "Stable source; expected tiers present",
-      "checkedAt": "2026-10-03T00:35:56.983Z"
+      "checkedAt": "2026-10-03T01:28:37.225Z"
     },
     "2026-09-25": {
       "status": "complete",
       "ids": [],
       "reason": "Stable source; expected tiers present",
-      "checkedAt": "2026-10-03T00:35:56.983Z"
+      "checkedAt": "2026-10-03T01:28:37.225Z"
     },
     "2026-09-26": {
       "status": "complete",
@@ -477,13 +477,13 @@
         "blocker_ultra_gifts"
       ],
       "reason": "Stable source; expected tiers present",
-      "checkedAt": "2026-10-03T00:35:56.983Z"
+      "checkedAt": "2026-10-03T01:28:37.225Z"
     },
     "2026-09-27": {
       "status": "complete",
       "ids": [],
       "reason": "Stable source; expected tiers present",
-      "checkedAt": "2026-10-03T00:35:56.983Z"
+      "checkedAt": "2026-10-03T01:28:37.225Z"
     },
     "2026-09-28": {
       "status": "complete",
@@ -491,7 +491,7 @@
         "shipping_pink"
       ],
       "reason": "Stable source; expected tiers present",
-      "checkedAt": "2026-10-03T00:35:56.983Z"
+      "checkedAt": "2026-10-03T01:28:37.225Z"
     },
     "2026-09-29": {
       "status": "complete",
@@ -499,7 +499,7 @@
         "shipping_blue"
       ],
       "reason": "Stable source; expected tiers present",
-      "checkedAt": "2026-10-03T00:35:56.983Z"
+      "checkedAt": "2026-10-03T01:28:37.225Z"
     },
     "2026-09-30": {
       "status": "complete",
@@ -508,7 +508,7 @@
         "blocker_boost_duration"
       ],
       "reason": "Stable source; expected tiers present",
-      "checkedAt": "2026-10-03T00:35:56.983Z"
+      "checkedAt": "2026-10-03T01:28:37.225Z"
     },
     "2026-10-01": {
       "status": "complete",
@@ -516,7 +516,7 @@
         "drone_green"
       ],
       "reason": "Stable source; expected tiers present",
-      "checkedAt": "2026-10-03T00:35:56.983Z"
+      "checkedAt": "2026-10-03T01:28:37.225Z"
     },
     "2026-10-02": {
       "status": "complete",
@@ -524,7 +524,7 @@
         "housing_pink"
       ],
       "reason": "Stable source; expected tiers present",
-      "checkedAt": "2026-10-03T00:35:56.983Z"
+      "checkedAt": "2026-10-03T01:28:37.225Z"
     }
   },
   "scores": {
