@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-10T13:30:23.538Z",
+  "updatedAt": "2026-10-10T14:29:08.509Z",
   "sourceLatest": "2026-10-09",
   "predictions": {
     "2026-09-24": {
@@ -638,82 +638,82 @@
     "2026-09-24": {
       "fingerprint": "8e80df28bb71476da603a3a18aa88103a3ec5748e1aca12890244e9d27a1a013",
       "stableSince": "2026-09-24T16:16:26.389Z",
-      "checkedAt": "2026-10-10T13:30:23.538Z"
+      "checkedAt": "2026-10-10T14:29:08.509Z"
     },
     "2026-09-25": {
       "fingerprint": "406083187654ccb92469c7613eff05409a5d00aab0cc23dab57e255176e288d5",
       "stableSince": "2026-09-25T16:29:48.546Z",
-      "checkedAt": "2026-10-10T13:30:23.538Z"
+      "checkedAt": "2026-10-10T14:29:08.509Z"
     },
     "2026-09-26": {
       "fingerprint": "55e2b6983d68df6a27dd6e9b4fc0cf2fb860d3e0c708cee644c1dc1630790754",
       "stableSince": "2026-09-26T16:27:46.370Z",
-      "checkedAt": "2026-10-10T13:30:23.538Z"
+      "checkedAt": "2026-10-10T14:29:08.509Z"
     },
     "2026-09-27": {
       "fingerprint": "c109176b9230a7fd009070a05ceee2d1537ea0ab46976f006e39ae4eba33f0e5",
       "stableSince": "2026-09-27T16:28:02.769Z",
-      "checkedAt": "2026-10-10T13:30:23.538Z"
+      "checkedAt": "2026-10-10T14:29:08.509Z"
     },
     "2026-09-28": {
       "fingerprint": "9a68060f9b723865cfbf96a80c91d24a7d7019a28dab374f6ee2c7a2b05101d7",
       "stableSince": "2026-09-28T16:31:52.473Z",
-      "checkedAt": "2026-10-10T13:30:23.538Z"
+      "checkedAt": "2026-10-10T14:29:08.509Z"
     },
     "2026-09-29": {
       "fingerprint": "058efc3248aee915ce2dd4d40ef288cac3ac597d951b240f463475b0c3f6e049",
       "stableSince": "2026-09-29T16:32:28.179Z",
-      "checkedAt": "2026-10-10T13:30:23.538Z"
+      "checkedAt": "2026-10-10T14:29:08.509Z"
     },
     "2026-09-30": {
       "fingerprint": "9730b58f49ae8639851beb7c38353cbe42f283fb3738a8f1fc85a447f216f6d7",
       "stableSince": "2026-09-30T16:32:42.597Z",
-      "checkedAt": "2026-10-10T13:30:23.538Z"
+      "checkedAt": "2026-10-10T14:29:08.509Z"
     },
     "2026-10-01": {
       "fingerprint": "a95d6cc693d7e80a2dad2d1609c587f07048a3e1a5c35cfaabe6960b79c6900c",
       "stableSince": "2026-10-01T16:30:20.006Z",
-      "checkedAt": "2026-10-10T13:30:23.538Z"
+      "checkedAt": "2026-10-10T14:29:08.509Z"
     },
     "2026-10-02": {
       "fingerprint": "6ee748ba68d2ac5b1a8799e1771f6a08f58da0619265cfb5d8fd4aed4eb5e59f",
       "stableSince": "2026-10-02T16:31:14.654Z",
-      "checkedAt": "2026-10-10T13:30:23.538Z"
+      "checkedAt": "2026-10-10T14:29:08.509Z"
     },
     "2026-10-03": {
       "fingerprint": "9901733b0e8fdc5042f4a1065db842f68722a5e581f8df5a436cf62df7df64ce",
       "stableSince": "2026-10-03T19:42:08.891Z",
-      "checkedAt": "2026-10-10T13:30:23.538Z"
+      "checkedAt": "2026-10-10T14:29:08.509Z"
     },
     "2026-10-04": {
       "fingerprint": "a0040908e41c1742203b3c556cbd2b2a02fe0c7361616142bc7c6b692d387c14",
       "stableSince": "2026-10-04T20:28:26.930Z",
-      "checkedAt": "2026-10-10T13:30:23.538Z"
+      "checkedAt": "2026-10-10T14:29:08.509Z"
     },
     "2026-10-05": {
       "fingerprint": "7b2723a026d49c3b83d84fc3c285a8ed27843e293476d204cdf898f65644ab57",
       "stableSince": "2026-10-05T16:33:20.995Z",
-      "checkedAt": "2026-10-10T13:30:23.538Z"
+      "checkedAt": "2026-10-10T14:29:08.509Z"
     },
     "2026-10-06": {
       "fingerprint": "34f386aa0f05580d669918d7909fa295754641f6ccca31de0c74e2fa0a8d0a0b",
       "stableSince": "2026-10-06T16:33:23.975Z",
-      "checkedAt": "2026-10-10T13:30:23.538Z"
+      "checkedAt": "2026-10-10T14:29:08.509Z"
     },
     "2026-10-07": {
       "fingerprint": "f8119576578e006fac42643abd06d497cd9f300b2f7fa5cf70c8c14390623058",
       "stableSince": "2026-10-07T16:34:51.746Z",
-      "checkedAt": "2026-10-10T13:30:23.538Z"
+      "checkedAt": "2026-10-10T14:29:08.509Z"
     },
     "2026-10-08": {
       "fingerprint": "7dbe2db66799054ed488b7ae8777db616076e96fb631526cf321cb09a6dc1f0c",
       "stableSince": "2026-10-08T16:25:39.169Z",
-      "checkedAt": "2026-10-10T13:30:23.538Z"
+      "checkedAt": "2026-10-10T14:29:08.509Z"
     },
     "2026-10-09": {
       "fingerprint": "6156bef91ba3486d5cdbde1f0713a0e4cec6415bae2603c73219a79243c544bb",
       "stableSince": "2026-10-09T16:32:24.357Z",
-      "checkedAt": "2026-10-10T13:30:23.538Z"
+      "checkedAt": "2026-10-10T14:29:08.509Z"
     }
   },
   "outcomes": {
@@ -778,13 +778,13 @@
         "blocker_ultra_shells"
       ],
       "reason": "Stable source; expected tiers present",
-      "checkedAt": "2026-10-10T13:30:23.538Z"
+      "checkedAt": "2026-10-10T14:29:08.509Z"
     },
     "2026-09-25": {
       "status": "complete",
       "ids": [],
       "reason": "Stable source; expected tiers present",
-      "checkedAt": "2026-10-10T13:30:23.538Z"
+      "checkedAt": "2026-10-10T14:29:08.509Z"
     },
     "2026-09-26": {
       "status": "complete",
@@ -792,13 +792,13 @@
         "blocker_ultra_gifts"
       ],
       "reason": "Stable source; expected tiers present",
-      "checkedAt": "2026-10-10T13:30:23.538Z"
+      "checkedAt": "2026-10-10T14:29:08.509Z"
     },
     "2026-09-27": {
       "status": "complete",
       "ids": [],
       "reason": "Stable source; expected tiers present",
-      "checkedAt": "2026-10-10T13:30:23.538Z"
+      "checkedAt": "2026-10-10T14:29:08.509Z"
     },
     "2026-09-28": {
       "status": "complete",
@@ -806,7 +806,7 @@
         "shipping_pink"
       ],
       "reason": "Stable source; expected tiers present",
-      "checkedAt": "2026-10-10T13:30:23.538Z"
+      "checkedAt": "2026-10-10T14:29:08.509Z"
     },
     "2026-09-29": {
       "status": "complete",
@@ -814,7 +814,7 @@
         "shipping_blue"
       ],
       "reason": "Stable source; expected tiers present",
-      "checkedAt": "2026-10-10T13:30:23.538Z"
+      "checkedAt": "2026-10-10T14:29:08.509Z"
     },
     "2026-09-30": {
       "status": "complete",
@@ -823,7 +823,7 @@
         "blocker_boost_duration"
       ],
       "reason": "Stable source; expected tiers present",
-      "checkedAt": "2026-10-10T13:30:23.538Z"
+      "checkedAt": "2026-10-10T14:29:08.509Z"
     },
     "2026-10-01": {
       "status": "complete",
@@ -831,7 +831,7 @@
         "drone_green"
       ],
       "reason": "Stable source; expected tiers present",
-      "checkedAt": "2026-10-10T13:30:23.538Z"
+      "checkedAt": "2026-10-10T14:29:08.509Z"
     },
     "2026-10-02": {
       "status": "complete",
@@ -839,13 +839,13 @@
         "housing_pink"
       ],
       "reason": "Stable source; expected tiers present",
-      "checkedAt": "2026-10-10T13:30:23.538Z"
+      "checkedAt": "2026-10-10T14:29:08.509Z"
     },
     "2026-10-03": {
       "status": "complete",
       "ids": [],
       "reason": "Stable source; expected tiers present",
-      "checkedAt": "2026-10-10T13:30:23.538Z"
+      "checkedAt": "2026-10-10T14:29:08.509Z"
     },
     "2026-10-04": {
       "status": "complete",
@@ -853,13 +853,13 @@
         "shipping_pink"
       ],
       "reason": "Stable source; expected tiers present",
-      "checkedAt": "2026-10-10T13:30:23.538Z"
+      "checkedAt": "2026-10-10T14:29:08.509Z"
     },
     "2026-10-05": {
       "status": "complete",
       "ids": [],
       "reason": "Stable source; expected tiers present",
-      "checkedAt": "2026-10-10T13:30:23.538Z"
+      "checkedAt": "2026-10-10T14:29:08.509Z"
     },
     "2026-10-06": {
       "status": "complete",
@@ -868,7 +868,7 @@
         "shipping_blue"
       ],
       "reason": "Stable source; expected tiers present",
-      "checkedAt": "2026-10-10T13:30:23.538Z"
+      "checkedAt": "2026-10-10T14:29:08.509Z"
     },
     "2026-10-07": {
       "status": "complete",
@@ -876,7 +876,7 @@
         "housing_blue"
       ],
       "reason": "Stable source; expected tiers present",
-      "checkedAt": "2026-10-10T13:30:23.538Z"
+      "checkedAt": "2026-10-10T14:29:08.509Z"
     },
     "2026-10-08": {
       "status": "complete",
@@ -885,13 +885,13 @@
         "drone_green"
       ],
       "reason": "Stable source; expected tiers present",
-      "checkedAt": "2026-10-10T13:30:23.538Z"
+      "checkedAt": "2026-10-10T14:29:08.509Z"
     },
     "2026-10-09": {
       "status": "complete",
       "ids": [],
       "reason": "Stable source; expected tiers present",
-      "checkedAt": "2026-10-10T13:30:23.538Z"
+      "checkedAt": "2026-10-10T14:29:08.509Z"
     }
   },
   "scores": {
