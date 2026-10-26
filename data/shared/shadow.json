@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "experimentId": "frequency-blend-50-v1",
+  "implementationHash": "5e6ccb6e013267f9130d3c76aab489ade93239ed5b19f4a8a112955b8c9e83f4",
+  "candidate": "frequencyBoth50",
+  "excludedDates": [
+    "2026-10-17"
+  ],
+  "predictions": {},
+  "updatedAt": "2026-10-26T23:54:15.537Z",
+  "scores": {
+    "baseline": {
+      "overall": {
+        "count": 0,
+        "score": null,
+        "top": 0,
+        "top3": 0
+      },
+      "nonUltra": {
+        "count": 0,
+        "score": null,
+        "top": 0,
+        "top3": 0
+      },
+      "ultra": {
+        "count": 0,
+        "score": null,
+        "top": 0,
+        "top3": 0
+      }
+    },
+    "candidate": {
+      "overall": {
+        "count": 0,
+        "score": null,
+        "top": 0,
+        "top3": 0
+      },
+      "nonUltra": {
+        "count": 0,
+        "score": null,
+        "top": 0,
+        "top3": 0
+      },
+      "ultra": {
+        "count": 0,
+        "score": null,
+        "top": 0,
+        "top3": 0
+      }
+    }
+  },
+  "firstForecastDate": null,
+  "reviewAfter": null,
+  "scoredDates": [],
+  "status": "Waiting for first pre-release snapshot"
+}
