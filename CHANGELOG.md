@@ -1,5 +1,10 @@
 # Changelog
 
+## Background model study — 2026-10-26
+
+- Added a background comparison of the current model and a historical-frequency blend. Both forecasts are saved before release; the website keeps its existing predictions.
+- Excluded October 17 from the study and added a backtest report. We will review the comparison after four weeks of collection.
+
 ## v0.6 — 2026-09-23
 
 - Reduced the scoring wait to one hour after release, with one hour of unchanged source data.

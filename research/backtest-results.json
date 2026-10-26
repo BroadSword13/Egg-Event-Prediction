@@ -1,0 +1,485 @@
+{
+  "generatedAt": "2026-10-26T21:05:14.869Z",
+  "sourceHash": "fba5dca3a3d476a39b59829a0ffa9f58f20a710669d7371cb63b4e0fb8a2e294",
+  "excludedDates": [
+    "2026-10-17"
+  ],
+  "periods": {
+    "development": [
+      "2026-05-05",
+      "2026-07-31"
+    ],
+    "validation": [
+      "2026-08-01",
+      "2026-09-23"
+    ],
+    "recent": [
+      "2026-09-24",
+      "2026-10-26"
+    ]
+  },
+  "results": {
+    "baseline": {
+      "development": {
+        "overall": {
+          "count": 82,
+          "score": 53.59441260941209,
+          "top": 20,
+          "top3": 55
+        },
+        "nonUltra": {
+          "count": 38,
+          "score": 53.86065521099449,
+          "top": 9,
+          "top3": 29
+        },
+        "ultra": {
+          "count": 44,
+          "score": 53.364475817136395,
+          "top": 11,
+          "top3": 26
+        }
+      },
+      "validation": {
+        "overall": {
+          "count": 50,
+          "score": 62.16221477717947,
+          "top": 20,
+          "top3": 43
+        },
+        "nonUltra": {
+          "count": 23,
+          "score": 60.53095983865312,
+          "top": 8,
+          "top3": 20
+        },
+        "ultra": {
+          "count": 27,
+          "score": 63.55180231740558,
+          "top": 12,
+          "top3": 23
+        }
+      },
+      "recent": {
+        "overall": {
+          "count": 30,
+          "score": 59.68314290796029,
+          "top": 8,
+          "top3": 24
+        },
+        "nonUltra": {
+          "count": 13,
+          "score": 60.923745583886436,
+          "top": 4,
+          "top3": 12
+        },
+        "ultra": {
+          "count": 17,
+          "score": 58.734446744016736,
+          "top": 4,
+          "top3": 12
+        }
+      }
+    },
+    "frequencyN50": {
+      "development": {
+        "overall": {
+          "count": 82,
+          "score": 57.67583346676195,
+          "top": 21,
+          "top3": 56
+        },
+        "nonUltra": {
+          "count": 38,
+          "score": 62.4083040332303,
+          "top": 11,
+          "top3": 30
+        },
+        "ultra": {
+          "count": 44,
+          "score": 53.58869979572107,
+          "top": 10,
+          "top3": 26
+        }
+      },
+      "validation": {
+        "overall": {
+          "count": 50,
+          "score": 63.81001637129942,
+          "top": 20,
+          "top3": 44
+        },
+        "nonUltra": {
+          "count": 23,
+          "score": 63.588714081525644,
+          "top": 9,
+          "top3": 21
+        },
+        "ultra": {
+          "count": 27,
+          "score": 63.99853313666224,
+          "top": 11,
+          "top3": 23
+        }
+      },
+      "recent": {
+        "overall": {
+          "count": 30,
+          "score": 61.23631959297921,
+          "top": 8,
+          "top3": 23
+        },
+        "nonUltra": {
+          "count": 13,
+          "score": 63.92126773770946,
+          "top": 4,
+          "top3": 11
+        },
+        "ultra": {
+          "count": 17,
+          "score": 59.18312395289136,
+          "top": 4,
+          "top3": 12
+        }
+      }
+    },
+    "frequencyU50": {
+      "development": {
+        "overall": {
+          "count": 82,
+          "score": 55.7111019172462,
+          "top": 21,
+          "top3": 55
+        },
+        "nonUltra": {
+          "count": 38,
+          "score": 54.031006307800396,
+          "top": 9,
+          "top3": 28
+        },
+        "ultra": {
+          "count": 44,
+          "score": 57.16209357994941,
+          "top": 12,
+          "top3": 27
+        }
+      },
+      "validation": {
+        "overall": {
+          "count": 50,
+          "score": 61.717422374007135,
+          "top": 21,
+          "top3": 42
+        },
+        "nonUltra": {
+          "count": 23,
+          "score": 60.55512856436419,
+          "top": 8,
+          "top3": 20
+        },
+        "ultra": {
+          "count": 27,
+          "score": 62.70752450814741,
+          "top": 13,
+          "top3": 22
+        }
+      },
+      "recent": {
+        "overall": {
+          "count": 30,
+          "score": 60.0394837805447,
+          "top": 10,
+          "top3": 22
+        },
+        "nonUltra": {
+          "count": 13,
+          "score": 60.091263470184764,
+          "top": 4,
+          "top3": 12
+        },
+        "ultra": {
+          "count": 17,
+          "score": 59.999887547290534,
+          "top": 6,
+          "top3": 10
+        }
+      }
+    },
+    "frequencyBoth50": {
+      "development": {
+        "overall": {
+          "count": 82,
+          "score": 59.792132444855675,
+          "top": 24,
+          "top3": 58
+        },
+        "nonUltra": {
+          "count": 38,
+          "score": 62.53696170571188,
+          "top": 12,
+          "top3": 31
+        },
+        "ultra": {
+          "count": 44,
+          "score": 57.42159808320713,
+          "top": 12,
+          "top3": 27
+        }
+      },
+      "validation": {
+        "overall": {
+          "count": 50,
+          "score": 63.322101363957515,
+          "top": 22,
+          "top3": 43
+        },
+        "nonUltra": {
+          "count": 23,
+          "score": 63.643401882189956,
+          "top": 9,
+          "top3": 21
+        },
+        "ultra": {
+          "count": 27,
+          "score": 63.048400922500235,
+          "top": 13,
+          "top3": 22
+        }
+      },
+      "recent": {
+        "overall": {
+          "count": 30,
+          "score": 61.67453780678252,
+          "top": 10,
+          "top3": 22
+        },
+        "nonUltra": {
+          "count": 13,
+          "score": 63.31089677414106,
+          "top": 4,
+          "top3": 11
+        },
+        "ultra": {
+          "count": 17,
+          "score": 60.423204478802475,
+          "top": 6,
+          "top3": 11
+        }
+      }
+    },
+    "smoothN": {
+      "development": {
+        "overall": {
+          "count": 82,
+          "score": 53.56657911319943,
+          "top": 20,
+          "top3": 54
+        },
+        "nonUltra": {
+          "count": 38,
+          "score": 53.96120914906275,
+          "top": 9,
+          "top3": 28
+        },
+        "ultra": {
+          "count": 44,
+          "score": 53.22576226404474,
+          "top": 11,
+          "top3": 26
+        }
+      },
+      "validation": {
+        "overall": {
+          "count": 50,
+          "score": 62.870213118108175,
+          "top": 18,
+          "top3": 44
+        },
+        "nonUltra": {
+          "count": 23,
+          "score": 62.03142971283325,
+          "top": 7,
+          "top3": 21
+        },
+        "ultra": {
+          "count": 27,
+          "score": 63.58473231519424,
+          "top": 11,
+          "top3": 23
+        }
+      },
+      "recent": {
+        "overall": {
+          "count": 30,
+          "score": 61.226401783529816,
+          "top": 8,
+          "top3": 23
+        },
+        "nonUltra": {
+          "count": 13,
+          "score": 64.79122347403452,
+          "top": 4,
+          "top3": 11
+        },
+        "ultra": {
+          "count": 17,
+          "score": 58.5003616672615,
+          "top": 4,
+          "top3": 12
+        }
+      }
+    },
+    "smoothU": {
+      "development": {
+        "overall": {
+          "count": 82,
+          "score": 54.5507298411721,
+          "top": 19,
+          "top3": 55
+        },
+        "nonUltra": {
+          "count": 38,
+          "score": 54.10438156458734,
+          "top": 9,
+          "top3": 28
+        },
+        "ultra": {
+          "count": 44,
+          "score": 54.93621244367712,
+          "top": 10,
+          "top3": 27
+        }
+      },
+      "validation": {
+        "overall": {
+          "count": 50,
+          "score": 62.92911411401043,
+          "top": 20,
+          "top3": 42
+        },
+        "nonUltra": {
+          "count": 23,
+          "score": 60.472328255038946,
+          "top": 8,
+          "top3": 20
+        },
+        "ultra": {
+          "count": 27,
+          "score": 65.02193169757871,
+          "top": 12,
+          "top3": 22
+        }
+      },
+      "recent": {
+        "overall": {
+          "count": 30,
+          "score": 61.49889230318426,
+          "top": 12,
+          "top3": 23
+        },
+        "nonUltra": {
+          "count": 13,
+          "score": 61.303202563951054,
+          "top": 4,
+          "top3": 12
+        },
+        "ultra": {
+          "count": 17,
+          "score": 61.648537397892,
+          "top": 8,
+          "top3": 11
+        }
+      }
+    },
+    "recentU": {
+      "development": {
+        "overall": {
+          "count": 82,
+          "score": 54.451349915119486,
+          "top": 20,
+          "top3": 55
+        },
+        "nonUltra": {
+          "count": 38,
+          "score": 55.893932306840654,
+          "top": 9,
+          "top3": 28
+        },
+        "ultra": {
+          "count": 44,
+          "score": 53.205483304087565,
+          "top": 11,
+          "top3": 27
+        }
+      },
+      "validation": {
+        "overall": {
+          "count": 50,
+          "score": 61.18014288389043,
+          "top": 19,
+          "top3": 41
+        },
+        "nonUltra": {
+          "count": 23,
+          "score": 60.93952827258221,
+          "top": 8,
+          "top3": 20
+        },
+        "ultra": {
+          "count": 27,
+          "score": 61.38511088611591,
+          "top": 11,
+          "top3": 21
+        }
+      },
+      "recent": {
+        "overall": {
+          "count": 30,
+          "score": 56.53338806848276,
+          "top": 9,
+          "top3": 25
+        },
+        "nonUltra": {
+          "count": 13,
+          "score": 58.75848124843678,
+          "top": 4,
+          "top3": 12
+        },
+        "ultra": {
+          "count": 17,
+          "score": 54.83184622498851,
+          "top": 5,
+          "top3": 13
+        }
+      }
+    }
+  },
+  "proposed": "frequencyBoth50",
+  "accepted": "frequencyBoth50",
+  "pairedUncertainty": {
+    "development": {
+      "gain": 6.197719835443586,
+      "bootstrap95": [
+        3.876990802402373,
+        8.617750706939306
+      ],
+      "method": "Paired date-block bootstrap; descriptive, not adjusted for candidate selection"
+    },
+    "validation": {
+      "gain": 1.1598865867780432,
+      "bootstrap95": [
+        -1.2629850698083482,
+        3.826566984900484
+      ],
+      "method": "Paired date-block bootstrap; descriptive, not adjusted for candidate selection"
+    },
+    "recent": {
+      "gain": 1.9913948988222288,
+      "bootstrap95": [
+        -0.7529902368769276,
+        4.568633564314038
+      ],
+      "method": "Paired date-block bootstrap; descriptive, not adjusted for candidate selection"
+    }
+  }
+}
