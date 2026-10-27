@@ -6,8 +6,72 @@
   "excludedDates": [
     "2026-10-17"
   ],
-  "predictions": {},
-  "updatedAt": "2026-10-27T05:07:11.263Z",
+  "predictions": {
+    "2026-10-27": {
+      "reference": "2026-10-26",
+      "savedAt": "2026-10-27T10:35:53.257Z",
+      "status": "eligible",
+      "inputHash": "fba5dca3a3d476a39b59829a0ffa9f58f20a710669d7371cb63b4e0fb8a2e294",
+      "sourceLatest": "2026-10-26",
+      "implementationHash": "5e6ccb6e013267f9130d3c76aab489ade93239ed5b19f4a8a112955b8c9e83f4",
+      "commit": "cd8df06a583c71eacb87fddf18a88f48f10a5aa5",
+      "baseline": {
+        "housing_blue": 0.3382214184845136,
+        "housing_pink": 0,
+        "shipping_blue": 0,
+        "shipping_pink": 0,
+        "drone_green": 0.28022150822567043,
+        "drone_pink": 0,
+        "blocker_boost_duration": 0.0037287664422997447,
+        "blocker_gifts": 0.35650074746540017,
+        "blocker_shells": 0.018069074500163013,
+        "blocker_fueling": 0.0032584848819529697,
+        "blocker_ultra_boost_duration": 0,
+        "blocker_ultra_gifts": 0,
+        "blocker_ultra_shells": 0,
+        "blocker_ultra_fueling": 0,
+        "capacity_purple": 0,
+        "capacity_pink": 0
+      },
+      "candidate": {
+        "housing_blue": 0.29609483622638383,
+        "housing_pink": 0,
+        "shipping_blue": 0,
+        "shipping_pink": 0,
+        "drone_green": 0.29090440490648606,
+        "drone_pink": 0,
+        "blocker_boost_duration": 0.08122946258622925,
+        "blocker_gifts": 0.2576154530977795,
+        "blocker_shells": 0.03284406105960532,
+        "blocker_fueling": 0.041311782123516175,
+        "blocker_ultra_boost_duration": 0,
+        "blocker_ultra_gifts": 0,
+        "blocker_ultra_shells": 0,
+        "blocker_ultra_fueling": 0,
+        "capacity_purple": 0,
+        "capacity_pink": 0
+      },
+      "publicForecast": {
+        "housing_blue": 0.34833333333333333,
+        "housing_pink": 0,
+        "shipping_blue": 0,
+        "shipping_pink": 0,
+        "drone_green": 0.276,
+        "drone_pink": 0,
+        "blocker_boost_duration": 0.0026666666666666666,
+        "blocker_gifts": 0.35433333333333333,
+        "blocker_shells": 0.01633333333333333,
+        "blocker_fueling": 0.0023333333333333335,
+        "blocker_ultra_boost_duration": 0,
+        "blocker_ultra_gifts": 0,
+        "blocker_ultra_shells": 0,
+        "blocker_ultra_fueling": 0,
+        "capacity_purple": 0,
+        "capacity_pink": 0
+      }
+    }
+  },
+  "updatedAt": "2026-10-27T10:35:53.191Z",
   "scores": {
     "baseline": {
       "overall": {
@@ -50,8 +114,8 @@
       }
     }
   },
-  "firstForecastDate": null,
-  "reviewAfter": null,
+  "firstForecastDate": "2026-10-27",
+  "reviewAfter": "2026-11-24",
   "scoredDates": [],
-  "status": "Waiting for first pre-release snapshot"
+  "status": "Collecting four weeks of paired forecasts"
 }
