@@ -69,9 +69,72 @@
         "capacity_purple": 0,
         "capacity_pink": 0
       }
+    },
+    "2026-10-29": {
+      "reference": "2026-10-28",
+      "savedAt": "2026-10-29T14:21:33.615Z",
+      "status": "eligible",
+      "inputHash": "826a6ee7e28416ff464185096365e1ebbe20b30001757604c06e51fc0950db73",
+      "sourceLatest": "2026-10-28",
+      "implementationHash": "5e6ccb6e013267f9130d3c76aab489ade93239ed5b19f4a8a112955b8c9e83f4",
+      "commit": "f2711358b2b7f42ec9f423c5000db9f7ddf6e5bc",
+      "baseline": {
+        "housing_blue": 0,
+        "housing_pink": 0,
+        "shipping_blue": 0.6028985413047256,
+        "shipping_pink": 0,
+        "drone_green": 0,
+        "drone_pink": 0,
+        "blocker_boost_duration": 0.011124853464815074,
+        "blocker_gifts": 0.32201994834253395,
+        "blocker_shells": 0.0535693328985248,
+        "blocker_fueling": 0.010387323989400562,
+        "blocker_ultra_boost_duration": 0,
+        "blocker_ultra_gifts": 0,
+        "blocker_ultra_shells": 0,
+        "blocker_ultra_fueling": 0,
+        "capacity_purple": 0,
+        "capacity_pink": 0
+      },
+      "candidate": {
+        "housing_blue": 0,
+        "housing_pink": 0,
+        "shipping_blue": 0.4971014445654063,
+        "shipping_pink": 0,
+        "drone_green": 0,
+        "drone_pink": 0,
+        "blocker_boost_duration": 0.11425807890632057,
+        "blocker_gifts": 0.26970562634518,
+        "blocker_shells": 0.05939336210143631,
+        "blocker_fueling": 0.0595414880816568,
+        "blocker_ultra_boost_duration": 0,
+        "blocker_ultra_gifts": 0,
+        "blocker_ultra_shells": 0,
+        "blocker_ultra_fueling": 0,
+        "capacity_purple": 0,
+        "capacity_pink": 0
+      },
+      "publicForecast": {
+        "housing_blue": 0,
+        "housing_pink": 0,
+        "shipping_blue": 0.6056666666666667,
+        "shipping_pink": 0,
+        "drone_green": 0,
+        "drone_pink": 0,
+        "blocker_boost_duration": 0.007666666666666666,
+        "blocker_gifts": 0.326,
+        "blocker_shells": 0.048666666666666664,
+        "blocker_fueling": 0.012,
+        "blocker_ultra_boost_duration": 0,
+        "blocker_ultra_gifts": 0,
+        "blocker_ultra_shells": 0,
+        "blocker_ultra_fueling": 0,
+        "capacity_purple": 0,
+        "capacity_pink": 0
+      }
     }
   },
-  "updatedAt": "2026-10-29T07:07:02.542Z",
+  "updatedAt": "2026-10-29T14:21:33.550Z",
   "scores": {
     "baseline": {
       "overall": {
