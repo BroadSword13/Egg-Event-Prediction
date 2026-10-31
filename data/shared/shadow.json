@@ -195,9 +195,72 @@
         "capacity_purple": 0,
         "capacity_pink": 0
       }
+    },
+    "2026-10-31": {
+      "reference": "2026-10-30",
+      "savedAt": "2026-10-31T12:31:55.451Z",
+      "status": "eligible",
+      "inputHash": "83d2f66e83efd562f7936384beff5dcea597869dace54d9e830c17f719a4cfec",
+      "sourceLatest": "2026-10-30",
+      "implementationHash": "5e6ccb6e013267f9130d3c76aab489ade93239ed5b19f4a8a112955b8c9e83f4",
+      "commit": "06ca0e97cc86f3ada24b256f3a85e1b87bc952e6",
+      "baseline": {
+        "housing_blue": 0,
+        "housing_pink": 0,
+        "shipping_blue": 0,
+        "shipping_pink": 0,
+        "drone_green": 0,
+        "drone_pink": 0,
+        "blocker_boost_duration": 0,
+        "blocker_gifts": 0,
+        "blocker_shells": 0,
+        "blocker_fueling": 0,
+        "blocker_ultra_boost_duration": 0,
+        "blocker_ultra_gifts": 0,
+        "blocker_ultra_shells": 0,
+        "blocker_ultra_fueling": 0,
+        "capacity_purple": 0,
+        "capacity_pink": 0
+      },
+      "candidate": {
+        "housing_blue": 0,
+        "housing_pink": 0,
+        "shipping_blue": 0,
+        "shipping_pink": 0,
+        "drone_green": 0,
+        "drone_pink": 0,
+        "blocker_boost_duration": 0,
+        "blocker_gifts": 0,
+        "blocker_shells": 0,
+        "blocker_fueling": 0,
+        "blocker_ultra_boost_duration": 0,
+        "blocker_ultra_gifts": 0,
+        "blocker_ultra_shells": 0,
+        "blocker_ultra_fueling": 0,
+        "capacity_purple": 0,
+        "capacity_pink": 0
+      },
+      "publicForecast": {
+        "housing_blue": 0,
+        "housing_pink": 0,
+        "shipping_blue": 0,
+        "shipping_pink": 0,
+        "drone_green": 0,
+        "drone_pink": 0,
+        "blocker_boost_duration": 0,
+        "blocker_gifts": 0,
+        "blocker_shells": 0,
+        "blocker_fueling": 0,
+        "blocker_ultra_boost_duration": 0,
+        "blocker_ultra_gifts": 0,
+        "blocker_ultra_shells": 0,
+        "blocker_ultra_fueling": 0,
+        "capacity_purple": 0,
+        "capacity_pink": 0
+      }
     }
   },
-  "updatedAt": "2026-10-31T05:43:05.615Z",
+  "updatedAt": "2026-10-31T12:31:55.386Z",
   "scores": {
     "baseline": {
       "overall": {
