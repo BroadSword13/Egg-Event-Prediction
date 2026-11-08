@@ -573,9 +573,72 @@
         "capacity_purple": 0,
         "capacity_pink": 0
       }
+    },
+    "2026-11-08": {
+      "reference": "2026-11-07",
+      "savedAt": "2026-11-08T15:13:56.350Z",
+      "status": "eligible",
+      "inputHash": "1783aeb8e3c86b58ec6591f113824b7ed95cda6f41eb93bdd7e7a00a5fdb8260",
+      "sourceLatest": "2026-11-07",
+      "implementationHash": "5e6ccb6e013267f9130d3c76aab489ade93239ed5b19f4a8a112955b8c9e83f4",
+      "commit": "c75658a99381c36ef97569e629fcaeef6705c8bb",
+      "baseline": {
+        "housing_blue": 0,
+        "housing_pink": 0,
+        "shipping_blue": 0,
+        "shipping_pink": 0,
+        "drone_green": 0,
+        "drone_pink": 0,
+        "blocker_boost_duration": 0,
+        "blocker_gifts": 0,
+        "blocker_shells": 0,
+        "blocker_fueling": 0,
+        "blocker_ultra_boost_duration": 0,
+        "blocker_ultra_gifts": 0,
+        "blocker_ultra_shells": 0,
+        "blocker_ultra_fueling": 0,
+        "capacity_purple": 0.010000000000000002,
+        "capacity_pink": 0
+      },
+      "candidate": {
+        "housing_blue": 0,
+        "housing_pink": 0,
+        "shipping_blue": 0,
+        "shipping_pink": 0,
+        "drone_green": 0,
+        "drone_pink": 0,
+        "blocker_boost_duration": 0,
+        "blocker_gifts": 0,
+        "blocker_shells": 0,
+        "blocker_fueling": 0,
+        "blocker_ultra_boost_duration": 0,
+        "blocker_ultra_gifts": 0,
+        "blocker_ultra_shells": 0,
+        "blocker_ultra_fueling": 0,
+        "capacity_purple": 0.010000000000000002,
+        "capacity_pink": 0
+      },
+      "publicForecast": {
+        "housing_blue": 0,
+        "housing_pink": 0,
+        "shipping_blue": 0,
+        "shipping_pink": 0,
+        "drone_green": 0,
+        "drone_pink": 0,
+        "blocker_boost_duration": 0,
+        "blocker_gifts": 0,
+        "blocker_shells": 0,
+        "blocker_fueling": 0,
+        "blocker_ultra_boost_duration": 0,
+        "blocker_ultra_gifts": 0,
+        "blocker_ultra_shells": 0,
+        "blocker_ultra_fueling": 0,
+        "capacity_purple": 0.012333333333333333,
+        "capacity_pink": 0
+      }
     }
   },
-  "updatedAt": "2026-11-08T07:22:39.595Z",
+  "updatedAt": "2026-11-08T15:13:56.285Z",
   "scores": {
     "baseline": {
       "overall": {
