@@ -51,7 +51,7 @@ function update(previous, rows, now, predict, finishedAt = () => now) {
   }
   const untilRelease = eventInstantForDate(target) - now;
   // Save in the last six hours, never in the final fifteen minutes or after release.
-  if (untilRelease <= 6*HOUR && untilRelease > HOUR/4 && target.slice(5) !== '07-14') {
+  if (untilRelease <= 12*HOUR && untilRelease > HOUR/4 && target.slice(5) !== '07-14') {
     const historyComplete = Array.from({length:7},(_,i)=>addDays(today,-i)).every(d=>d.slice(5)==='07-14' || state.outcomes[d]?.status === 'complete');
     const status = historyComplete ? 'eligible' : 'incomplete-history';
     const previousPrediction = state.predictions[target];

@@ -24,7 +24,7 @@ function update(previous,rows,official,now,finishedAt=()=>now,predictor=null){
  const observed=engine.app.wasmegg.normalizeWasmeggData(rows,today).latestDate;
  const complete=Array.from({length:7},(_,i)=>addDays(today,-i)).every(d=>engine.EXCLUDED_DATES.includes(d)||d.endsWith('07-14')||official.outcomes?.[d]?.status==='complete');
  // No retrospective predictions, even when a workflow was missed.
- if(remaining<=6*HOUR&&remaining>HOUR/4&&!engine.EXCLUDED_DATES.includes(target)&&!target.endsWith('07-14')&&state.predictions[target]?.status!=='eligible'&&fresh&&observed===official.sourceLatest){
+ if(remaining<=12*HOUR&&remaining>HOUR/4&&!engine.EXCLUDED_DATES.includes(target)&&!target.endsWith('07-14')&&state.predictions[target]?.status!=='eligible'&&fresh&&observed===official.sourceLatest){
    const prepared=engine.prepare(rows,target);
    const predictions=predictor?predictor(target):{
      baseline:engine.predictPrepared(prepared,'baseline'),candidate:engine.predictPrepared(prepared,CANDIDATE)
