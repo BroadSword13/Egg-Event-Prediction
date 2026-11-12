@@ -701,46 +701,46 @@
       }
     }
   },
-  "updatedAt": "2026-11-11T21:59:27.813Z",
+  "updatedAt": "2026-11-12T02:59:59.984Z",
   "scores": {
     "baseline": {
       "overall": {
-        "count": 9,
-        "score": 58.676449559483515,
+        "count": 11,
+        "score": 59.17796932262311,
         "top": 2,
-        "top3": 6
+        "top3": 8
       },
       "nonUltra": {
-        "count": 4,
-        "score": 62.82683133473934,
+        "count": 5,
+        "score": 60.98506921000495,
         "top": 1,
-        "top3": 4
+        "top3": 5
       },
       "ultra": {
-        "count": 5,
-        "score": 55.356144139278825,
+        "count": 6,
+        "score": 57.67205274980489,
         "top": 1,
-        "top3": 2
+        "top3": 3
       }
     },
     "candidate": {
       "overall": {
-        "count": 9,
-        "score": 61.985301338760124,
-        "top": 3,
-        "top3": 8
+        "count": 11,
+        "score": 61.74714530159706,
+        "top": 4,
+        "top3": 10
       },
       "nonUltra": {
-        "count": 4,
-        "score": 64.11214189217851,
+        "count": 5,
+        "score": 62.72485901338874,
         "top": 2,
-        "top3": 4
+        "top3": 5
       },
       "ultra": {
-        "count": 5,
-        "score": 60.28382889602541,
-        "top": 1,
-        "top3": 4
+        "count": 6,
+        "score": 60.932383875104,
+        "top": 2,
+        "top3": 5
       }
     }
   },
@@ -756,7 +756,8 @@
     "2026-11-03",
     "2026-11-05",
     "2026-11-07",
-    "2026-11-08"
+    "2026-11-08",
+    "2026-11-11"
   ],
   "status": "Collecting four weeks of paired forecasts"
 }
