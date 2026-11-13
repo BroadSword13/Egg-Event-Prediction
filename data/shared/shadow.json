@@ -762,9 +762,72 @@
         "capacity_purple": 0,
         "capacity_pink": 0
       }
+    },
+    "2026-11-13": {
+      "reference": "2026-11-12",
+      "savedAt": "2026-11-13T07:59:27.250Z",
+      "status": "eligible",
+      "inputHash": "75d049f069dcbda2f28dcf94bc3d931a216674f2ef90681a8611db4ac6a526d7",
+      "sourceLatest": "2026-11-12",
+      "implementationHash": "5e6ccb6e013267f9130d3c76aab489ade93239ed5b19f4a8a112955b8c9e83f4",
+      "commit": "595ccdbe43a2ed6a2fd68edd210486777912cb3b",
+      "baseline": {
+        "housing_blue": 0,
+        "housing_pink": 0.055812211990493486,
+        "shipping_blue": 0,
+        "shipping_pink": 0.16084545144341234,
+        "drone_green": 0,
+        "drone_pink": 0.3699824440069081,
+        "blocker_boost_duration": 0,
+        "blocker_gifts": 0,
+        "blocker_shells": 0,
+        "blocker_fueling": 0,
+        "blocker_ultra_boost_duration": 0.002820762745829387,
+        "blocker_ultra_gifts": 0.002758623201367737,
+        "blocker_ultra_shells": 0.051312148520171914,
+        "blocker_ultra_fueling": 0.35646835809181726,
+        "capacity_purple": 0,
+        "capacity_pink": 0
+      },
+      "candidate": {
+        "housing_blue": 0,
+        "housing_pink": 0.13843242178472043,
+        "shipping_blue": 0,
+        "shipping_pink": 0.19094904151117986,
+        "drone_green": 0,
+        "drone_pink": 0.2797280641087172,
+        "blocker_boost_duration": 0,
+        "blocker_gifts": 0,
+        "blocker_shells": 0,
+        "blocker_fueling": 0,
+        "blocker_ultra_boost_duration": 0.05404196032028311,
+        "blocker_ultra_gifts": 0.06980036423226282,
+        "blocker_ultra_shells": 0.05723502162850701,
+        "blocker_ultra_fueling": 0.2098131264143297,
+        "capacity_purple": 0,
+        "capacity_pink": 0
+      },
+      "publicForecast": {
+        "housing_blue": 0,
+        "housing_pink": 0.07366666666666667,
+        "shipping_blue": 0,
+        "shipping_pink": 0.20633333333333334,
+        "drone_green": 0,
+        "drone_pink": 0.4646666666666667,
+        "blocker_boost_duration": 0,
+        "blocker_gifts": 0,
+        "blocker_shells": 0,
+        "blocker_fueling": 0,
+        "blocker_ultra_boost_duration": 0.002,
+        "blocker_ultra_gifts": 0.0026666666666666666,
+        "blocker_ultra_shells": 0.06566666666666666,
+        "blocker_ultra_fueling": 0.185,
+        "capacity_purple": 0,
+        "capacity_pink": 0
+      }
     }
   },
-  "updatedAt": "2026-11-13T00:25:58.823Z",
+  "updatedAt": "2026-11-13T07:59:27.185Z",
   "scores": {
     "baseline": {
       "overall": {
