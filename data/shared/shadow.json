@@ -1205,44 +1205,44 @@
       }
     }
   },
-  "updatedAt": "2026-11-19T21:35:59.195Z",
+  "updatedAt": "2026-11-20T03:17:07.300Z",
   "scores": {
     "baseline": {
       "overall": {
-        "count": 17,
-        "score": 53.87457072610021,
+        "count": 19,
+        "score": 53.84950845474405,
         "top": 2,
-        "top3": 10
+        "top3": 11
       },
       "nonUltra": {
-        "count": 8,
-        "score": 55.74000521001881,
+        "count": 9,
+        "score": 57.6636972656208,
         "top": 1,
-        "top3": 6
+        "top3": 7
       },
       "ultra": {
-        "count": 9,
-        "score": 52.21640674039478,
+        "count": 10,
+        "score": 50.41673852495494,
         "top": 1,
         "top3": 4
       }
     },
     "candidate": {
       "overall": {
-        "count": 17,
-        "score": 59.266156768827486,
-        "top": 4,
-        "top3": 13
+        "count": 19,
+        "score": 59.29699144322227,
+        "top": 5,
+        "top3": 14
       },
       "nonUltra": {
-        "count": 8,
-        "score": 59.997050626448534,
-        "top": 2,
-        "top3": 6
+        "count": 9,
+        "score": 61.70366008718784,
+        "top": 3,
+        "top3": 7
       },
       "ultra": {
-        "count": 9,
-        "score": 58.616473339830996,
+        "count": 10,
+        "score": 57.13098966365324,
         "top": 2,
         "top3": 7
       }
@@ -1268,7 +1268,8 @@
     "2026-11-15",
     "2026-11-16",
     "2026-11-17",
-    "2026-11-18"
+    "2026-11-18",
+    "2026-11-19"
   ],
   "status": "Collecting four weeks of paired forecasts"
 }
