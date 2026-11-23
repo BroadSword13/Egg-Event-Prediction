@@ -1394,7 +1394,7 @@
       }
     }
   },
-  "updatedAt": "2026-11-22T21:46:04.184Z",
+  "updatedAt": "2026-11-23T02:45:43.077Z",
   "scores": {
     "baseline": {
       "overall": {
@@ -1460,7 +1460,8 @@
     "2026-11-18",
     "2026-11-19",
     "2026-11-20",
-    "2026-11-21"
+    "2026-11-21",
+    "2026-11-22"
   ],
   "status": "Collecting four weeks of paired forecasts"
 }
