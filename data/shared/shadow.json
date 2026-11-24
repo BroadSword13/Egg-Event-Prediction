@@ -1455,16 +1455,79 @@
         "capacity_purple": 0,
         "capacity_pink": 0
       }
+    },
+    "2026-11-24": {
+      "reference": "2026-11-23",
+      "savedAt": "2026-11-24T10:56:03.875Z",
+      "status": "eligible",
+      "inputHash": "77839e18aec7d58e8275773501c1aa2e26a2ea38a34f4acafbe6d5e0118a9f39",
+      "sourceLatest": "2026-11-23",
+      "implementationHash": "5e6ccb6e013267f9130d3c76aab489ade93239ed5b19f4a8a112955b8c9e83f4",
+      "commit": "131b70b1ed1a9a5610a67bace6b8254225e868da",
+      "baseline": {
+        "housing_blue": 0.015977786920729,
+        "housing_pink": 0,
+        "shipping_blue": 0,
+        "shipping_pink": 0,
+        "drone_green": 0.229146281781154,
+        "drone_pink": 0,
+        "blocker_boost_duration": 0.04785105204227495,
+        "blocker_gifts": 0.19000669103168336,
+        "blocker_shells": 0.5142481039997531,
+        "blocker_fueling": 0.0027700842244057448,
+        "blocker_ultra_boost_duration": 0,
+        "blocker_ultra_gifts": 0,
+        "blocker_ultra_shells": 0,
+        "blocker_ultra_fueling": 0,
+        "capacity_purple": 0,
+        "capacity_pink": 0
+      },
+      "candidate": {
+        "housing_blue": 0.13875812422959524,
+        "housing_pink": 0,
+        "shipping_blue": 0,
+        "shipping_pink": 0,
+        "drone_green": 0.2607269870444231,
+        "drone_pink": 0,
+        "blocker_boost_duration": 0.10084860294421438,
+        "blocker_gifts": 0.17192642243891856,
+        "blocker_shells": 0.2802009750767996,
+        "blocker_fueling": 0.04753888826604902,
+        "blocker_ultra_boost_duration": 0,
+        "blocker_ultra_gifts": 0,
+        "blocker_ultra_shells": 0,
+        "blocker_ultra_fueling": 0,
+        "capacity_purple": 0,
+        "capacity_pink": 0
+      },
+      "publicForecast": {
+        "housing_blue": 0.015,
+        "housing_pink": 0,
+        "shipping_blue": 0,
+        "shipping_pink": 0,
+        "drone_green": 0.22566666666666665,
+        "drone_pink": 0,
+        "blocker_boost_duration": 0.058666666666666666,
+        "blocker_gifts": 0.18133333333333335,
+        "blocker_shells": 0.5156666666666667,
+        "blocker_fueling": 0.0036666666666666666,
+        "blocker_ultra_boost_duration": 0,
+        "blocker_ultra_gifts": 0,
+        "blocker_ultra_shells": 0,
+        "blocker_ultra_fueling": 0,
+        "capacity_purple": 0,
+        "capacity_pink": 0
+      }
     }
   },
-  "updatedAt": "2026-11-24T00:51:45.917Z",
+  "updatedAt": "2026-11-24T10:56:03.822Z",
   "scores": {
     "baseline": {
       "overall": {
-        "count": 20,
-        "score": 53.62726443316137,
+        "count": 21,
+        "score": 53.97270315718664,
         "top": 2,
-        "top3": 11
+        "top3": 12
       },
       "nonUltra": {
         "count": 9,
@@ -1473,18 +1536,18 @@
         "top3": 7
       },
       "ultra": {
-        "count": 11,
-        "score": 50.324728479330915,
+        "count": 12,
+        "score": 51.20445757586101,
         "top": 1,
-        "top3": 4
+        "top3": 5
       }
     },
     "candidate": {
       "overall": {
-        "count": 20,
-        "score": 59.2991894118408,
+        "count": 21,
+        "score": 59.46971485035226,
         "top": 5,
-        "top3": 15
+        "top3": 16
       },
       "nonUltra": {
         "count": 9,
@@ -1493,10 +1556,10 @@
         "top3": 7
       },
       "ultra": {
-        "count": 11,
-        "score": 57.33189522292048,
+        "count": 12,
+        "score": 57.794255922725554,
         "top": 2,
-        "top3": 8
+        "top3": 9
       }
     }
   },
@@ -1524,7 +1587,8 @@
     "2026-11-19",
     "2026-11-20",
     "2026-11-21",
-    "2026-11-22"
+    "2026-11-22",
+    "2026-11-23"
   ],
   "status": "Collecting four weeks of paired forecasts"
 }
