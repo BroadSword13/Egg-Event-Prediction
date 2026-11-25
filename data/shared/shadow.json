@@ -1520,20 +1520,20 @@
       }
     }
   },
-  "updatedAt": "2026-11-24T21:12:00.436Z",
+  "updatedAt": "2026-11-25T04:12:24.837Z",
   "scores": {
     "baseline": {
       "overall": {
-        "count": 21,
-        "score": 53.97270315718664,
+        "count": 22,
+        "score": 54.025485294998575,
         "top": 2,
-        "top3": 12
+        "top3": 13
       },
       "nonUltra": {
-        "count": 9,
-        "score": 57.6636972656208,
+        "count": 10,
+        "score": 57.410718557963634,
         "top": 1,
-        "top3": 7
+        "top3": 8
       },
       "ultra": {
         "count": 12,
@@ -1544,16 +1544,16 @@
     },
     "candidate": {
       "overall": {
-        "count": 21,
-        "score": 59.46971485035226,
+        "count": 22,
+        "score": 59.7522731014632,
         "top": 5,
-        "top3": 16
+        "top3": 17
       },
       "nonUltra": {
-        "count": 9,
-        "score": 61.70366008718784,
+        "count": 10,
+        "score": 62.101893715948364,
         "top": 3,
-        "top3": 7
+        "top3": 8
       },
       "ultra": {
         "count": 12,
@@ -1588,7 +1588,8 @@
     "2026-11-20",
     "2026-11-21",
     "2026-11-22",
-    "2026-11-23"
+    "2026-11-23",
+    "2026-11-24"
   ],
   "status": "Ready for review; no automatic promotion"
 }
